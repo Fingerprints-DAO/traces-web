@@ -10,8 +10,8 @@ const Home: NextPage = () => {
   return (
     <>
       <HomeHero />
-      <FAQ />
       <FeaturedCollections />
+      <FAQ />
     </>
   )
 }
