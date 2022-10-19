@@ -16,7 +16,7 @@ import Swiper, { Pagination, Navigation } from 'swiper'
 
 // Components
 import Slider from '@ui/components/molecules/slider'
-import useMediaQuery from '@ui/hooks/useMediaQuery'
+import useMediaQuery from '@ui/hooks/use-media-query'
 
 const FeaturedCollections = () => {
   const [swiper, setSwiper] = useState<Swiper>()

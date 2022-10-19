@@ -8,7 +8,7 @@ import Layout from '@ui/components/templates/layout'
 // Helpers
 import theme from '@ui/base/theme'
 import { Web3Provider } from '@ui/contexts/Web3Provider'
-import useScrollRestoration from '@ui/hooks/useScrollRestoration'
+import useScrollRestoration from '@ui/hooks/use-scroll-restoration'
 
 // Assets
 import '../styles/globals.css'
