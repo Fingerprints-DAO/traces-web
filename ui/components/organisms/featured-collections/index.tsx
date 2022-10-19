@@ -76,7 +76,7 @@ const FeaturedCollections = () => {
         modules={[Pagination, Navigation]}
         className="featured-collections"
         items={Array.from(Array(8), (_, index) => {
-          return <CollectionCard key={index} />
+          return <CollectionCard href="collections/1" key={index} />
         })}
       />
     </Box>

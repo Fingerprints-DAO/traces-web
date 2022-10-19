@@ -1,10 +1,11 @@
-import React from 'react'
+import React, { PropsWithChildren } from 'react'
 
 // Dependencies
 import Link from 'next/link'
-import { Box, Heading, Text } from '@chakra-ui/react'
+import { Box, Button, Heading, Text } from '@chakra-ui/react'
 
 type CollectionCardProps = {
+  href?: string
   cardWidth?: Array<string | number>
   image?: Partial<{
     height: string
@@ -13,12 +14,23 @@ type CollectionCardProps = {
 }
 
 const CollectionCard = ({
+  href,
   cardWidth = ['100%', 96],
   image,
-}: CollectionCardProps) => {
+  children,
+}: PropsWithChildren<CollectionCardProps>) => {
+  const Component = href ? Link : Box
+
   return (
-    <Link href="collection/1" passHref={true}>
-      <Box as="a" display="block" width={cardWidth} color="gray.100">
+    <Component href={href} passHref={true} height="full">
+      <Box
+        as={href ? 'a' : 'div'}
+        display="flex"
+        flexDirection="column"
+        height="full"
+        width={cardWidth}
+        color="gray.100"
+      >
         <Box
           width="100%"
           height={image?.height || '549px'}
@@ -29,9 +41,9 @@ const CollectionCard = ({
         <Heading as="h6" size="md" marginBottom={2}>
           Autoglyphs
         </Heading>
-        <Text fontSize="xs">Larva labs</Text>
+        {children || <Text fontSize="xs">Larva labs</Text>}
       </Box>
-    </Link>
+    </Component>
   )
 }
 
