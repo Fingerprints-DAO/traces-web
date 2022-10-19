@@ -17,6 +17,7 @@ import Swiper, { Pagination, Navigation } from 'swiper'
 // Components
 import Slider from '@ui/components/molecules/slider'
 import useMediaQuery from '@ui/hooks/use-media-query'
+import CollectionCard from '@ui/components/molecules/collection-card'
 
 const FeaturedCollections = () => {
   const [swiper, setSwiper] = useState<Swiper>()
@@ -75,29 +76,7 @@ const FeaturedCollections = () => {
         modules={[Pagination, Navigation]}
         className="featured-collections"
         items={Array.from(Array(8), (_, index) => {
-          return (
-            <Link href="collection/1" passHref={true} key={index}>
-              <Box
-                as="a"
-                display="block"
-                width={['100%', 96]}
-                height="620px"
-                color="gray.100"
-              >
-                <Box
-                  width="100%"
-                  height="549px"
-                  marginBottom={6}
-                  background="gray.500"
-                  borderRadius={8}
-                />
-                <Heading as="h6" size="md" marginBottom={2}>
-                  Autoglyphs
-                </Heading>
-                <Text fontSize="xs">Larva labs</Text>
-              </Box>
-            </Link>
-          )
+          return <CollectionCard key={index} />
         })}
       />
     </Box>
