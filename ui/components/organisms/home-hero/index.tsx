@@ -14,7 +14,7 @@ const HomeHero = () => {
   const [isMobile] = useMediaQuery('(max-width: 30em)')
 
   return (
-    <Box as="section" pt={[10, 20]} pb={[10, '136px']}>
+    <Box as="section" pt={[10, 20]} pb={[20, '136px']}>
       <Container
         maxWidth="7xl"
         display={['block', 'flex']}
