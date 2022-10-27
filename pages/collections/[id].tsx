@@ -13,6 +13,7 @@ import {
   Text,
   Tooltip,
   useDisclosure,
+  useToast,
 } from '@chakra-ui/react'
 
 // Components
@@ -28,6 +29,11 @@ const arr = [
 
 const Collection = () => {
   const { isOpen, onOpen, onClose } = useDisclosure()
+
+  const toast = useToast({
+    isClosable: true,
+    position: 'top-right',
+  })
 
   return (
     <>
@@ -79,6 +85,7 @@ const Collection = () => {
                         colorScheme="primary"
                         width="full"
                         marginTop="auto"
+                        onClick={onOpen}
                       >
                         Mint WNFT
                       </Button>
@@ -197,7 +204,29 @@ const Collection = () => {
           ))}
         </Grid>
       </Container>
-      <ModalMint isOpen={true} onClose={onClose} />
+      <ModalMint
+        isOpen={isOpen}
+        onClose={() => {
+          onClose()
+          toast({
+            title: 'WNFT Minted',
+            status: 'success',
+            description: (
+              <>
+                <Text mb={4}>You have sucesfully... better text </Text>
+                <Box
+                  as="a"
+                  href="https://fake.com"
+                  target="_blank"
+                  textDecoration="underline"
+                >
+                  Click here to see transaction
+                </Box>
+              </>
+            ),
+          })
+        }}
+      />
     </>
   )
 }
