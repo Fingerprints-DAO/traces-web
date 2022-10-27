@@ -22,7 +22,7 @@ const CollectionCard = ({
   const Component = href ? Link : Box
 
   return (
-    <Component href={href} passHref={true} height="full">
+    <Component href={href as any} passHref={true} height="full">
       <Box
         as={href ? 'a' : 'div'}
         display="flex"
