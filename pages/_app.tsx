@@ -27,11 +27,11 @@ function MyApp({ Component, pageProps, router }: AppProps) {
 
   return (
     <ChakraProvider theme={theme}>
-      {/* <Web3Provider> */}
-      <Layout>
-        <Component {...pageProps} />
-      </Layout>
-      {/* </Web3Provider> */}
+      <Web3Provider>
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
+      </Web3Provider>
     </ChakraProvider>
   )
 }
