@@ -1,31 +1,21 @@
-import React, { useMemo, useState } from 'react'
+import React from 'react'
 
 // Dependencies
 import { HamburgerIcon } from '@chakra-ui/icons'
-import {
-  Avatar,
-  Box,
-  Button,
-  Container,
-  Text,
-  useMediaQuery,
-} from '@chakra-ui/react'
+import { Avatar, Box, Button, Container, Text } from '@chakra-ui/react'
 
 // Components
 import Logo from '@ui/components/atoms/logo'
 
+// Helpers
+import { shortenAddress } from '@ui/utils/string'
+import useWalletConnection from '@ui/hooks/use-wallet-connect'
+
 const Header = () => {
-  const [isMobile] = useMediaQuery('(max-width: 30em)')
-  const [isConnected, setIsConnected] = useState(true)
+  const { WalletButton, walletIsConnected, provider, userAddress } =
+    useWalletConnection()
 
-  const handleConnectWallet = () => setIsConnected(!isConnected)
-
-  const connectButtonLabel = useMemo(() => {
-    const sufix = ' wallet'
-    const prefix = isConnected ? 'Disconnect' : 'Connect'
-
-    return isMobile ? prefix : `${prefix} ${sufix}`
-  }, [isConnected, isMobile])
+  console.log('provider', provider)
 
   return (
     <Box
@@ -57,7 +47,7 @@ const Header = () => {
           <Logo />
         </Box>
         <Box display="flex" alignItems="center">
-          {isConnected && (
+          {walletIsConnected && (
             <Box display="flex" alignItems="center" marginRight={[3, 6]}>
               <Box textAlign="right" marginRight={2}>
                 <Text
@@ -76,22 +66,13 @@ const Header = () => {
                   fontSize={['xs', 'sm']}
                   display="block"
                 >
-                  0x...45bG
+                  {shortenAddress(userAddress)}
                 </Text>
               </Box>
               <Avatar size={['sm', 'xm']} src="https://bit.ly/dan-abramov" />
             </Box>
           )}
-          <Button
-            borderColor="gray.200"
-            color={isConnected ? 'gray.200' : 'gray.900'}
-            colorScheme="primary"
-            variant={isConnected ? 'outline' : 'solid'}
-            size={['xs', 'md']}
-            onClick={handleConnectWallet}
-          >
-            {connectButtonLabel}
-          </Button>
+          <WalletButton />
         </Box>
       </Container>
     </Box>

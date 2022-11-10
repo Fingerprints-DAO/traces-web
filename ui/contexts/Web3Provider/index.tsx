@@ -21,7 +21,7 @@ const DEFAULT_CONTEXT = {
   exampleContractRead: exampleContract.get(),
   walletIsConnected: false,
   userAddress: '',
-  onConnectWallet: () => {},
+  handleConnectWallet: () => {},
   connectWalletHandler: () => {},
 }
 
@@ -31,23 +31,29 @@ export const Web3Provider: React.FC<PropsWithChildren> = ({
   children,
   ...rest
 }) => {
+  const toast = useToast()
+
   const [provider, setProvider] = useState(DEFAULT_CONTEXT.provider)
   const [userAddress, setUserAddress] = useState(DEFAULT_CONTEXT.userAddress)
   const [walletIsConnected, setWalletIsConnected] = useState(
     DEFAULT_CONTEXT.walletIsConnected
   )
-  const toast = useToast()
 
   const connectWalletHandler = useCallback(async () => {
     if (walletIsConnected) return
+
     await providerClass.connectWallet()
+
     const connectedWallet = providerClass.getConnectedWallet()
+
     if (!connectedWallet) return
 
-    const signer = await connectedWallet.getSigner()
+    const signer = connectedWallet.getSigner()
+
     if (!signer) return
 
     const address = await signer.getAddress()
+
     if (!address) return
 
     setProvider(connectedWallet)
@@ -55,9 +61,10 @@ export const Web3Provider: React.FC<PropsWithChildren> = ({
     setWalletIsConnected(true)
   }, [walletIsConnected])
 
-  const onConnectWallet = useCallback(async () => {
+  const handleConnectWallet = useCallback(async () => {
     try {
       await connectWalletHandler()
+
       toast({
         title: 'Connect a wallet',
         description: 'Wallet connected successfully',
@@ -67,6 +74,7 @@ export const Web3Provider: React.FC<PropsWithChildren> = ({
       })
     } catch (error) {
       console.log('Error onConnectWallet', error)
+
       toast({
         title: 'Connect a wallet',
         description: 'Error while connecting your wallet. Try again late.',
@@ -83,6 +91,7 @@ export const Web3Provider: React.FC<PropsWithChildren> = ({
         const addressList = await window.ethereum?.request({
           method: 'eth_accounts',
         })
+
         if (addressList.length > 0) {
           connectWalletHandler()
         }
@@ -97,7 +106,7 @@ export const Web3Provider: React.FC<PropsWithChildren> = ({
         ...DEFAULT_CONTEXT,
         provider,
         walletIsConnected,
-        onConnectWallet,
+        handleConnectWallet,
         userAddress,
         connectWalletHandler,
       }}

@@ -30,17 +30,21 @@ const startProvider = () => {
 export class Provider {
   readProvider: ProviderType
   signedProvider: ProviderType | null
+
   constructor() {
     this.readProvider = startProvider()
     this.signedProvider = null
     this.bindNetworkChanges(this.readProvider)
   }
+
   get() {
     return this.readProvider
   }
+
   getConnectedWallet() {
     return this.signedProvider
   }
+
   async connectWallet() {
     const web3Modal = new Web3Modal({
       cacheProvider: true, // optional
@@ -51,6 +55,7 @@ export class Provider {
     this.bindNetworkChanges(this.signedProvider)
     return this.signedProvider
   }
+
   bindNetworkChanges(provider: ProviderType) {
     provider
       .on('network', onChangeNetwork)
