@@ -3,7 +3,7 @@ import jazzicon from '@metamask/jazzicon'
 import { useToast } from '@chakra-ui/react'
 import { Contract } from 'ethers/lib/ethers'
 import { formatEther } from 'ethers/lib/utils'
-import { createContext, PropsWithChildren, useCallback, useEffect, useRef, useState } from 'react'
+import { createContext, PropsWithChildren, useCallback, useEffect, useState } from 'react'
 
 // Helpers
 import { Provider, ProviderType } from 'web3/provider'
@@ -50,6 +50,7 @@ export const Web3Provider: React.FC<PropsWithChildren> = ({ children }) => {
         const icon = jazzicon(40, parseInt(address, 16))
 
         setAvatar(icon as HTMLDivElement)
+        console.log('address', address)
     }, [])
 
     const connectWalletHandler = useCallback(async () => {
@@ -102,7 +103,7 @@ export const Web3Provider: React.FC<PropsWithChildren> = ({ children }) => {
     }, [connectWalletHandler, toast])
 
     const disconnectWallet = async () => {
-        setWalletIsConnected(false)
+        setWalletIsConnected(DEFAULT_CONTEXT.walletIsConnected)
         setProvider(DEFAULT_CONTEXT.provider)
         setUserAddress(DEFAULT_CONTEXT.userAddress)
 
@@ -115,11 +116,11 @@ export const Web3Provider: React.FC<PropsWithChildren> = ({ children }) => {
                 method: 'eth_accounts',
             })
 
-            if (addressList.length > 0) {
+            if (addressList.length > 0 && !walletIsConnected) {
                 connectWalletHandler()
             }
         }
-    }, [connectWalletHandler])
+    }, [connectWalletHandler, walletIsConnected])
 
     useEffect(() => {
         checkWalletConnection()

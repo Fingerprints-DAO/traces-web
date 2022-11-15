@@ -1,66 +1,46 @@
-import React, { useCallback, useEffect, useRef } from 'react'
+import React, { useEffect } from 'react'
 
 // Dependencies
+import { useRouter } from 'next/router'
 import { HamburgerIcon } from '@chakra-ui/icons'
-import { Avatar, Box, Button, Container, Text } from '@chakra-ui/react'
+import { Box, Button, Container, useDisclosure } from '@chakra-ui/react'
 
 // Components
+import Drawer from '../drawer'
+import ModalAddNft from '../modal-add-nft'
 import Logo from '@ui/components/atoms/logo'
-
-// Helpers
-import { shortenAddress } from '@ui/utils/string'
-import useWalletConnection from '@ui/hooks/use-wallet-connect'
+import Wallet from '@ui/components/molecules/wallet'
 
 const Header = () => {
-    const avatarRef = useRef<HTMLDivElement>(null)
-    const { WalletButton, walletIsConnected, printsBalance, userAddress, avatar } = useWalletConnection()
-
-    const handleAvatar = useCallback(() => {
-        console.log('AQUI 1')
-        if (avatar && avatarRef?.current) {
-            console.log('AQUI 2')
-            if (avatarRef.current.firstChild) {
-                console.log('AQUI 3')
-                avatarRef.current.removeChild(avatarRef.current.firstChild)
-            }
-
-            avatarRef.current.appendChild(avatar)
-            console.log('AQUI 4')
-        }
-    }, [avatar, avatarRef])
+    const router = useRouter()
+    const { isOpen: isModalOpen, onClose: onCloseModal, onOpen: onOpenModal } = useDisclosure()
+    const { isOpen: isDrawerOpen, onClose: onCloseDrawer, onOpen: onOpenDrawer } = useDisclosure()
 
     useEffect(() => {
-        handleAvatar()
-    }, [handleAvatar])
+        onCloseDrawer()
+    }, [router.route, onCloseDrawer])
+
+    const handleOpenAddNftModal = () => {
+        onCloseDrawer()
+        onOpenModal()
+    }
 
     return (
-        <Box as="header" paddingY="3" background="gray.900" position="sticky" left={0} top={0} zIndex="sticky">
-            <Container maxWidth="7xl" display="flex" justifyContent="space-between" alignItems="center">
-                <Box display="flex" alignItems="center">
-                    <Button variant="unstyled" display="block" minWidth="unset" height="unset" padding="3px" marginRight={[2, 4]}>
-                        <HamburgerIcon boxSize={18} display="block" />
-                    </Button>
-                    <Logo />
-                </Box>
-                <Box display="flex" alignItems="center">
-                    {walletIsConnected && (
-                        <Box display="flex" alignItems="center" marginRight={[3, 6]}>
-                            <Box textAlign="right" marginRight={2}>
-                                <Text as="strong" color="gray.200" display="block" fontSize={['xs', 'sm']} fontWeight={600} marginBottom="-2px">
-                                    {printsBalance || 0} PRINTS
-                                </Text>
-                                <Text as="span" color="gray.400" fontSize={['xs', 'sm']} display="block">
-                                    {shortenAddress(userAddress)}
-                                </Text>
-                            </Box>
-                            <Box ref={avatarRef} />
-                            {/* <Avatar size={['sm', 'xm']} src="https://bit.ly/dan-abramov" /> */}
-                        </Box>
-                    )}
-                    <WalletButton />
-                </Box>
-            </Container>
-        </Box>
+        <>
+            <Box as="header" paddingY="3" background="gray.900" position="sticky" left={0} top={0} zIndex="sticky">
+                <Container maxWidth="7xl" display="flex" justifyContent="space-between" alignItems="center">
+                    <Box display="flex" alignItems="center">
+                        <Button variant="unstyled" display="block" minWidth="unset" height="unset" padding="3px" marginRight={[2, 4]} onClick={onOpenDrawer}>
+                            <HamburgerIcon boxSize={18} display="block" />
+                        </Button>
+                        <Logo />
+                    </Box>
+                    <Wallet variant="header" />
+                </Container>
+            </Box>
+            <Drawer isOpen={isDrawerOpen} onClose={onCloseDrawer} onOpenAddNftModal={handleOpenAddNftModal} />
+            <ModalAddNft isOpen={isModalOpen} onClose={onCloseModal} />
+        </>
     )
 }
 
