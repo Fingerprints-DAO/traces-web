@@ -1,76 +1,78 @@
-import Web3Modal from 'web3modal'
+import Web3Modal, { IProviderOptions } from 'web3modal'
 import { providers } from 'ethers'
 import WalletConnectProvider from '@walletconnect/web3-provider'
 import { PROVIDER_KEY, WEB3_NETWORK } from '@ui/base/dotenv-client'
 
 export type ProviderType = providers.JsonRpcProvider | providers.Web3Provider
 
-const providerOptions = {
-  walletconnect: {
-    package: WalletConnectProvider, // required
-    options: {
-      infuraId: PROVIDER_KEY, // required
+const providerOptions: IProviderOptions = {
+    walletconnect: {
+        package: WalletConnectProvider, // required
+        options: {
+            infuraId: PROVIDER_KEY, // required
+        },
     },
-  },
 }
 
 const onChangeNetwork = (newNetwork: any, oldNetwork: any) => {
-  if (oldNetwork) {
-    window.location.reload()
-  }
+    if (oldNetwork) {
+        window.location.reload()
+    }
 }
 
 const startProvider = () => {
-  if (WEB3_NETWORK === 'local') {
-    return new providers.JsonRpcProvider()
-  }
-  return new providers.InfuraProvider(WEB3_NETWORK)
+    if (WEB3_NETWORK === 'local') {
+        return new providers.JsonRpcProvider()
+    }
+    return new providers.InfuraProvider(WEB3_NETWORK)
 }
 
 let web3Modal: Web3Modal
 
 if (typeof window !== 'undefined') {
-  web3Modal = new Web3Modal({
-    cacheProvider: true, // optional
-    providerOptions, // required
-  })
+    web3Modal = new Web3Modal({
+        cacheProvider: true, // optional
+        providerOptions, // required
+    })
 }
 
 export class Provider {
-  readProvider: ProviderType
-  signedProvider: ProviderType | null
+    readProvider: ProviderType
+    signedProvider: ProviderType | null
 
-  constructor() {
-    this.readProvider = startProvider()
-    this.signedProvider = null
-    this.bindNetworkChanges(this.readProvider)
-  }
+    constructor() {
+        this.readProvider = startProvider()
+        this.signedProvider = null
+        this.bindNetworkChanges(this.readProvider)
+    }
 
-  get() {
-    return this.readProvider
-  }
+    get() {
+        return this.readProvider
+    }
 
-  getConnectedWallet() {
-    return this.signedProvider
-  }
+    getConnectedWallet() {
+        return this.signedProvider
+    }
 
-  async connectWallet() {
-    let providerConnection = await web3Modal.connect()
-    this.signedProvider = new providers.Web3Provider(providerConnection)
-    this.bindNetworkChanges(this.signedProvider)
-    return this.signedProvider
-  }
+    async connectWallet() {
+        let providerConnection = await web3Modal.connect()
 
-  disconnectWallet() {
-    web3Modal.clearCachedProvider()
-  }
+        this.signedProvider = new providers.Web3Provider(providerConnection)
+        this.bindNetworkChanges(this.signedProvider)
 
-  bindNetworkChanges(provider: ProviderType) {
-    provider
-      ?.on('network', onChangeNetwork)
-      .on('chainChanged', onChangeNetwork)
-      .on('accountsChanged', () => {
-        window.location.reload()
-      })
-  }
+        return this.signedProvider
+    }
+
+    disconnectWallet() {
+        web3Modal.clearCachedProvider()
+    }
+
+    bindNetworkChanges(provider: ProviderType) {
+        provider
+            ?.on('network', onChangeNetwork)
+            .on('chainChanged', onChangeNetwork)
+            .on('accountsChanged', () => {
+                window.location.reload()
+            })
+    }
 }
