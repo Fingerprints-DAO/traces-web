@@ -1,16 +1,19 @@
+// Dependencies
+import jazzicon from '@metamask/jazzicon'
 import { useToast } from '@chakra-ui/react'
-import { createContext, PropsWithChildren, useCallback, useEffect, useState } from 'react'
+import { Contract } from 'ethers/lib/ethers'
+import { formatEther } from 'ethers/lib/utils'
+import { createContext, PropsWithChildren, useCallback, useEffect, useRef, useState } from 'react'
+
+// Helpers
 import { Provider, ProviderType } from 'web3/provider'
 import PrintsContract from '@web3/contracts/PrintsContract'
-import { formatEther } from 'ethers/lib/utils'
-import { Contract } from 'ethers'
-
-const printsContractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS || ''
 
 const providerInstance = new Provider()
 const printsContract = new PrintsContract(providerInstance.get())
 
 const DEFAULT_CONTEXT = {
+    avatar: undefined as HTMLDivElement | undefined,
     provider: providerInstance.get(),
     printsBalance: '0',
     /** @dev: only minter must be signed.
@@ -30,17 +33,23 @@ const Web3Context = createContext(DEFAULT_CONTEXT)
 export const Web3Provider: React.FC<PropsWithChildren> = ({ children }) => {
     const toast = useToast()
 
-    const [provider, setProvider] = useState<ProviderType>(DEFAULT_CONTEXT.provider)
+    const [avatar, setAvatar] = useState<HTMLDivElement>()
     const [userAddress, setUserAddress] = useState(DEFAULT_CONTEXT.userAddress)
-    const [walletIsConnected, setWalletIsConnected] = useState(DEFAULT_CONTEXT.walletIsConnected)
-    const [printsContractSigned, setPrintsContractSigned] = useState(DEFAULT_CONTEXT.contractRead)
+    const [provider, setProvider] = useState<ProviderType>(DEFAULT_CONTEXT.provider)
     const [printsBalance, setPrintsBalance] = useState(DEFAULT_CONTEXT.printsBalance)
+    const [walletIsConnected, setWalletIsConnected] = useState(DEFAULT_CONTEXT.walletIsConnected)
 
     const checkBalance = useCallback(async (address: string, printsSigned: Contract) => {
         const balance = await printsSigned.balanceOf(address)
         const balanceStr = formatEther(balance)
 
         setPrintsBalance(parseFloat(balanceStr).toFixed(2))
+    }, [])
+
+    const getAvatar = useCallback((address: string) => {
+        const icon = jazzicon(40, parseInt(address, 16))
+
+        setAvatar(icon as HTMLDivElement)
     }, [])
 
     const connectWalletHandler = useCallback(async () => {
@@ -63,10 +72,10 @@ export const Web3Provider: React.FC<PropsWithChildren> = ({ children }) => {
         setProvider(connectedWallet)
         setUserAddress(address)
         setWalletIsConnected(true)
-        setPrintsContractSigned(printsSigned)
 
         await checkBalance(address, printsSigned)
-    }, [walletIsConnected, checkBalance])
+        getAvatar(address)
+    }, [walletIsConnected, checkBalance, getAvatar])
 
     const handleConnectWallet = useCallback(async () => {
         try {
@@ -120,6 +129,7 @@ export const Web3Provider: React.FC<PropsWithChildren> = ({ children }) => {
         <Web3Context.Provider
             value={{
                 ...DEFAULT_CONTEXT,
+                avatar,
                 provider,
                 printsBalance,
                 disconnectWallet,
@@ -129,7 +139,6 @@ export const Web3Provider: React.FC<PropsWithChildren> = ({ children }) => {
                 connectWalletHandler,
             }}
         >
-            {/* {provider ? children : ''} */}
             {children}
         </Web3Context.Provider>
     )

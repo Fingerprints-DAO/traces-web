@@ -14,7 +14,7 @@ const providerOptions: IProviderOptions = {
     },
 }
 
-const onChangeNetwork = (newNetwork: any, oldNetwork: any) => {
+const onChangeNetwork = (_: any, oldNetwork: any) => {
     if (oldNetwork) {
         window.location.reload()
     }
@@ -24,6 +24,7 @@ const startProvider = () => {
     if (WEB3_NETWORK === 'local') {
         return new providers.JsonRpcProvider()
     }
+
     return new providers.InfuraProvider(WEB3_NETWORK)
 }
 
@@ -55,7 +56,7 @@ export class Provider {
     }
 
     async connectWallet() {
-        let providerConnection = await web3Modal.connect()
+        const providerConnection = await web3Modal.connect()
 
         this.signedProvider = new providers.Web3Provider(providerConnection)
         this.bindNetworkChanges(this.signedProvider)
