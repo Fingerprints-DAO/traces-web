@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback, useEffect, useRef } from 'react'
 
 // Dependencies
 import { HamburgerIcon } from '@chakra-ui/icons'
@@ -12,9 +12,26 @@ import { shortenAddress } from '@ui/utils/string'
 import useWalletConnection from '@ui/hooks/use-wallet-connect'
 
 const Header = () => {
-    const { WalletButton, walletIsConnected, printsBalance, userAddress } = useWalletConnection()
+    const avatarRef = useRef<HTMLDivElement>(null)
+    const { WalletButton, walletIsConnected, printsBalance, userAddress, avatar } = useWalletConnection()
 
-    //   console.log('provider', provider)
+    const handleAvatar = useCallback(() => {
+        console.log('AQUI 1')
+        if (avatar && avatarRef?.current) {
+            console.log('AQUI 2')
+            if (avatarRef.current.firstChild) {
+                console.log('AQUI 3')
+                avatarRef.current.removeChild(avatarRef.current.firstChild)
+            }
+
+            avatarRef.current.appendChild(avatar)
+            console.log('AQUI 4')
+        }
+    }, [avatar, avatarRef])
+
+    useEffect(() => {
+        handleAvatar()
+    }, [handleAvatar])
 
     return (
         <Box as="header" paddingY="3" background="gray.900" position="sticky" left={0} top={0} zIndex="sticky">
@@ -36,7 +53,8 @@ const Header = () => {
                                     {shortenAddress(userAddress)}
                                 </Text>
                             </Box>
-                            <Avatar size={['sm', 'xm']} src="https://bit.ly/dan-abramov" />
+                            <Box ref={avatarRef} />
+                            {/* <Avatar size={['sm', 'xm']} src="https://bit.ly/dan-abramov" /> */}
                         </Box>
                     )}
                     <WalletButton />
