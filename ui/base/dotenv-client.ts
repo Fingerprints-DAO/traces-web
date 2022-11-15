@@ -9,6 +9,7 @@ const getEnv = (
   if (typeof window === 'object') {
     return process.env[publicName]
   }
+
   return envVarFn(env.get(publicName))
 }
 

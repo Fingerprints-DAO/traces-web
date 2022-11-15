@@ -6,8 +6,11 @@ import {
   useEffect,
   useState,
 } from 'react'
-import { Provider } from 'web3/provider'
+import { Provider, ProviderType } from 'web3/provider'
 import { ContractExample } from 'web3/contracts/ContractExample'
+import { formatEther, formatUnits } from 'ethers/lib/utils'
+
+const tokenContractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS || ''
 
 const providerClass = new Provider()
 const exampleContract = new ContractExample(providerClass.get())
@@ -23,6 +26,7 @@ const DEFAULT_CONTEXT = {
   userAddress: '',
   handleConnectWallet: () => {},
   connectWalletHandler: () => {},
+  disconnectWallet: () => {},
 }
 
 const Web3Context = createContext(DEFAULT_CONTEXT)
@@ -33,11 +37,18 @@ export const Web3Provider: React.FC<PropsWithChildren> = ({
 }) => {
   const toast = useToast()
 
-  const [provider, setProvider] = useState(DEFAULT_CONTEXT.provider)
+  const [provider, setProvider] = useState<ProviderType>(
+    DEFAULT_CONTEXT.provider
+  )
   const [userAddress, setUserAddress] = useState(DEFAULT_CONTEXT.userAddress)
   const [walletIsConnected, setWalletIsConnected] = useState(
     DEFAULT_CONTEXT.walletIsConnected
   )
+  const [tradableContractSigned, setTradableContractSigned] = useState(
+    DEFAULT_CONTEXT.exampleContractRead
+  )
+
+  console.log('tradableContractSigned', tradableContractSigned)
 
   const connectWalletHandler = useCallback(async () => {
     if (walletIsConnected) return
@@ -59,7 +70,25 @@ export const Web3Provider: React.FC<PropsWithChildren> = ({
     setProvider(connectedWallet)
     setUserAddress(address)
     setWalletIsConnected(true)
-  }, [walletIsConnected])
+
+    // const avatar = provider.getAvatar(address);
+    // const avatar = await connectedWallet.getAvatar()
+    // console.log('avatar', avatar)
+
+    // const balance = await signer.getBalance(
+    //   process.env.NEXT_PUBLIC_CONTRACT_ADDRESS || ''
+    // )
+
+    const contract = await tradableContractSigned.balanceOf(address)
+    console.log('contract', contract)
+    // const balance = await tradableContractSigned.balanceOf(address)
+    // console.log('balance', balance)
+
+    const balance2 = await provider.getBalance(tokenContractAddress)
+    // console.log('balance', formatEther(balance))
+    // console.log('balance', formatUnits(balance, 6))
+    console.log('balance2', formatUnits(balance2, 6))
+  }, [walletIsConnected, provider, tradableContractSigned])
 
   const handleConnectWallet = useCallback(async () => {
     try {
@@ -85,26 +114,36 @@ export const Web3Provider: React.FC<PropsWithChildren> = ({
     }
   }, [connectWalletHandler, toast])
 
-  useEffect(() => {
-    async function checkWalletConnection() {
-      if (typeof window.ethereum !== 'undefined') {
-        const addressList = await window.ethereum?.request({
-          method: 'eth_accounts',
-        })
+  const disconnectWallet = async () => {
+    setWalletIsConnected(false)
+    setProvider(DEFAULT_CONTEXT.provider)
+    setUserAddress(DEFAULT_CONTEXT.userAddress)
 
-        if (addressList.length > 0) {
-          connectWalletHandler()
-        }
+    providerClass.disconnectWallet()
+  }
+
+  const checkWalletConnection = useCallback(async () => {
+    if (typeof window.ethereum !== 'undefined') {
+      const addressList = await window.ethereum?.request({
+        method: 'eth_accounts',
+      })
+
+      if (addressList.length > 0) {
+        connectWalletHandler()
       }
     }
-    checkWalletConnection()
   }, [connectWalletHandler])
+
+  useEffect(() => {
+    checkWalletConnection()
+  }, [checkWalletConnection])
 
   return (
     <Web3Context.Provider
       value={{
         ...DEFAULT_CONTEXT,
         provider,
+        disconnectWallet,
         walletIsConnected,
         handleConnectWallet,
         userAddress,
