@@ -66,6 +66,7 @@ export class Provider {
 
     disconnectWallet() {
         web3Modal.clearCachedProvider()
+        web3Modal.toggleModal()
     }
 
     bindNetworkChanges(provider: ProviderType) {
