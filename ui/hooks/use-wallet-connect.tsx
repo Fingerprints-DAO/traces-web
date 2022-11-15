@@ -21,7 +21,11 @@ const useWalletConnection = () => {
         colorScheme="primary"
         variant={web3.walletIsConnected ? 'outline' : 'solid'}
         size={['xs', 'md']}
-        onClick={web3.handleConnectWallet}
+        onClick={
+          web3.walletIsConnected
+            ? web3.disconnectWallet
+            : web3.handleConnectWallet
+        }
       >
         {connectButtonLabel}
       </Button>

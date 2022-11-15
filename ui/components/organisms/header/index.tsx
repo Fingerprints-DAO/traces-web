@@ -15,7 +15,7 @@ const Header = () => {
   const { WalletButton, walletIsConnected, provider, userAddress } =
     useWalletConnection()
 
-  console.log('provider', provider)
+  //   console.log('provider', provider)
 
   return (
     <Box
