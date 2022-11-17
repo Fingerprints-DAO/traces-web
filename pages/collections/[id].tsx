@@ -5,7 +5,7 @@ import { BsArrowDownRightCircle } from 'react-icons/bs'
 import { Box, Button, Container, Flex, Grid, GridItem, Icon, Text, Tooltip, useDisclosure, useToast } from '@chakra-ui/react'
 
 // Components
-import ModalMint from '@ui/components/organisms/modal-mint'
+import ModalMint from '@ui/components/organisms/modals/modal-mint'
 import PageHeader from '@ui/components/organisms/page-header'
 import CollectionCard from '@ui/components/molecules/collection-card'
 

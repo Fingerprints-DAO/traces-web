@@ -54,8 +54,8 @@ const Drawer = ({ isOpen, onClose, onOpenAddNftModal }: DrawerProps) => {
                             }
 
                             return (
-                                <Link key={item.path} href={item.path} passHref={true} legacyBehavior={true}>
-                                    <Box as="a" display="block" lineHeight={9} {...activeStyles(item.path)} mb={10}>
+                                <Link key={item.path} href={item.path} legacyBehavior={true}>
+                                    <Box as="a" href={item.path} display="block" lineHeight={9} {...activeStyles(item.path)} mb={10}>
                                         {item.label}
                                     </Box>
                                 </Link>

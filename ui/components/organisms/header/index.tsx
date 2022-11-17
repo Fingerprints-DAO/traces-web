@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useContext, useEffect } from 'react'
 
 // Dependencies
 import { useRouter } from 'next/router'
@@ -7,13 +7,13 @@ import { Box, Button, Container, useDisclosure } from '@chakra-ui/react'
 
 // Components
 import Drawer from '../drawer'
-import ModalAddNft from '../modal-add-nft'
 import Logo from '@ui/components/atoms/logo'
+import { ModalContext } from '@ui/contexts/Modal'
 import Wallet from '@ui/components/molecules/wallet'
 
 const Header = () => {
     const router = useRouter()
-    const { isOpen: isModalOpen, onClose: onCloseModal, onOpen: onOpenModal } = useDisclosure()
+    const { handleOpenModal } = useContext(ModalContext)
     const { isOpen: isDrawerOpen, onClose: onCloseDrawer, onOpen: onOpenDrawer } = useDisclosure()
 
     useEffect(() => {
@@ -22,7 +22,8 @@ const Header = () => {
 
     const handleOpenAddNftModal = () => {
         onCloseDrawer()
-        onOpenModal()
+
+        handleOpenModal('add-nft')()
     }
 
     return (
@@ -39,7 +40,6 @@ const Header = () => {
                 </Container>
             </Box>
             <Drawer isOpen={isDrawerOpen} onClose={onCloseDrawer} onOpenAddNftModal={handleOpenAddNftModal} />
-            <ModalAddNft isOpen={isModalOpen} onClose={onCloseModal} />
         </>
     )
 }
