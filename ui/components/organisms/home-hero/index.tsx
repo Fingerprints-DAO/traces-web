@@ -1,12 +1,16 @@
 import React from 'react'
 
 // Dependencies
+import { useAccount } from 'wagmi'
+import { useWeb3Modal } from '@web3modal/react'
 import { Box, Button, Container, Heading, Text, useMediaQuery } from '@chakra-ui/react'
-import useConnectedWallet from '@ui/hooks/use-connected-wallet'
 
 const HomeHero = () => {
+    const { open } = useWeb3Modal()
+    const { isConnected } = useAccount()
     const [isMobile] = useMediaQuery('(max-width: 30em)')
-    const { walletIsConnected } = useConnectedWallet()
+
+    const handleOpenModal = () => open()
 
     return (
         <Box as="section" pt={[10, 20]} pb={[20, '136px']}>
@@ -20,9 +24,9 @@ const HomeHero = () => {
                         FP members can hold and enjoy usage permissions from {!isMobile && <br />}
                         {"FP's"} NFTs through a staking system
                     </Text>
-                    {!walletIsConnected && (
-                        <Button color="gray.900" colorScheme="primary" size="lg" mt={8}>
-                            Connect wallet
+                    {!isConnected && (
+                        <Button color="gray.900" colorScheme="primary" size="lg" mt={8} onClick={handleOpenModal}>
+                            {!isConnected ? 'Connect' : 'Disconnect'} wallet
                         </Button>
                     )}
                 </Box>

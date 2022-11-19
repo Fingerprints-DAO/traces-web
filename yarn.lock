@@ -154,7 +154,7 @@
   dependencies:
     regenerator-runtime "^0.13.4"
 
-"@babel/runtime@^7.17.2":
+"@babel/runtime@^7.15.4", "@babel/runtime@^7.17.2":
   version "7.20.1"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.20.1.tgz#1148bb33ab252b165a06698fde7576092a78b4a9"
   integrity sha512-mrzLkl6U9YLF8qpqI7TB82PESyEGjm/0Ly91jG575eVxMMlb8fYfOXFZIJ8XfLrJZQbm7dlKry2bJmXBUEkdFg==
@@ -930,7 +930,7 @@
   resolved "https://registry.npmjs.org/@chakra-ui/visually-hidden/-/visually-hidden-2.0.11.tgz"
   integrity sha512-e+5amYvnsmEQdiWH4XMyvrtGTdwz//+48vwj5CsNWWcselzkwqodmciy5rIrT71/SCQDOtmgnL7ZWAUOffxfsQ==
 
-"@coinbase/wallet-sdk@^3.5.3":
+"@coinbase/wallet-sdk@3.5.4", "@coinbase/wallet-sdk@^3.5.3":
   version "3.5.4"
   resolved "https://registry.yarnpkg.com/@coinbase/wallet-sdk/-/wallet-sdk-3.5.4.tgz#957aa74521a4afa61ae99e1e2b948a6e017fcc87"
   integrity sha512-+5s05dmB6YUPUnV5vThP96GVG1O4GgS3qYvjYJhe56ds8YFz+keU3/docFBLf8FQOCIO5j7IZtZmVGvz7G+kRw==
@@ -1474,6 +1474,11 @@
   resolved "https://registry.yarnpkg.com/@fontsource/inter/-/inter-4.5.14.tgz#3944b809aa7bf27dacd20bdc04a49fb738959724"
   integrity sha512-JDC9AocdPLuGsASkvWw9hS5gtHE7K9dOwL98XLrk5yjYqxy4uVnScG58NUvFMJDVJRl/7c8Wnap6PEs+7Zvj1Q==
 
+"@hookform/resolvers@^2.9.10":
+  version "2.9.10"
+  resolved "https://registry.yarnpkg.com/@hookform/resolvers/-/resolvers-2.9.10.tgz#e7e88942ee34e97b7bc937b0be4694194c9cd420"
+  integrity sha512-JIL1DgJIlH9yuxcNGtyhsWX/PgNltz+5Gr6+8SX9fhXc/hPbEIk6wPI82nhgvp3uUb6ZfAM5mqg/x7KR7NAb+A==
+
 "@humanwhocodes/config-array@^0.10.5":
   version "0.10.7"
   resolved "https://registry.npmjs.org/@humanwhocodes/config-array/-/config-array-0.10.7.tgz"
@@ -1915,6 +1920,11 @@
   resolved "https://registry.npmjs.org/@types/lodash/-/lodash-4.14.186.tgz"
   integrity sha512-eHcVlLXP0c2FlMPm56ITode2AgLMSa6aJ05JTTbYbI+7EMkCEE5qk2E41d5g2lCVTqRe0GnnRFurmlCsDODrPw==
 
+"@types/lodash@^4.14.175":
+  version "4.14.189"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.189.tgz#975ff8c38da5ae58b751127b19ad5e44b5b7f6d2"
+  integrity sha512-kb9/98N6X8gyME9Cf7YaqIMvYGnBSWqEci6tiettE6iJWH1XdJz/PO8LB0GtLCG7x8dU3KWhZT+lA1a35127tA==
+
 "@types/node@*", "@types/node@18.8.4":
   version "18.8.4"
   resolved "https://registry.npmjs.org/@types/node/-/node-18.8.4.tgz"
@@ -2096,7 +2106,7 @@
   resolved "https://registry.npmjs.org/@walletconnect/environment/-/environment-1.0.0.tgz"
   integrity sha512-4BwqyWy6KpSvkocSaV7WR3BlZfrxLbJSLkg+j7Gl6pTDE+U55lLhJvQaMuDVazXYxcjBsG09k7UlH7cGiUI5vQ==
 
-"@walletconnect/ethereum-provider@^1.8.0":
+"@walletconnect/ethereum-provider@1.8.0", "@walletconnect/ethereum-provider@^1.8.0":
   version "1.8.0"
   resolved "https://registry.yarnpkg.com/@walletconnect/ethereum-provider/-/ethereum-provider-1.8.0.tgz#ed1dbf9cecc3b818758a060d2f9017c50bde1d32"
   integrity sha512-Nq9m+oo5P0F+njsROHw9KMWdoc/8iGHYzQdkjJN/1C7DtsqFRg5k5a3hd9rzCLpbPsOC1q8Z5lRs6JQgDvPm6Q==
@@ -2255,28 +2265,36 @@
   dependencies:
     "@walletconnect/window-getters" "^1.0.0"
 
-"@web3modal/core@2.0.0-beta.4":
-  version "2.0.0-beta.4"
-  resolved "https://registry.yarnpkg.com/@web3modal/core/-/core-2.0.0-beta.4.tgz#755e9279fbab7b7d1f226b5be2d60b6bf11eeded"
-  integrity sha512-V97OXEBDwDruEOHh2gWYhJokepipddicW1pfGW1Cr8kmE2ououW96+hNOeKspBFv/4/VGmvvKBloZ0DvwRT/uw==
+"@web3modal/core@2.0.0-beta.5":
+  version "2.0.0-beta.5"
+  resolved "https://registry.yarnpkg.com/@web3modal/core/-/core-2.0.0-beta.5.tgz#15216aef1b3d35ac6279ec5983a3f4f31115e0a3"
+  integrity sha512-rMuQ3ajFDobXqFVNmcYrUySN0y0/RJWTA+fa44myuvpXO+NDKIlGC7+eg4QX6Vg7HRkBld68yTTCM1ZVWymIIA==
   dependencies:
     buffer "6.0.3"
     valtio "1.7.5"
 
-"@web3modal/react@^2.0.0-beta.4":
-  version "2.0.0-beta.4"
-  resolved "https://registry.yarnpkg.com/@web3modal/react/-/react-2.0.0-beta.4.tgz#379ef7c6438e1e03e078801aa031096640dc63f5"
-  integrity sha512-cG5JwG14fRPRAPa5s3Ie+au86ij97w2HjGCTly/95hVBAgaCTBMUw5IPecsGStieedzfk6SMRZp/TGpGaMDi6w==
+"@web3modal/ethereum@^2.0.0-beta.5":
+  version "2.0.0-beta.5"
+  resolved "https://registry.yarnpkg.com/@web3modal/ethereum/-/ethereum-2.0.0-beta.5.tgz#371b4798e6652d60b72b7eaa368c37b609495377"
+  integrity sha512-qukcbdLPV2yCJr6xtHcXbNi2Xr1aqdupqewL/NAfW3XKqENGqAqaqzLo/x8F66fwU76u3/Gw+jYFBq46vANxjA==
   dependencies:
-    "@web3modal/core" "2.0.0-beta.4"
-    "@web3modal/ui" "2.0.0-beta.4"
+    "@coinbase/wallet-sdk" "3.5.4"
+    "@walletconnect/ethereum-provider" "1.8.0"
 
-"@web3modal/ui@2.0.0-beta.4":
-  version "2.0.0-beta.4"
-  resolved "https://registry.yarnpkg.com/@web3modal/ui/-/ui-2.0.0-beta.4.tgz#d4cd3988aba20d5fc686ee559e8f7532a0f098a2"
-  integrity sha512-6NuY24Cnr26ljeq9cCggwqRa8v+RSYxOS5T+7kjBUroOYE/mpoXKw/8tIiYxF9dpvJw7+gE+IF0w/6XT/l0A0A==
+"@web3modal/react@^2.0.0-beta.5":
+  version "2.0.0-beta.5"
+  resolved "https://registry.yarnpkg.com/@web3modal/react/-/react-2.0.0-beta.5.tgz#c90f6ad660b56a55c9df5b2b6abb0cb34fea0e28"
+  integrity sha512-9mmFIoj4QlFfCVbFxf1ZLBvq5UeqjTANaufTvZfxGHcMVpeDQFYTfWZ9SUmYUHM+9lQ3uE0Wk32uXpcdlaLwyA==
   dependencies:
-    "@web3modal/core" "2.0.0-beta.4"
+    "@web3modal/core" "2.0.0-beta.5"
+    "@web3modal/ui" "2.0.0-beta.5"
+
+"@web3modal/ui@2.0.0-beta.5":
+  version "2.0.0-beta.5"
+  resolved "https://registry.yarnpkg.com/@web3modal/ui/-/ui-2.0.0-beta.5.tgz#f06bb1bc95ffb5dbe24dcb19a9ba901b737ae18b"
+  integrity sha512-0O/+6sZDEHZzDpH0Q1jtAnD/vrGE3FYN5LxiWxwbg3bfTPbZaZN4Mj1dvyESuaJrKmzm+mOqoZWlyRykob4nJw==
+  dependencies:
+    "@web3modal/core" "2.0.0-beta.5"
     lit "2.4.1"
     motion "10.14.3"
     qrcode "1.5.1"
@@ -5549,6 +5567,11 @@ locate-path@^6.0.0:
   dependencies:
     p-locate "^5.0.0"
 
+lodash-es@^4.17.21:
+  version "4.17.21"
+  resolved "https://registry.yarnpkg.com/lodash-es/-/lodash-es-4.17.21.tgz#43e626c46e6591b7750beb2b50117390c609e3ee"
+  integrity sha512-mKnC+QJ9pWVzv+C4/U3rRsHapFfHvQFoFB92e52xeyGMcX6/OlIl78je1u8vePzYZSkkogMPJ2yjxxsb89cxyw==
+
 lodash.debounce@^4.0.8:
   version "4.0.8"
   resolved "https://registry.npmjs.org/lodash.debounce/-/lodash.debounce-4.0.8.tgz"
@@ -5564,7 +5587,7 @@ lodash.mergewith@4.6.2:
   resolved "https://registry.npmjs.org/lodash.mergewith/-/lodash.mergewith-4.6.2.tgz"
   integrity sha512-GK3g5RPZWTRSeLSpgP8Xhra+pnjBC56q9FZYe1d5RN3TJ35dbkGy3YqBSMbyCrlbi+CM9Z3Jk5yTL7RCsqboyQ==
 
-lodash@^4.17.11, lodash@^4.17.14, lodash@^4.17.20:
+lodash@^4.17.11, lodash@^4.17.14, lodash@^4.17.20, lodash@^4.17.21:
   version "4.17.21"
   resolved "https://registry.npmjs.org/lodash/-/lodash-4.17.21.tgz"
   integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
@@ -5865,6 +5888,11 @@ nano-json-stream-parser@^0.1.2:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/nano-json-stream-parser/-/nano-json-stream-parser-0.1.2.tgz#0cc8f6d0e2b622b479c40d499c46d64b755c6f5f"
   integrity sha512-9MqxMH/BSJC7dnLsEMPyfN5Dvoo49IsPFYMcHw3Bcfc2kN0lpHRBSzlMSVx4HGyJ7s9B31CyBTVehWJoQ8Ctew==
+
+nanoclone@^0.2.1:
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/nanoclone/-/nanoclone-0.2.1.tgz#dd4090f8f1a110d26bb32c49ed2f5b9235209ed4"
+  integrity sha512-wynEP02LmIbLpcYw8uBKpcfF6dmg2vcpKqxeH5UcoKEYdExslsdUA4ugFauuaeYdTB76ez6gJW8XAZ6CgkXYxA==
 
 nanoid@^3.3.4:
   version "3.3.4"
@@ -6338,6 +6366,11 @@ prop-types@^15.6.2, prop-types@^15.7.2, prop-types@^15.8.1:
     object-assign "^4.1.1"
     react-is "^16.13.1"
 
+property-expr@^2.0.4:
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/property-expr/-/property-expr-2.0.5.tgz#278bdb15308ae16af3e3b9640024524f4dc02cb4"
+  integrity sha512-IJUkICM5dP5znhCckHSv30Q4b5/JA5enCtkRHYaOVOAocnH/1BQEYTC5NMfT3AVl/iXKdr3aqQbQn9DxyWknwA==
+
 proxy-addr@~2.0.7:
   version "2.0.7"
   resolved "https://registry.yarnpkg.com/proxy-addr/-/proxy-addr-2.0.7.tgz#f19fe69ceab311eeb94b42e70e8c2070f9ba1025"
@@ -6525,6 +6558,11 @@ react-focus-lock@^2.9.1:
     react-clientside-effect "^1.2.6"
     use-callback-ref "^1.3.0"
     use-sidecar "^1.1.2"
+
+react-hook-form@^7.39.4:
+  version "7.39.4"
+  resolved "https://registry.yarnpkg.com/react-hook-form/-/react-hook-form-7.39.4.tgz#7d9edf4e778a0cec4383f0119cd0699e3826a14a"
+  integrity sha512-B0e78r9kR9L2M4A4AXGbHoA/vyv34sB/n8QWJAw33TFz8f5t9helBbYAeqnbvcQf1EYzJxKX/bGQQh9K+evCyQ==
 
 react-icons@^4.6.0:
   version "4.6.0"
@@ -7376,6 +7414,11 @@ toidentifier@1.0.1:
   resolved "https://registry.yarnpkg.com/toidentifier/-/toidentifier-1.0.1.tgz#3be34321a88a820ed1bd80dfaa33e479fbb8dd35"
   integrity sha512-o5sSPKEkg/DIQNmH43V0/uerLrpzVedkUh8tGNvaeXpfpuwjKenlSox/2O/BTlZUtEe+JG7s5YhEz608PlAHRA==
 
+toposort@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/toposort/-/toposort-2.0.2.tgz#ae21768175d1559d48bef35420b2f4962f09c330"
+  integrity sha512-0a5EOkAUp8D4moMi2W8ZF8jcga7BgZd91O/yabJCFY8az+XSzeGyTKs0Aoo897iV1Nj6guFq8orWDS96z91oGg==
+
 tough-cookie@~2.5.0:
   version "2.5.0"
   resolved "https://registry.npmjs.org/tough-cookie/-/tough-cookie-2.5.0.tgz"
@@ -7620,10 +7663,10 @@ verror@1.10.0:
     core-util-is "1.0.2"
     extsprintf "^1.2.0"
 
-wagmi@^0.8.4:
-  version "0.8.4"
-  resolved "https://registry.yarnpkg.com/wagmi/-/wagmi-0.8.4.tgz#6f9f2ba1cb8fc21f6a10c0a4237173fe1000bfc7"
-  integrity sha512-FfObjjUb3SvEb2HsNItenGphZZoESuPntkqtEg2JQo4hCjlvLTVdW90VYv4M2UVTWtx0V0ab79j73BXe5Jny9A==
+wagmi@^0.8.5:
+  version "0.8.5"
+  resolved "https://registry.yarnpkg.com/wagmi/-/wagmi-0.8.5.tgz#f15de70b8b7bca11bf9faccae2dd3eea980ce1df"
+  integrity sha512-LKxolobNPwTPsidtbgoA4x5zWUFeRAzaGqNE7AiSsM8wHRuClO6Mrp3XtGzVy/UfaMFE/yR1xWIJbiHXzeeEmA==
   dependencies:
     "@coinbase/wallet-sdk" "^3.5.3"
     "@tanstack/query-sync-storage-persister" "^4.14.5"
@@ -8188,6 +8231,19 @@ yocto-queue@^0.1.0:
   version "0.1.0"
   resolved "https://registry.npmjs.org/yocto-queue/-/yocto-queue-0.1.0.tgz"
   integrity sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==
+
+yup@^0.32.11:
+  version "0.32.11"
+  resolved "https://registry.yarnpkg.com/yup/-/yup-0.32.11.tgz#d67fb83eefa4698607982e63f7ca4c5ed3cf18c5"
+  integrity sha512-Z2Fe1bn+eLstG8DRR6FTavGD+MeAwyfmouhHsIUgaADz8jvFKbO/fXc2trJKZg+5EBjh4gGm3iU/t3onKlXHIg==
+  dependencies:
+    "@babel/runtime" "^7.15.4"
+    "@types/lodash" "^4.14.175"
+    lodash "^4.17.21"
+    lodash-es "^4.17.21"
+    nanoclone "^0.2.1"
+    property-expr "^2.0.4"
+    toposort "^2.0.2"
 
 zustand@^4.1.4:
   version "4.1.4"
