@@ -1,15 +1,17 @@
 // Dependencies
+import { WagmiConfig } from 'wagmi'
 import type { AppProps } from 'next/app'
+import { Web3Modal } from '@web3modal/react'
 import { ChakraProvider } from '@chakra-ui/react'
 
 // Components
 import { ModalProvider } from '@ui/contexts/Modal'
 import Layout from '@ui/components/templates/layout'
 import Modals from '@ui/components/organisms/modals'
-import { Web3Provider } from '@ui/contexts/Web3Provider'
 
 // Helpers
 import theme from '@ui/base/theme'
+import { wagmiClient, ethereumClient } from '@web3/wagmi'
 import useScrollRestoration from '@ui/hooks/use-scroll-restoration'
 
 // Assets
@@ -30,13 +32,14 @@ function Traces({ Component, pageProps, router }: AppProps) {
     return (
         <ChakraProvider theme={theme}>
             <ModalProvider>
-                <Web3Provider>
+                <WagmiConfig client={wagmiClient}>
                     <Layout>
                         <Component {...pageProps} />
                         <Modals />
                     </Layout>
-                </Web3Provider>
+                </WagmiConfig>
             </ModalProvider>
+            <Web3Modal projectId={'485af33ad5e6074d70a5cb408d857994'} theme="dark" accentColor="default" ethereumClient={ethereumClient} />
         </ChakraProvider>
     )
 }

@@ -1,10 +1,7 @@
-import React, { useCallback, useEffect, useRef } from 'react'
+import React, { useRef } from 'react'
 
 // Dependencies
 import { Box } from '@chakra-ui/react'
-
-// Helpers
-import useConnectedWallet from '@ui/hooks/use-connected-wallet'
 
 type AvatarProps = {
     variant: 'header' | 'drawer'
@@ -13,21 +10,19 @@ type AvatarProps = {
 const Avatar = ({ variant }: AvatarProps) => {
     const avatarRef = useRef<HTMLDivElement>(null)
 
-    const { avatar } = useConnectedWallet()
+    // const handleAvatar = useCallback(() => {
+    //     if (avatar && avatarRef?.current) {
+    //         if (avatarRef.current.firstChild) {
+    //             avatarRef.current.removeChild(avatarRef.current.firstChild)
+    //         }
 
-    const handleAvatar = useCallback(() => {
-        if (avatar && avatarRef?.current) {
-            if (avatarRef.current.firstChild) {
-                avatarRef.current.removeChild(avatarRef.current.firstChild)
-            }
+    //         avatarRef.current.appendChild(avatar)
+    //     }
+    // }, [avatar, avatarRef])
 
-            avatarRef.current.appendChild(avatar)
-        }
-    }, [avatar, avatarRef])
-
-    useEffect(() => {
-        handleAvatar()
-    }, [handleAvatar])
+    // useEffect(() => {
+    //     handleAvatar()
+    // }, [handleAvatar])
 
     const isDrawer = variant === 'drawer'
 
@@ -43,7 +38,7 @@ const Avatar = ({ variant }: AvatarProps) => {
             height={10}
             ref={avatarRef}
             mr={isDrawer ? 2 : 0}
-            dangerouslySetInnerHTML={{ __html: avatar?.innerHTML || '' }}
+            // dangerouslySetInnerHTML={{ __html: avatar?.innerHTML || '' }}
         />
     )
 }
