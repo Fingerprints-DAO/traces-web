@@ -1,23 +1,23 @@
 .featured-collections.swiper {
-    padding: 0 16px;
+  padding: 0 16px;
 }
 
 .featured-collections .swiper-slide {
-    width: 100% !important;
+  width: 100% !important;
 }
 
 @media (min-width: 30em) {
-    .featured-collections.swiper {
-        padding: 0;
-    }
+  .featured-collections.swiper {
+    padding: 0;
+  }
 
-    .featured-collections .swiper-slide {
-        width: 384px !important;
-    }
+  .featured-collections .swiper-slide {
+    width: 384px !important;
+  }
 }
 
 @media (min-width: 80em) {
-    .featured-collections.swiper {
-        margin-left: -30px;
-    }
+  .featured-collections.swiper {
+    margin-left: -30px;
+  }
 }

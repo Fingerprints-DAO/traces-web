@@ -1,13 +1,13 @@
 import env from 'env-var'
 
 const getEnv = (name: string, envVarFn: (envGet: env.IOptionalVariable<{}>) => string) => {
-    const publicName = `NEXT_PUBLIC_${name}`
+  const publicName = `NEXT_PUBLIC_${name}`
 
-    if (typeof window === 'object') {
-        return process.env[publicName]
-    }
+  if (typeof window === 'object') {
+    return process.env[publicName]
+  }
 
-    return envVarFn(env.get(publicName))
+  return envVarFn(env.get(publicName))
 }
 
 export const PUBLIC_URL = getEnv('PUBLIC_URL', (envGet) => envGet.default('').asString())

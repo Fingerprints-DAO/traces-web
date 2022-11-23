@@ -5,13 +5,7 @@ import { Box, Heading, Text } from '@chakra-ui/react'
 
 const ModalMintHeader = () => {
   return (
-    <Box
-      display="flex"
-      flexDirection={['column-reverse', 'row']}
-      alignItems="start"
-      justifyContent="space-between"
-      marginBottom={10}
-    >
+    <Box display="flex" flexDirection={['column-reverse', 'row']} alignItems="start" justifyContent="space-between" marginBottom={10}>
       <Box>
         <Heading size="md" color="gray.100" marginBottom={2}>
           Mint WNFT
@@ -20,14 +14,7 @@ const ModalMintHeader = () => {
           Autoglyph#131
         </Text>
       </Box>
-      <Text
-        as="span"
-        color="gray.300"
-        marginBottom={[4, 0]}
-        display={['flex', 'unset']}
-        w={['full', 'unset']}
-        justifyContent={['space-between', 'unset']}
-      >
+      <Text as="span" color="gray.300" marginBottom={[4, 0]} display={['flex', 'unset']} w={['full', 'unset']} justifyContent={['space-between', 'unset']}>
         Current balance
         <Text as="span" color="gray.100" fontWeight={600} marginLeft={3}>
           5000 $PRINTS

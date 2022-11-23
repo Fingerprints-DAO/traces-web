@@ -27,21 +27,21 @@ import '@fontsource/inter/800.css'
 import '@fontsource/inter/900.css'
 
 function Traces({ Component, pageProps, router }: AppProps) {
-    useScrollRestoration(router)
+  useScrollRestoration(router)
 
-    return (
-        <ChakraProvider theme={theme}>
-            <ModalProvider>
-                <Web3Provider client={web3Config}>
-                    <Layout>
-                        <Component {...pageProps} />
-                        <Modals />
-                    </Layout>
-                </Web3Provider>
-            </ModalProvider>
-            <Web3Modal projectId={process.env.NEXT_PUBLIC_WALLET_CONNECT_KEY || ''} theme="dark" accentColor="default" ethereumClient={ethereumClient} />
-        </ChakraProvider>
-    )
+  return (
+    <ChakraProvider theme={theme}>
+      <ModalProvider>
+        <Web3Provider client={web3Config}>
+          <Layout>
+            <Component {...pageProps} />
+            <Modals />
+          </Layout>
+        </Web3Provider>
+      </ModalProvider>
+      <Web3Modal projectId={process.env.NEXT_PUBLIC_WALLET_CONNECT_KEY || ''} theme="dark" accentColor="default" ethereumClient={ethereumClient} />
+    </ChakraProvider>
+  )
 }
 
 export default Traces

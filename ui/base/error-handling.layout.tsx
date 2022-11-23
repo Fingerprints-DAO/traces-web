@@ -5,9 +5,7 @@ interface ErrorHandlingLayoutProps {
   error: ErrorProps
 }
 
-const ErrorHandlingLayout: React.FC<
-  PropsWithChildren<ErrorHandlingLayoutProps>
-> = ({ error, children }) => {
+const ErrorHandlingLayout: React.FC<PropsWithChildren<ErrorHandlingLayoutProps>> = ({ error, children }) => {
   if (error) {
     return <Error statusCode={error.statusCode} />
   }

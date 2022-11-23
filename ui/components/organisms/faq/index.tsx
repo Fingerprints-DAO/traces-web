@@ -1,19 +1,7 @@
 import React, { useMemo } from 'react'
 
 // Dependencies
-import {
-  Accordion,
-  AccordionButton,
-  AccordionIcon,
-  AccordionItem,
-  AccordionPanel,
-  Box,
-  Container,
-  Grid,
-  GridItem,
-  Heading,
-  useToken,
-} from '@chakra-ui/react'
+import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Box, Container, Grid, GridItem, Heading, useToken } from '@chakra-ui/react'
 
 const arr = Array.from(Array(8), (item, index) => index + 1)
 
@@ -36,27 +24,15 @@ const FAQ = () => {
                 const isLastItem = odd.length - 1 === index
 
                 return (
-                  <AccordionItem
-                    key={item}
-                    border={`1px solid ${gray300}`}
-                    borderRadius={8}
-                    marginBottom={!isLastItem ? 6 : 0}
-                  >
+                  <AccordionItem key={item} border={`1px solid ${gray300}`} borderRadius={8} marginBottom={!isLastItem ? 6 : 0}>
                     <AccordionButton paddingY={3}>
-                      <Heading
-                        size="md"
-                        flex="1"
-                        textAlign="left"
-                        color={gray100}
-                      >
+                      <Heading size="md" flex="1" textAlign="left" color={gray100}>
                         Question number {item}
                       </Heading>
                       <AccordionIcon boxSize={6} />
                     </AccordionButton>
                     <AccordionPanel pb={4} color={gray300}>
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-                      sed do eiusmod tempor incididunt ut labore et dolore magna
-                      aliqua. Ut enim ad minim veniam, quis nostrud exercitation
+                      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
                       ullamco laboris nisi ut aliquip ex ea commodo consequat.
                     </AccordionPanel>
                   </AccordionItem>
@@ -68,27 +44,15 @@ const FAQ = () => {
                 const isLastItem = odd.length - 1 === index
 
                 return (
-                  <AccordionItem
-                    key={item}
-                    border={`1px solid ${gray300}`}
-                    borderRadius={8}
-                    marginBottom={!isLastItem ? 6 : 0}
-                  >
+                  <AccordionItem key={item} border={`1px solid ${gray300}`} borderRadius={8} marginBottom={!isLastItem ? 6 : 0}>
                     <AccordionButton paddingY={3}>
-                      <Heading
-                        size="md"
-                        flex="1"
-                        textAlign="left"
-                        color={gray100}
-                      >
+                      <Heading size="md" flex="1" textAlign="left" color={gray100}>
                         Question number {item}
                       </Heading>
                       <AccordionIcon boxSize={6} />
                     </AccordionButton>
                     <AccordionPanel pb={4} color={gray300}>
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-                      sed do eiusmod tempor incididunt ut labore et dolore magna
-                      aliqua. Ut enim ad minim veniam, quis nostrud exercitation
+                      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
                       ullamco laboris nisi ut aliquip ex ea commodo consequat.
                     </AccordionPanel>
                   </AccordionItem>
