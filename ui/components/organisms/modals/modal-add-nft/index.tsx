@@ -4,8 +4,8 @@ import React from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { number, object, string } from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { Box, Button, Grid, GridItem, Heading, Input, InputGroup, InputRightAddon, Modal, ModalBody, ModalContent, ModalFooter, ModalOverlay, Text } from '@chakra-ui/react'
-import useTracesContract from '@ui/hooks/use-traces-contract'
+import { Box, Button, Grid, GridItem, Heading, Input, InputGroup, InputRightAddon, Modal, ModalBody, ModalContent, ModalFooter, ModalOverlay, Text, useToast } from '@chakra-ui/react'
+import useTracesAddNft from '@ui/hooks/use-traces-add-nft'
 
 type ModalAddNftProps = {
     isOpen: boolean
@@ -30,12 +30,8 @@ const schema = object({
     dutchAuctionDuration: number().required(),
 })
 
-// 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512
-
 const ModalAddNft = ({ isOpen, onClose }: ModalAddNftProps) => {
-    const { writeAsync } = useTracesContract('addToken')
-
-    const { control, formState, register, handleSubmit } = useForm<AddNftPayload>({
+    const { control, formState, register, handleSubmit, watch } = useForm<AddNftPayload>({
         mode: 'onSubmit',
         resolver: yupResolver(schema),
         defaultValues: {
@@ -43,21 +39,11 @@ const ModalAddNft = ({ isOpen, onClose }: ModalAddNftProps) => {
         },
     })
 
-    const submit = async (data: AddNftPayload) => {
-        try {
-            console.log('data', data)
+    const form = watch()
 
-            if (!writeAsync) {
-                return
-            }
+    const addNft = useTracesAddNft(formState.isSubmitted, form)
 
-            const response = await writeAsync(data as any)
-
-            console.log('response', response)
-        } catch (error) {
-            console.log('ModalAddNft', error)
-        }
-    }
+    const submit = () => addNft && addNft()
 
     return (
         <Modal isOpen={isOpen} onClose={onClose} isCentered={true}>

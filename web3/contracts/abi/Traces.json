@@ -12,9 +12,14 @@
                 "type": "address"
             },
             {
-                "internalType": "address",
+                "internalType": "contract IERC20",
                 "name": "_tokenAddress",
                 "type": "address"
+            },
+            {
+                "internalType": "string",
+                "name": "_url",
+                "type": "string"
             }
         ],
         "stateMutability": "nonpayable",
@@ -207,6 +212,19 @@
         "anonymous": false,
         "inputs": [
             {
+                "indexed": false,
+                "internalType": "address",
+                "name": "account",
+                "type": "address"
+            }
+        ],
+        "name": "Paused",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
                 "indexed": true,
                 "internalType": "bytes32",
                 "name": "role",
@@ -341,6 +359,19 @@
         "type": "event"
     },
     {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": false,
+                "internalType": "address",
+                "name": "account",
+                "type": "address"
+            }
+        ],
+        "name": "Unpaused",
+        "type": "event"
+    },
+    {
         "inputs": [],
         "name": "COLLECTION_MULTIPLIER",
         "outputs": [
@@ -468,6 +499,19 @@
         "type": "function"
     },
     {
+        "inputs": [],
+        "name": "baseURI",
+        "outputs": [
+            {
+                "internalType": "string",
+                "name": "",
+                "type": "string"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
         "inputs": [
             {
                 "internalType": "address",
@@ -514,7 +558,7 @@
         "name": "customTokenAddress",
         "outputs": [
             {
-                "internalType": "address",
+                "internalType": "contract IERC20",
                 "name": "",
                 "type": "address"
             }
@@ -539,7 +583,7 @@
         "inputs": [
             {
                 "internalType": "uint256",
-                "name": "_id",
+                "name": "_tokenId",
                 "type": "uint256"
             }
         ],
@@ -714,7 +758,7 @@
         "inputs": [
             {
                 "internalType": "uint256",
-                "name": "_id",
+                "name": "_tokenId",
                 "type": "uint256"
             }
         ],
@@ -927,6 +971,26 @@
         "type": "function"
     },
     {
+        "inputs": [],
+        "name": "pause",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "paused",
+        "outputs": [
+            {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
         "inputs": [
             {
                 "internalType": "bytes32",
@@ -1027,6 +1091,19 @@
             }
         ],
         "name": "setApprovalForAll",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "string",
+                "name": "_newBaseURI",
+                "type": "string"
+            }
+        ],
+        "name": "setBaseURI",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
@@ -1175,10 +1252,17 @@
         "type": "function"
     },
     {
+        "inputs": [],
+        "name": "unpause",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
         "inputs": [
             {
                 "internalType": "uint256",
-                "name": "_id",
+                "name": "_tokenId",
                 "type": "uint256"
             }
         ],
