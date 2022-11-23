@@ -1,43 +1,18 @@
 import React from 'react'
 
 // Dependencies
-import {
-  Box,
-  Button,
-  Input,
-  InputGroup,
-  InputRightAddon,
-  ModalFooter,
-  Text,
-} from '@chakra-ui/react'
+import { Box, Button, Input, InputGroup, InputRightAddon, ModalFooter, Text } from '@chakra-ui/react'
 
 const Stake = ({ onClick, onClose }: any) => {
   return (
     <>
       <Box>
-        <Text
-          color="gray.100"
-          display="block"
-          as="label"
-          htmlFor="amount"
-          fontWeight="semibold"
-          marginBottom={2}
-        >
+        <Text color="gray.100" display="block" as="label" htmlFor="amount" fontWeight="semibold" marginBottom={2}>
           Amount to stake
         </Text>
         <InputGroup size="lg" marginBottom={2}>
-          <Input
-            name="amount"
-            type="tel"
-            placeholder="Amount to stake"
-            size="lg"
-          />
-          <InputRightAddon
-            background="gray.800"
-            borderLeft={1}
-            borderLeftColor="gray.600"
-            color="gray.400"
-          >
+          <Input name="amount" type="tel" placeholder="Amount to stake" size="lg" />
+          <InputRightAddon background="gray.800" borderLeft={1} borderLeftColor="gray.600" color="gray.400">
             $PRINTS
           </InputRightAddon>
         </InputGroup>
@@ -49,13 +24,7 @@ const Stake = ({ onClick, onClose }: any) => {
         <Button colorScheme="red" variant="outline" onClick={onClose}>
           Cancel
         </Button>
-        <Button
-          color="gray.900"
-          colorScheme="primary"
-          variant="solid"
-          ml={6}
-          onClick={onClick}
-        >
+        <Button color="gray.900" colorScheme="primary" variant="solid" ml={6} onClick={onClick}>
           Confirm stake
         </Button>
       </ModalFooter>

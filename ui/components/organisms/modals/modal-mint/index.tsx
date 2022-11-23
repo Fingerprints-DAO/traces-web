@@ -19,12 +19,7 @@ const ModalMint = ({ isOpen, onClose }: ModalMintProps) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered={true}>
       <ModalOverlay />
-      <ModalContent
-        background="gray.900"
-        padding={[6, 12]}
-        minW={['unset', 650]}
-        maxW={['90%', '90%', '90%', 'md']}
-      >
+      <ModalContent background="gray.900" padding={[6, 12]} minW={['unset', 650]} maxW={['90%', '90%', '90%', 'md']}>
         <ModalMintHeader />
         <ModalBody padding={0}>
           {step === 1 && <Stake onClick={() => setStep(2)} onClose={onClose} />}

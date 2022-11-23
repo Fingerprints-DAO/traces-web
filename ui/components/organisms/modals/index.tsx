@@ -8,22 +8,22 @@ import ModalMint from './modal-mint'
 import ModalAddNft from './modal-add-nft'
 
 const Modals = () => {
-    const { element, isOpen, handleCloseModal } = useContext(ModalContext)
+  const { element, isOpen, handleCloseModal } = useContext(ModalContext)
 
-    const Component = useMemo(() => {
-        const map = new Map<ModalContextValue['element'], any>([
-            ['add-nft', ModalAddNft],
-            ['mint', ModalMint],
-        ])
+  const Component = useMemo(() => {
+    const map = new Map<ModalContextValue['element'], any>([
+      ['add-nft', ModalAddNft],
+      ['mint', ModalMint],
+    ])
 
-        return map.get(element)
-    }, [element])
+    return map.get(element)
+  }, [element])
 
-    if (!Component) {
-        return null
-    }
+  if (!Component) {
+    return null
+  }
 
-    return <Component isOpen={isOpen} onClose={handleCloseModal} />
+  return <Component isOpen={isOpen} onClose={handleCloseModal} />
 }
 
 export default Modals

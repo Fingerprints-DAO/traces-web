@@ -1,22 +1,14 @@
 import { useEffect, useState } from 'react'
 
-const isAPISupported = (api: string): boolean =>
-  typeof window !== 'undefined' ? api in window : false
+const isAPISupported = (api: string): boolean => (typeof window !== 'undefined' ? api in window : false)
 
-const isClient = !!(
-  typeof window !== 'undefined' &&
-  window.document &&
-  window.document.createElement
-)
+const isClient = !!(typeof window !== 'undefined' && window.document && window.document.createElement)
 
 const errorMessage =
-  'matchMedia is not supported, this could happen both because window.matchMedia is not supported by' +
-  " your current browser or you're using the useMediaQuery hook whilst server side rendering."
+  'matchMedia is not supported, this could happen both because window.matchMedia is not supported by' + " your current browser or you're using the useMediaQuery hook whilst server side rendering."
 
 const useMediaQuery = (mediaQuery: string) => {
-  const [isVerified, setIsVerified] = useState<boolean>(
-    isClient ? !!window?.matchMedia(mediaQuery).matches : false
-  )
+  const [isVerified, setIsVerified] = useState<boolean>(isClient ? !!window?.matchMedia(mediaQuery).matches : false)
 
   useEffect(() => {
     const mediaQueryList = window?.matchMedia(mediaQuery)
