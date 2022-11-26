@@ -54,8 +54,8 @@ const Drawer = ({ isOpen, onClose, onOpenAddNftModal, onOpenUpdateConfigsModal }
             <>
               {links.map((item) => {
                 return (
-                  <Link key={item.path} href={item.path || ''} legacyBehavior={true}>
-                    <Box as="a" href={item.path} display="block" lineHeight={9} {...activeStyles(item.path || '')} mb={10}>
+                  <Link key={item.path} href={item.path} legacyBehavior={true}>
+                    <Box as="a" href={item.path} display="block" lineHeight={9} {...activeStyles(item.path)} mb={10}>
                       {item.label}
                     </Box>
                   </Link>
@@ -63,6 +63,11 @@ const Drawer = ({ isOpen, onClose, onOpenAddNftModal, onOpenUpdateConfigsModal }
               })}
               {isEditor && (
                 <>
+                  <Link href="admin" passHref={true} legacyBehavior={true}>
+                    <Box as="a" display="block" lineHeight={9} {...activeStyles('admin')} mb={10}>
+                      Admin
+                    </Box>
+                  </Link>
                   <Box as="button" display="block" lineHeight={9} fontSize={24} mb={10} onClick={onOpenAddNftModal}>
                     Add NFT
                   </Box>
