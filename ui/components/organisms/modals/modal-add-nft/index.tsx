@@ -5,6 +5,8 @@ import { Controller, useForm } from 'react-hook-form'
 import { number, object, string } from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Box, Button, Grid, GridItem, Heading, Input, InputGroup, InputRightAddon, Modal, ModalBody, ModalContent, ModalFooter, ModalOverlay, Text, useToast } from '@chakra-ui/react'
+
+// Helpers
 import useTracesAddNft from '@ui/hooks/use-traces-add-nft'
 
 type ModalAddNftProps = {

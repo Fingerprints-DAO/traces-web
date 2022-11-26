@@ -26,6 +26,12 @@ const Header = () => {
     handleOpenModal('add-nft')()
   }
 
+  const handleOpenUpdateConfigsModal = () => {
+    onCloseDrawer()
+
+    handleOpenModal('update-configs')()
+  }
+
   return (
     <>
       <Box as="header" paddingY="3" background="gray.900" position="sticky" left={0} top={0} zIndex="sticky">
@@ -39,7 +45,7 @@ const Header = () => {
           <Wallet variant="header" />
         </Container>
       </Box>
-      <Drawer isOpen={isDrawerOpen} onClose={onCloseDrawer} onOpenAddNftModal={handleOpenAddNftModal} />
+      <Drawer isOpen={isDrawerOpen} onClose={onCloseDrawer} onOpenAddNftModal={handleOpenAddNftModal} onOpenUpdateConfigsModal={handleOpenUpdateConfigsModal} />
     </>
   )
 }

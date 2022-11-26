@@ -5,19 +5,22 @@ import { useDisclosure } from '@chakra-ui/react'
 
 export type ModalContextValue = {
   isOpen?: boolean
-  element: 'mint' | 'add-nft' | ''
+  element: 'mint' | 'add-nft' | 'update-configs' | ''
   handleOpenModal: (element: ModalContextValue['element']) => () => void
   handleCloseModal: () => void
 }
 
-const ModalContext = createContext<ModalContextValue>({
-  element: '',
+const INITIAL_STATE: ModalContextValue = {
+  //   element: '',
+  element: 'update-configs',
   handleOpenModal: (element: ModalContextValue['element']) => () => {},
   handleCloseModal: () => {},
-})
+}
+
+const ModalContext = createContext<ModalContextValue>(INITIAL_STATE)
 
 const ModalProvider = ({ children }: PropsWithChildren) => {
-  const [element, setElement] = useState<ModalContextValue['element']>('')
+  const [element, setElement] = useState<ModalContextValue['element']>(INITIAL_STATE.element)
 
   const { isOpen, onClose, onOpen } = useDisclosure()
 
@@ -31,7 +34,7 @@ const ModalProvider = ({ children }: PropsWithChildren) => {
     onClose()
   }
 
-  const values: ModalContextValue = { element, isOpen, handleOpenModal, handleCloseModal }
+  const values: ModalContextValue = { element, isOpen: true, handleOpenModal, handleCloseModal }
 
   return <ModalContext.Provider value={values}>{children}</ModalContext.Provider>
 }

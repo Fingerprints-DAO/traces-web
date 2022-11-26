@@ -8,31 +8,23 @@ import { Drawer as ChakraDrawer, DrawerBody, DrawerFooter, DrawerHeader, DrawerO
 // Components
 import Wallet from '@ui/components/molecules/wallet'
 import useTracesRead from '@ui/hooks/use-traces-read'
-import { useAccount } from 'wagmi'
 
 type DrawerProps = {
   isOpen: boolean
   onClose: () => void
   onOpenAddNftModal: () => void
+  onOpenUpdateConfigsModal: () => void
 }
 
-const Drawer = ({ isOpen, onClose, onOpenAddNftModal }: DrawerProps) => {
+const links = [
+  { path: '/', label: 'Homepage' },
+  { path: '/profile', label: 'Profile' },
+  { path: '/collections', label: 'Collections' },
+]
+
+const Drawer = ({ isOpen, onClose, onOpenAddNftModal, onOpenUpdateConfigsModal }: DrawerProps) => {
   const router = useRouter()
   const { isEditor } = useTracesRead()
-
-  const nav = useMemo(() => {
-    const arr = [
-      { path: '/', label: 'Homepage' },
-      { path: '/profile', label: 'Profile' },
-      { path: '/collections', label: 'Collections' },
-    ]
-
-    if (isEditor) {
-      arr.push({ path: undefined as any, label: 'Add NFT' })
-    }
-
-    return arr
-  }, [isEditor])
 
   const activeStyles = (path: string) => {
     if (router.pathname === path) {
@@ -59,23 +51,27 @@ const Drawer = ({ isOpen, onClose, onOpenAddNftModal }: DrawerProps) => {
         </DrawerHeader>
         <DrawerBody px={8}>
           <Box as="nav">
-            {nav.map((item, index) => {
-              if (!item.path) {
+            <>
+              {links.map((item) => {
                 return (
-                  <Box key={index} as="button" display="block" lineHeight={9} fontSize={24} onClick={onOpenAddNftModal}>
-                    {item.label}
-                  </Box>
+                  <Link key={item.path} href={item.path || ''} legacyBehavior={true}>
+                    <Box as="a" href={item.path} display="block" lineHeight={9} {...activeStyles(item.path || '')} mb={10}>
+                      {item.label}
+                    </Box>
+                  </Link>
                 )
-              }
-
-              return (
-                <Link key={item.path} href={item.path || ''} legacyBehavior={true}>
-                  <Box as="a" href={item.path} display="block" lineHeight={9} {...activeStyles(item.path || '')} mb={10}>
-                    {item.label}
+              })}
+              {isEditor && (
+                <>
+                  <Box as="button" display="block" lineHeight={9} fontSize={24} mb={10} onClick={onOpenAddNftModal}>
+                    Add NFT
                   </Box>
-                </Link>
-              )
-            })}
+                  <Box as="button" display="block" lineHeight={9} fontSize={24} onClick={onOpenUpdateConfigsModal}>
+                    Update configs
+                  </Box>
+                </>
+              )}
+            </>
           </Box>
         </DrawerBody>
         <DrawerFooter p={8}>
