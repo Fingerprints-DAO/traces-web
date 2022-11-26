@@ -2,24 +2,24 @@
 import { useAccount, useContractRead } from 'wagmi'
 
 // Helpers
-import Traces from '@web3/contracts/abi/Traces.json'
+import TracesContract from '@web3/contracts/abi/Traces'
 
 const useTracesRead = () => {
   const { address, isConnected } = useAccount()
 
   const { data: editorRole } = useContractRead({
     address: process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS,
-    abi: Traces,
+    abi: TracesContract,
     functionName: 'EDITOR_ROLE',
     enabled: isConnected,
   })
 
   const { data: isEditor } = useContractRead({
     address: process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS,
-    abi: Traces,
+    abi: TracesContract,
     functionName: 'hasRole',
     enabled: !!editorRole && !!address,
-    args: [editorRole, address],
+    args: [editorRole!, address!],
   })
 
   return {

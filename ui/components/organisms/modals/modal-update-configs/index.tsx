@@ -1,51 +1,37 @@
 import React from 'react'
 
 // Dependencies
-import { number, object, string } from 'yup'
+import { object, string } from 'yup'
 import { Controller, useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { Box, Button, Heading, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalOverlay, Text, useToast } from '@chakra-ui/react'
+import { Box, Button, Heading, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalOverlay, Text } from '@chakra-ui/react'
 
 // Helpers
-import useTracesAddNft from '@ui/hooks/use-traces-add-nft'
+import { ModalProps } from '@ui/contexts/Modal'
+import useTracesUpdateConfigs from '@ui/hooks/use-traces-update-configs'
 
-type ModalAddNftProps = {
-  isOpen: boolean
-  onClose: () => void
-}
-
-export type AddNftPayload = {
-  ogTokenAddress: string
-  ogTokenId: number
-  minStake: number
-  minHoldPeriod: number
-  dutchMultiplier: number
-  dutchAuctionDuration: number
+export type UpdateConfigsPayload = {
+  vaultAddress: `0x${string}`
 }
 
 const schema = object({
-  ogTokenAddress: string().required(),
-  ogTokenId: number().required(),
-  minStake: number().required(),
-  minHoldPeriod: number().required(),
-  dutchMultiplier: number().required(),
-  dutchAuctionDuration: number().required(),
+  vaultAddress: string().required(),
 })
 
-const ModalUpdateConfigs = ({ isOpen, onClose }: ModalAddNftProps) => {
-  const { control, formState, handleSubmit, watch } = useForm<AddNftPayload>({
+const ModalUpdateConfigs = ({ isOpen, onClose }: ModalProps) => {
+  const { control, formState, handleSubmit, watch } = useForm<UpdateConfigsPayload>({
     mode: 'onSubmit',
     resolver: yupResolver(schema),
     defaultValues: {
-      ogTokenAddress: '',
+      vaultAddress: '' as any,
     },
   })
 
-  const form = watch()
+  const vaultAddress = watch('vaultAddress')
 
-  const addNft = useTracesAddNft(formState.isSubmitted, form)
+  const updateConfigs = useTracesUpdateConfigs(formState.isSubmitted, vaultAddress)
 
-  const submit = () => addNft && addNft()
+  const submit = () => updateConfigs && updateConfigs()
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered={true}>
@@ -63,7 +49,7 @@ const ModalUpdateConfigs = ({ isOpen, onClose }: ModalAddNftProps) => {
                 FP Vault Address
               </Text>
               <Controller
-                name="ogTokenAddress"
+                name="vaultAddress"
                 control={control}
                 render={({ field }) => <Input {...field} size="lg" borderColor="gray.600" placeholder="Ex: 0xabcdefghijklmnopqrstuvwxyz1234567890abc1" />}
               />

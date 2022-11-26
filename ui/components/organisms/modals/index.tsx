@@ -11,9 +11,6 @@ import ModalUpdateConfigs from './modal-update-configs'
 const Modal = () => {
   const { element, isOpen, handleCloseModal } = useContext(ModalContext)
 
-  console.log('isOpen', isOpen)
-  console.log('element', element)
-
   const Component = useMemo(() => {
     const map = new Map<ModalContextValue['element'], any>([
       ['add-nft', ModalAddNft],

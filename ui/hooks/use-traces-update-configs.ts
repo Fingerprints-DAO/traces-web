@@ -8,9 +8,8 @@ import { useContractWrite, usePrepareContractWrite } from 'wagmi'
 import useTracesRead from './use-traces-read'
 import TracesContract from '@web3/contracts/abi/Traces'
 import { ModalContext } from '@ui/contexts/Modal'
-import { AddNftPayload } from '@ui/components/organisms/modals/modal-add-nft'
 
-const useTracesAddNft = (isSubmitted: boolean, payload: AddNftPayload) => {
+const useTracesUpdateConfigs = (isSubmitted: boolean, vaultAddress: `0x${string}`) => {
   const toast = useToast()
   const { isEditor } = useTracesRead()
   const { handleCloseModal } = useContext(ModalContext)
@@ -18,25 +17,25 @@ const useTracesAddNft = (isSubmitted: boolean, payload: AddNftPayload) => {
   const { config } = usePrepareContractWrite({
     address: process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS,
     abi: TracesContract,
-    functionName: 'addToken',
-    args: [process.env.NEXT_PUBLIC_ERC721_MOCK_CONTRACT_ADDRESS || '', payload?.ogTokenId, payload?.minStake, payload?.minHoldPeriod, payload?.dutchMultiplier, payload?.dutchAuctionDuration],
-    enabled: isSubmitted && !!isEditor && !!payload,
+    functionName: 'setVaultAddress',
+    args: [vaultAddress],
+    enabled: isSubmitted && !!isEditor && !!vaultAddress,
   })
 
   const { write } = useContractWrite({
     ...config,
     onSettled: (_, error) => {
       if (!error) {
-        toast({ title: 'Agora sim seu cagão', status: 'success' })
+        toast({ title: 'Vault updated', status: 'success' })
         handleCloseModal()
       }
     },
     onError: () => {
-      toast({ title: 'Você fez merda', status: 'error' })
+      toast({ title: 'Someting went wrong on your transaction. Need better text', status: 'error' })
     },
   })
 
   return write
 }
 
-export default useTracesAddNft
+export default useTracesUpdateConfigs

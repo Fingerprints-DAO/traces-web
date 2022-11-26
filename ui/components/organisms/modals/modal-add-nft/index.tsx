@@ -7,12 +7,8 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { Box, Button, Grid, GridItem, Heading, Input, InputGroup, InputRightAddon, Modal, ModalBody, ModalContent, ModalFooter, ModalOverlay, Text, useToast } from '@chakra-ui/react'
 
 // Helpers
+import { ModalProps } from '@ui/contexts/Modal'
 import useTracesAddNft from '@ui/hooks/use-traces-add-nft'
-
-type ModalAddNftProps = {
-  isOpen: boolean
-  onClose: () => void
-}
 
 export type AddNftPayload = {
   ogTokenAddress: string
@@ -32,7 +28,7 @@ const schema = object({
   dutchAuctionDuration: number().required(),
 })
 
-const ModalAddNft = ({ isOpen, onClose }: ModalAddNftProps) => {
+const ModalAddNft = ({ isOpen, onClose }: ModalProps) => {
   const { control, formState, register, handleSubmit, watch } = useForm<AddNftPayload>({
     mode: 'onSubmit',
     resolver: yupResolver(schema),

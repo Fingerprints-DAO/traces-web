@@ -10,9 +10,13 @@ export type ModalContextValue = {
   handleCloseModal: () => void
 }
 
+export type ModalProps = {
+  isOpen: boolean
+  onClose: () => void
+}
+
 const INITIAL_STATE: ModalContextValue = {
-  //   element: '',
-  element: 'update-configs',
+  element: '',
   handleOpenModal: (element: ModalContextValue['element']) => () => {},
   handleCloseModal: () => {},
 }
@@ -34,7 +38,7 @@ const ModalProvider = ({ children }: PropsWithChildren) => {
     onClose()
   }
 
-  const values: ModalContextValue = { element, isOpen: true, handleOpenModal, handleCloseModal }
+  const values: ModalContextValue = { element, isOpen, handleOpenModal, handleCloseModal }
 
   return <ModalContext.Provider value={values}>{children}</ModalContext.Provider>
 }
