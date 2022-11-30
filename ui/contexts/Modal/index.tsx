@@ -5,7 +5,7 @@ import { useDisclosure } from '@chakra-ui/react'
 
 export type ModalContextValue = {
   isOpen?: boolean
-  element: 'mint' | 'add-nft' | 'update-configs' | ''
+  element: 'mint' | 'add-nft' | 'update-configs' | 'administrators' | ''
   handleOpenModal: (element: ModalContextValue['element']) => () => void
   handleCloseModal: () => void
 }

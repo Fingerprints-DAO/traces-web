@@ -14,6 +14,7 @@ type DrawerProps = {
   onClose: () => void
   onOpenAddNftModal: () => void
   onOpenUpdateConfigsModal: () => void
+  onOpenAdministratorsModal: () => void
 }
 
 const links = [
@@ -22,20 +23,20 @@ const links = [
   { path: '/collections', label: 'Collections' },
 ]
 
-const Drawer = ({ isOpen, onClose, onOpenAddNftModal, onOpenUpdateConfigsModal }: DrawerProps) => {
+const Drawer = ({ isOpen, onClose, onOpenAddNftModal, onOpenUpdateConfigsModal, onOpenAdministratorsModal }: DrawerProps) => {
   const router = useRouter()
   const { isEditor } = useTracesRead()
 
   const activeStyles = (path: string) => {
     if (router.pathname === path) {
       return {
-        fontSize: 30,
+        fontSize: 24,
         fontWeight: 700,
       }
     }
 
     return {
-      fontSize: 24,
+      fontSize: 18,
     }
   }
 
@@ -51,35 +52,33 @@ const Drawer = ({ isOpen, onClose, onOpenAddNftModal, onOpenUpdateConfigsModal }
         </DrawerHeader>
         <DrawerBody px={8}>
           <Box as="nav">
-            <>
-              {links.map((item) => {
-                return (
-                  <Link key={item.path} href={item.path} legacyBehavior={true}>
-                    <Box as="a" href={item.path} display="block" lineHeight={9} {...activeStyles(item.path)} mb={10}>
-                      {item.label}
-                    </Box>
-                  </Link>
-                )
-              })}
-              {isEditor && (
-                <>
-                  <Link href="admin" passHref={true} legacyBehavior={true}>
-                    <Box as="a" display="block" lineHeight={9} {...activeStyles('admin')} mb={10}>
-                      Admin
-                    </Box>
-                  </Link>
-                  <Box as="button" display="block" lineHeight={9} fontSize={24} mb={10} onClick={onOpenAddNftModal}>
-                    Add NFT
+            {links.map((item) => {
+              return (
+                <Link key={item.path} href={item.path} legacyBehavior={true}>
+                  <Box as="a" href={item.path} display="block" lineHeight={9} {...activeStyles(item.path)} mb={[4, 4, 4, 4, 10]}>
+                    {item.label}
                   </Box>
-                  <Box as="button" display="block" lineHeight={9} fontSize={24} onClick={onOpenUpdateConfigsModal}>
-                    Update configs
-                  </Box>
-                </>
-              )}
-            </>
+                </Link>
+              )
+            })}
           </Box>
         </DrawerBody>
-        <DrawerFooter p={8}>
+        <DrawerFooter alignItems="flex-start" flexDirection="column" p={8}>
+          <Box as="nav" mb={[10, 20]}>
+            {isEditor && (
+              <>
+                <Box as="button" display="block" lineHeight={9} fontSize={[18, 18, 18, 18, 24]} mb={[4, 4, 4, 4, 10]} onClick={onOpenAddNftModal}>
+                  Add NFT
+                </Box>
+                <Box as="button" display="block" lineHeight={9} fontSize={[18, 18, 18, 18, 24]} mb={[4, 4, 4, 4, 10]} onClick={onOpenUpdateConfigsModal}>
+                  Update configs
+                </Box>
+                <Box as="button" display="block" lineHeight={9} fontSize={[18, 18, 18, 18, 24]} onClick={onOpenAdministratorsModal}>
+                  Administrators
+                </Box>
+              </>
+            )}
+          </Box>
           <Wallet variant="drawer" />
         </DrawerFooter>
       </DrawerContent>

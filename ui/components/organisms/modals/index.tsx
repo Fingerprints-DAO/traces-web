@@ -7,6 +7,7 @@ import { ModalContext, ModalContextValue } from '@ui/contexts/Modal'
 import ModalMint from './modal-mint'
 import ModalAddNft from './modal-add-nft'
 import ModalUpdateConfigs from './modal-update-configs'
+import ModalAdministrators from './modal-administrators'
 
 const Modal = () => {
   const { element, isOpen, handleCloseModal } = useContext(ModalContext)
@@ -16,6 +17,7 @@ const Modal = () => {
       ['add-nft', ModalAddNft],
       ['mint', ModalMint],
       ['update-configs', ModalUpdateConfigs],
+      ['administrators', ModalAdministrators],
     ])
 
     return map.get(element)
