@@ -1,7 +1,7 @@
 import React from 'react'
 
 // Dependencies
-import { Controller, useForm } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { number, object, string } from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Box, Button, Grid, GridItem, Heading, Input, InputGroup, InputRightAddon, Modal, ModalBody, ModalContent, ModalFooter, ModalOverlay, Text, useToast } from '@chakra-ui/react'
@@ -58,25 +58,20 @@ const ModalAddNft = ({ isOpen, onClose }: ModalProps) => {
               <Text color="gray.100" display="block" as="label" htmlFor="contract" fontWeight="semibold" marginBottom={2}>
                 Contract address
               </Text>
-              <Controller
-                name="ogTokenAddress"
-                control={control}
-                render={({ field }) => <Input {...field} size="lg" borderColor="gray.600" placeholder="Ex: 0xabcdefghijklmnopqrstuvwxyz1234567890abc1" />}
-              />
+              <Input {...register('ogTokenAddress')} size="lg" borderColor="gray.600" placeholder="Ex: 0xabcdefghijklmnopqrstuvwxyz1234567890abc1" />
             </Box>
             <Grid templateColumns={['repeat(1, 1fr)', 'repeat(2, 1fr)']} gap={6}>
               <GridItem>
                 <Text color="gray.100" display="block" as="label" htmlFor="amount" fontWeight="semibold" marginBottom={2}>
                   Token ID
                 </Text>
-                <Controller name="ogTokenId" control={control} render={({ field }) => <Input {...field} size="lg" borderColor="gray.600" placeholder="Ex: abc123" />} />
+                <Input {...register('ogTokenId')} size="lg" borderColor="gray.600" placeholder="Ex: abc123" />
               </GridItem>
               <GridItem>
                 <Text color="gray.100" display="block" as="label" htmlFor="amount" fontWeight="semibold" marginBottom={2}>
                   Guaranteed Holding Period
                 </Text>
                 <InputGroup>
-                  {/* <Controller name="minHoldPeriod" control={control} render={({ field }) => <Input {...field} type="number" size="lg" borderColor="gray.600" placeholder="Ex: 10" />} /> */}
                   <Input {...register('minHoldPeriod')} type="number" size="lg" borderColor="gray.600" placeholder="Ex: 10" />
                   <InputRightAddon background="gray.800" borderColor="gray.600" color="gray.400" height={12}>
                     Days
@@ -88,7 +83,7 @@ const ModalAddNft = ({ isOpen, onClose }: ModalProps) => {
                   Min. Stake Qty
                 </Text>
                 <InputGroup>
-                  <Controller name="minStake" control={control} render={({ field }) => <Input {...field} type="number" size="lg" borderColor="gray.600" placeholder="Ex: 1000" />} />
+                  <Input {...register('minStake')} type="number" size="lg" borderColor="gray.600" placeholder="Ex: 1000" />
                   <InputRightAddon background="gray.800" borderColor="gray.600" color="gray.400" height={12}>
                     $PRINTS
                   </InputRightAddon>
@@ -99,7 +94,7 @@ const ModalAddNft = ({ isOpen, onClose }: ModalProps) => {
                   Dutch multiplier
                 </Text>
                 <InputGroup>
-                  <Controller name="dutchMultiplier" control={control} render={({ field }) => <Input {...field} type="number" size="lg" borderColor="gray.600" placeholder="Ex: 10" />} />
+                  <Input {...register('dutchMultiplier')} type="number" size="lg" borderColor="gray.600" placeholder="Ex: 10" />
                   <InputRightAddon background="gray.800" borderColor="gray.600" color="gray.400" height={12}>
                     x
                   </InputRightAddon>
@@ -110,7 +105,7 @@ const ModalAddNft = ({ isOpen, onClose }: ModalProps) => {
                   Dutch Auction Duration
                 </Text>
                 <InputGroup>
-                  <Controller name="dutchAuctionDuration" control={control} render={({ field }) => <Input {...field} type="number" size="lg" borderColor="gray.600" placeholder="Ex: 100" />} />
+                  <Input {...register('dutchAuctionDuration')} type="number" size="lg" borderColor="gray.600" placeholder="Ex: 100" />
                   <InputRightAddon background="gray.800" borderColor="gray.600" color="gray.400" height={12}>
                     seconds
                   </InputRightAddon>
