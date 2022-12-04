@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React from 'react'
 
 // Dependencies
 import Link from 'next/link'
@@ -7,7 +7,9 @@ import { Drawer as ChakraDrawer, DrawerBody, DrawerFooter, DrawerHeader, DrawerO
 
 // Components
 import Wallet from '@ui/components/molecules/wallet'
-import useTracesRead from '@ui/hooks/use-traces-read'
+
+// Helpers
+import useTracesRead from '@web3/contracts/traces/use-traces-read'
 
 type DrawerProps = {
   isOpen: boolean

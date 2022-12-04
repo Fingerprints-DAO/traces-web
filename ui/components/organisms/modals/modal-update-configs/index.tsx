@@ -8,7 +8,7 @@ import { Box, Button, Heading, Input, Modal, ModalBody, ModalContent, ModalFoote
 
 // Helpers
 import { ModalProps } from '@ui/contexts/Modal'
-import useTracesUpdateConfigs from '@ui/hooks/use-traces-update-configs'
+import useTracesUpdateConfigs from '@web3/contracts/traces/use-traces-update-configs'
 
 export type UpdateConfigsPayload = {
   vaultAddress: `0x${string}`

@@ -8,6 +8,9 @@ import { Modal, ModalBody, ModalContent, ModalOverlay } from '@chakra-ui/react'
 import Stake from './stake'
 import Actions from './actions'
 import ModalMintHeader from './header'
+import usePrintsRead from '@web3/contracts/prints/use-prints-read'
+import usePrintsApprove from '@web3/contracts/prints/use-prints-approve'
+import { BigNumber } from 'ethers'
 
 type ModalMintProps = {
   isOpen: boolean
@@ -17,13 +20,15 @@ type ModalMintProps = {
 const printContractAddress = process.env.NEXT_PUBLIC_PRINTS_CONTRACT_ADDRESS || ('' as any)
 
 const ModalMint = ({ isOpen, onClose }: ModalMintProps) => {
-  const [step, setStep] = useState(1)
+  const [amount, setAmount] = useState<BigNumber>()
 
   const { address } = useAccount()
   const { data: balance } = useBalance({ address, enabled: Boolean(address) && Boolean(printContractAddress), token: printContractAddress })
 
-  const handleMint = (data: { amount: number }) => {
-    console.log('data', data)
+  //   console.log('allowance', allowance?.toString())
+
+  const handleMint = (data: { amount: string }) => {
+    setAmount(BigNumber.from(data.amount))
   }
 
   return (
@@ -31,10 +36,7 @@ const ModalMint = ({ isOpen, onClose }: ModalMintProps) => {
       <ModalOverlay />
       <ModalContent background="gray.900" padding={[6, 12]} minW={['unset', 650]} maxW={['90%', '90%', '90%', 'md']}>
         <ModalMintHeader prints={Number(balance?.formatted)} />
-        <ModalBody padding={0}>
-          {step === 1 && <Stake prints={Number(balance?.formatted)} onSubmit={handleMint} onClose={onClose} />}
-          {step === 2 && <Actions onClose={onClose} />}
-        </ModalBody>
+        <ModalBody padding={0}>{Boolean(amount) ? <Actions amount={amount!} onClose={onClose} /> : <Stake prints={Number(balance?.formatted)} onSubmit={handleMint} onClose={onClose} />}</ModalBody>
       </ModalContent>
     </Modal>
   )

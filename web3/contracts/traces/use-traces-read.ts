@@ -2,7 +2,7 @@
 import { useAccount, useContractRead } from 'wagmi'
 
 // Helpers
-import TracesContract from '@web3/contracts/abi/Traces'
+import TracesContract from '@web3/contracts/traces/contract'
 
 const useTracesRead = () => {
   const { address, isConnected } = useAccount()

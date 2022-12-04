@@ -8,7 +8,7 @@ import { Box, Button, Grid, GridItem, Heading, Input, InputGroup, InputRightAddo
 
 // Helpers
 import { ModalProps } from '@ui/contexts/Modal'
-import useTracesAddNft from '@ui/hooks/use-traces-add-nft'
+import useTracesAddNft from '@web3/contracts/traces/use-traces-add-nft'
 
 export type AddNftPayload = {
   ogTokenAddress: string

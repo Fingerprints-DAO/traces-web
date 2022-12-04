@@ -140,24 +140,26 @@ const Collection = () => {
           ))}
         </Grid>
       </Container>
-      <ModalMint
-        isOpen={isOpen}
-        onClose={() => {
-          onClose()
-          toast({
-            title: 'WNFT Minted',
-            status: 'success',
-            description: (
-              <>
-                <Text mb={4}>You have sucesfully... better text </Text>
-                <Box as="a" href="https://fake.com" target="_blank" textDecoration="underline">
-                  Click here to see transaction
-                </Box>
-              </>
-            ),
-          })
-        }}
-      />
+      {isOpen && (
+        <ModalMint
+          isOpen={isOpen}
+          onClose={() => {
+            onClose()
+            // toast({
+            //   title: 'WNFT Minted',
+            //   status: 'success',
+            //   description: (
+            //     <>
+            //       <Text mb={4}>You have sucesfully... better text </Text>
+            //       <Box as="a" href="https://fake.com" target="_blank" textDecoration="underline">
+            //         Click here to see transaction
+            //       </Box>
+            //     </>
+            //   ),
+            // })
+          }}
+        />
+      )}
     </>
   )
 }
