@@ -39,7 +39,7 @@ function Traces({ Component, pageProps, router }: AppProps) {
           </Layout>
         </Web3Provider>
       </ModalProvider>
-      <Web3Modal projectId={process.env.NEXT_PUBLIC_WALLET_CONNECT_KEY || ''} theme="dark" accentColor="default" ethereumClient={ethereumClient} />
+      <Web3Modal projectId={process.env.NEXT_PUBLIC_WALLET_CONNECT_KEY || ''} themeMode="dark" themeColor="default" ethereumClient={ethereumClient} />
     </ChakraProvider>
   )
 }
