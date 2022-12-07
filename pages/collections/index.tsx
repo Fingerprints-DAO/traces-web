@@ -10,7 +10,7 @@ import CollectionCard from '@ui/components/molecules/collection-card'
 const CollectionsPage = () => {
   return (
     <Container maxWidth="7xl" paddingTop={14} paddingBottom={28}>
-      <PageHeader containerProps={{ marginBottom: 12 }} title="All collections" />
+      <PageHeader containerProps={{ marginBottom: 12 }} title="All collections" withBackButton={true} />
       <Grid templateColumns={['repeat(1, 1fr)', 'repeat(2, 1fr)', 'repeat(2, 1fr)', 'repeat(3, 1fr)', 'repeat(4, 1fr)']} gap={8} rowGap={12}>
         {Array.from(Array(11), (_, index) => (
           <GridItem w="100%" key={index}>
