@@ -23,7 +23,7 @@ const Wallet = ({ variant }: WalletProps) => {
   const { address, isConnected } = useAccount()
 
   const { data: ensName } = useEnsName({ address, enabled: Boolean(address) })
-  const { data: balance } = useBalance({ address, enabled: Boolean(address) && Boolean(printContractAddress), token: printContractAddress })
+  const { data: balance } = useBalance({ address, token: printContractAddress, enabled: isConnected && !!printContractAddress })
 
   const isDrawer = variant === 'drawer'
 

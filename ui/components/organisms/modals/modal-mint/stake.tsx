@@ -2,20 +2,23 @@ import React, { useMemo } from 'react'
 
 // Dependencies
 import get from 'lodash/get'
+import { BigNumber } from 'ethers'
 import { number, object } from 'yup'
 import { Controller, useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Box, Button, FormControl, FormErrorMessage, Input, InputGroup, InputRightAddon, ModalFooter, Text } from '@chakra-ui/react'
 
 type StakeProps = {
-  prints?: number
+  amountHook: [BigNumber | undefined, React.Dispatch<React.SetStateAction<BigNumber | undefined>>]
   onClose: () => void
-  onSubmit: (data: { amount: number }) => void
+  onSubmit: () => void
+  allowance?: BigNumber
+  prints?: number
 }
 
 const fakeMinPrints = 1000
 
-const Stake = ({ prints = 0, onClose, onSubmit }: StakeProps) => {
+const Stake = ({ allowance, amountHook, prints = 0, onClose, onSubmit }: StakeProps) => {
   const schema = object({
     amount: number().min(fakeMinPrints, `Minimum amount allowed is ${fakeMinPrints.toLocaleString()} $PRINTS`).max(prints, 'This value is bigger than your current balance').required('Required field'),
   })
@@ -26,6 +29,22 @@ const Stake = ({ prints = 0, onClose, onSubmit }: StakeProps) => {
   })
 
   const error = useMemo(() => get(formState.errors, 'amount'), [formState.errors])
+
+  const submit = (data: { amount: number }) => {
+    const [, setAmount] = amountHook
+
+    const allowanceUntilNow = allowance?.toNumber()
+
+    if (typeof allowanceUntilNow !== 'number') {
+      return
+    }
+
+    const balanceToApprove = data.amount - allowanceUntilNow
+
+    setAmount(BigNumber.from(balanceToApprove))
+
+    onSubmit()
+  }
 
   return (
     <>
@@ -56,7 +75,7 @@ const Stake = ({ prints = 0, onClose, onSubmit }: StakeProps) => {
         <Button colorScheme="red" variant="outline" onClick={onClose}>
           Cancel
         </Button>
-        <Button color="gray.900" colorScheme="primary" variant="solid" ml={6} onClick={handleSubmit(onSubmit)}>
+        <Button color="gray.900" colorScheme="primary" variant="solid" ml={6} onClick={handleSubmit(submit)}>
           Confirm stake
         </Button>
       </ModalFooter>

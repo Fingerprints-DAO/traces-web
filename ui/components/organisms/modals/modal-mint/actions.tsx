@@ -2,12 +2,11 @@ import React from 'react'
 
 // Dependencies
 import { BigNumber } from 'ethers'
+import { useWaitForTransaction } from 'wagmi'
 import { BsCheck2Circle } from 'react-icons/bs'
-import { useAccount, useContractRead, useWaitForTransaction } from 'wagmi'
 import { Box, Button, Icon, ModalFooter, Spinner, Text } from '@chakra-ui/react'
 
 // Helpers
-import PrintsContract from '@web3/contracts/prints/contract'
 import usePrintsApprove from '@web3/contracts/prints/use-prints-approve'
 
 type ActionsProps = {
@@ -16,20 +15,11 @@ type ActionsProps = {
 }
 
 const Actions = ({ amount, onClose }: ActionsProps) => {
-  const { address } = useAccount()
   const { write: approvePrints, data: approved, isLoading: isLoadingApprove, isSuccess: isSuccessApprove } = usePrintsApprove(amount)
 
   const { isLoading: isLoadingWaitingApprove, isSuccess: isSuccessWaitingApprove } = useWaitForTransaction({
     hash: approved?.hash,
     enabled: isSuccessApprove,
-  })
-
-  const { data: allowance } = useContractRead({
-    address: process.env.NEXT_PUBLIC_PRINTS_CONTRACT_ADDRESS,
-    abi: PrintsContract,
-    functionName: 'allowance',
-    enabled: Boolean(address) && Boolean(approved?.hash),
-    args: [address!, process.env.NEXT_PUBLIC_PRINTS_CONTRACT_ADDRESS || ('' as any)],
   })
 
   const handleApprove = () => approvePrints && approvePrints()
