@@ -30,6 +30,7 @@ const Collection = () => {
           containerProps={{ marginBottom: 16, maxW: 800 }}
           title="Autoglyphs"
           description="Inspired by Sol LeWitt’s Wall Drawings, Autoglyphs are considered the first “on-chain” generative art collection on the Ethereum blockchain. Created in 2019, once the 512 Autoglyphs were minted, the generator shut itself off. They are a completely self-contained mechanism for the creation and ownership of an artwork."
+          withBackButton={true}
         />
         <Grid templateColumns={['repeat(1, 1fr)', 'repeat(2, 1fr)', 'repeat(2, 1fr)', 'repeat(3, 1fr)', 'repeat(4, 1fr)']} gap={8} rowGap={12}>
           {arr.map((item) => (
@@ -139,24 +140,26 @@ const Collection = () => {
           ))}
         </Grid>
       </Container>
-      <ModalMint
-        isOpen={isOpen}
-        onClose={() => {
-          onClose()
-          toast({
-            title: 'WNFT Minted',
-            status: 'success',
-            description: (
-              <>
-                <Text mb={4}>You have sucesfully... better text </Text>
-                <Box as="a" href="https://fake.com" target="_blank" textDecoration="underline">
-                  Click here to see transaction
-                </Box>
-              </>
-            ),
-          })
-        }}
-      />
+      {isOpen && (
+        <ModalMint
+          isOpen={isOpen}
+          onClose={() => {
+            onClose()
+            // toast({
+            //   title: 'WNFT Minted',
+            //   status: 'success',
+            //   description: (
+            //     <>
+            //       <Text mb={4}>You have sucesfully... better text </Text>
+            //       <Box as="a" href="https://fake.com" target="_blank" textDecoration="underline">
+            //         Click here to see transaction
+            //       </Box>
+            //     </>
+            //   ),
+            // })
+          }}
+        />
+      )}
     </>
   )
 }

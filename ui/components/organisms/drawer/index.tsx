@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React from 'react'
 
 // Dependencies
 import Link from 'next/link'
@@ -7,43 +7,38 @@ import { Drawer as ChakraDrawer, DrawerBody, DrawerFooter, DrawerHeader, DrawerO
 
 // Components
 import Wallet from '@ui/components/molecules/wallet'
-import useTracesRead from '@ui/hooks/use-traces-read'
-import { useAccount } from 'wagmi'
+
+// Helpers
+import useTracesRead from '@web3/contracts/traces/use-traces-read'
 
 type DrawerProps = {
   isOpen: boolean
   onClose: () => void
   onOpenAddNftModal: () => void
+  onOpenUpdateConfigsModal: () => void
+  onOpenAdministratorsModal: () => void
 }
 
-const Drawer = ({ isOpen, onClose, onOpenAddNftModal }: DrawerProps) => {
+const links = [
+  { path: '/', label: 'Homepage' },
+  { path: '/profile', label: 'Profile' },
+  { path: '/collections', label: 'Collections' },
+]
+
+const Drawer = ({ isOpen, onClose, onOpenAddNftModal, onOpenUpdateConfigsModal, onOpenAdministratorsModal }: DrawerProps) => {
   const router = useRouter()
   const { isEditor } = useTracesRead()
-
-  const nav = useMemo(() => {
-    const arr = [
-      { path: '/', label: 'Homepage' },
-      { path: '/profile', label: 'Profile' },
-      { path: '/collections', label: 'Collections' },
-    ]
-
-    if (isEditor) {
-      arr.push({ path: undefined as any, label: 'Add NFT' })
-    }
-
-    return arr
-  }, [isEditor])
 
   const activeStyles = (path: string) => {
     if (router.pathname === path) {
       return {
-        fontSize: 30,
+        fontSize: 24,
         fontWeight: 700,
       }
     }
 
     return {
-      fontSize: 24,
+      fontSize: 18,
     }
   }
 
@@ -59,18 +54,10 @@ const Drawer = ({ isOpen, onClose, onOpenAddNftModal }: DrawerProps) => {
         </DrawerHeader>
         <DrawerBody px={8}>
           <Box as="nav">
-            {nav.map((item, index) => {
-              if (!item.path) {
-                return (
-                  <Box key={index} as="button" display="block" lineHeight={9} fontSize={24} onClick={onOpenAddNftModal}>
-                    {item.label}
-                  </Box>
-                )
-              }
-
+            {links.map((item) => {
               return (
-                <Link key={item.path} href={item.path || ''} legacyBehavior={true}>
-                  <Box as="a" href={item.path} display="block" lineHeight={9} {...activeStyles(item.path || '')} mb={10}>
+                <Link key={item.path} href={item.path} legacyBehavior={true}>
+                  <Box as="a" href={item.path} display="block" lineHeight={9} {...activeStyles(item.path)} mb={[4, 4, 4, 4, 10]}>
                     {item.label}
                   </Box>
                 </Link>
@@ -78,7 +65,22 @@ const Drawer = ({ isOpen, onClose, onOpenAddNftModal }: DrawerProps) => {
             })}
           </Box>
         </DrawerBody>
-        <DrawerFooter p={8}>
+        <DrawerFooter alignItems="flex-start" flexDirection="column" p={8}>
+          <Box as="nav" mb={[10, 20]}>
+            {isEditor && (
+              <>
+                <Box as="button" display="block" lineHeight={9} fontSize={[18, 18, 18, 18, 24]} mb={[4, 4, 4, 4, 10]} onClick={onOpenAddNftModal}>
+                  Add NFT
+                </Box>
+                <Box as="button" display="block" lineHeight={9} fontSize={[18, 18, 18, 18, 24]} mb={[4, 4, 4, 4, 10]} onClick={onOpenUpdateConfigsModal}>
+                  Update configs
+                </Box>
+                <Box as="button" display="block" lineHeight={9} fontSize={[18, 18, 18, 18, 24]} onClick={onOpenAdministratorsModal}>
+                  Administrators
+                </Box>
+              </>
+            )}
+          </Box>
           <Wallet variant="drawer" />
         </DrawerFooter>
       </DrawerContent>

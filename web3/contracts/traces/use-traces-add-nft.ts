@@ -1,13 +1,14 @@
+import { useContext } from 'react'
+
 // Dependencies
 import { useToast } from '@chakra-ui/react'
 import { useContractWrite, usePrepareContractWrite } from 'wagmi'
 
 // Helpers
-import Traces from '@web3/contracts/abi/Traces.json'
-import { AddNftPayload } from '@ui/components/organisms/modals/modal-add-nft'
-import { useContext, useState } from 'react'
-import { ModalContext } from '@ui/contexts/Modal'
 import useTracesRead from './use-traces-read'
+import TracesContract from '@web3/contracts/traces/contract'
+import { ModalContext } from '@ui/contexts/Modal'
+import { AddNftPayload } from '@ui/components/organisms/modals/modal-add-nft'
 
 const useTracesAddNft = (isSubmitted: boolean, payload: AddNftPayload) => {
   const toast = useToast()
@@ -16,9 +17,16 @@ const useTracesAddNft = (isSubmitted: boolean, payload: AddNftPayload) => {
 
   const { config } = usePrepareContractWrite({
     address: process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS,
-    abi: Traces,
+    abi: TracesContract,
     functionName: 'addToken',
-    args: [process.env.NEXT_PUBLIC_ERC721_MOCK_CONTRACT_ADDRESS, payload?.ogTokenId, payload?.minStake, payload?.minHoldPeriod, payload?.dutchMultiplier, payload?.dutchAuctionDuration],
+    args: [
+      process.env.NEXT_PUBLIC_ERC721_MOCK_CONTRACT_ADDRESS || ('' as any),
+      payload?.ogTokenId as any,
+      payload?.minStake as any,
+      payload?.minHoldPeriod as any,
+      payload?.dutchMultiplier as any,
+      payload?.dutchAuctionDuration as any,
+    ],
     enabled: isSubmitted && !!isEditor && !!payload,
   })
 
