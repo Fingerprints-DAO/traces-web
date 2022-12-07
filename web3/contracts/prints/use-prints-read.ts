@@ -12,8 +12,7 @@ const usePrintsRead = () => {
     address: process.env.NEXT_PUBLIC_PRINTS_CONTRACT_ADDRESS,
     abi: PrintsContract,
     functionName: 'allowance',
-    enabled: Boolean(address),
-    // args: [address!, process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS || ('' as any)],
+    enabled: !!address,
     args: [address!, process.env.NEXT_PUBLIC_PRINTS_CONTRACT_ADDRESS || ('' as any)],
   })
 

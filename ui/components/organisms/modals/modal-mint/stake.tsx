@@ -10,7 +10,7 @@ import { Box, Button, FormControl, FormErrorMessage, Input, InputGroup, InputRig
 type StakeProps = {
   prints?: number
   onClose: () => void
-  onSubmit: (data: { amount: string }) => void
+  onSubmit: (data: { amount: number }) => void
 }
 
 const fakeMinPrints = 1000
@@ -20,12 +20,9 @@ const Stake = ({ prints = 0, onClose, onSubmit }: StakeProps) => {
     amount: number().min(fakeMinPrints, `Minimum amount allowed is ${fakeMinPrints.toLocaleString()} $PRINTS`).max(prints, 'This value is bigger than your current balance').required('Required field'),
   })
 
-  const { control, formState, handleSubmit } = useForm<{ amount: string }>({
+  const { control, formState, handleSubmit } = useForm<{ amount: number }>({
     mode: 'onSubmit',
     resolver: yupResolver(schema),
-    defaultValues: {
-      amount: '',
-    },
   })
 
   const error = useMemo(() => get(formState.errors, 'amount'), [formState.errors])
@@ -47,7 +44,7 @@ const Stake = ({ prints = 0, onClose, onSubmit }: StakeProps) => {
                   $PRINTS
                 </InputRightAddon>
               </InputGroup>
-              {Boolean(error?.message) && <FormErrorMessage>{error?.message}</FormErrorMessage>}
+              {Boolean(error?.message) && <FormErrorMessage mb={4}>{error?.message}</FormErrorMessage>}
             </FormControl>
           )}
         />

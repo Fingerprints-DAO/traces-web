@@ -1,9 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { getWNFTMetadata } from '@web3/services/getWNFTMetadata'
 import { readContract } from '@wagmi/core'
-import Traces from '@web3/contracts/abi/Traces.json'
 import { getChainId, handleToken } from '../helpers/_web3'
 import { Token, WNFTMetadata } from '../helpers/_types'
+import TracesContract from '@web3/contracts/traces/contract'
 
 // bitchcoin
 // address 0x5e86f887ff9676a58f25a6e057b7a6b8d65e1874
@@ -14,7 +14,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   const token = handleToken(
     (await readContract({
       address: process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS ?? '',
-      abi: Traces,
+      abi: TracesContract,
       functionName: 'getToken',
       chainId: getChainId(),
       args: [req.query.id],
