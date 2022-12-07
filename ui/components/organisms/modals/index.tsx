@@ -6,14 +6,18 @@ import { ModalContext, ModalContextValue } from '@ui/contexts/Modal'
 // Components
 import ModalMint from './modal-mint'
 import ModalAddNft from './modal-add-nft'
+import ModalUpdateConfigs from './modal-update-configs'
+import ModalAdministrators from './modal-administrators'
 
-const Modals = () => {
+const Modal = () => {
   const { element, isOpen, handleCloseModal } = useContext(ModalContext)
 
   const Component = useMemo(() => {
     const map = new Map<ModalContextValue['element'], any>([
       ['add-nft', ModalAddNft],
       ['mint', ModalMint],
+      ['update-configs', ModalUpdateConfigs],
+      ['administrators', ModalAdministrators],
     ])
 
     return map.get(element)
@@ -26,4 +30,4 @@ const Modals = () => {
   return <Component isOpen={isOpen} onClose={handleCloseModal} />
 }
 
-export default Modals
+export default Modal

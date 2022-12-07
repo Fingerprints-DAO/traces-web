@@ -7,7 +7,7 @@ import { WagmiConfig as Web3Provider } from 'wagmi'
 // Components
 import { ModalProvider } from '@ui/contexts/Modal'
 import Layout from '@ui/components/templates/layout'
-import Modals from '@ui/components/organisms/modals'
+import Modal from '@ui/components/organisms/modals'
 
 // Helpers
 import theme from '@ui/base/theme'
@@ -35,7 +35,7 @@ function Traces({ Component, pageProps, router }: AppProps) {
         <Web3Provider client={web3Config}>
           <Layout>
             <Component {...pageProps} />
-            <Modals />
+            <Modal />
           </Layout>
         </Web3Provider>
       </ModalProvider>

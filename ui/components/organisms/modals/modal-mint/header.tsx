@@ -3,7 +3,11 @@ import React from 'react'
 // Dependencies
 import { Box, Heading, Text } from '@chakra-ui/react'
 
-const ModalMintHeader = () => {
+type ModalMintHeaderProps = {
+  prints?: number
+}
+
+const ModalMintHeader = ({ prints = 0 }: ModalMintHeaderProps) => {
   return (
     <Box display="flex" flexDirection={['column-reverse', 'row']} alignItems="start" justifyContent="space-between" marginBottom={10}>
       <Box>
@@ -17,7 +21,7 @@ const ModalMintHeader = () => {
       <Text as="span" color="gray.300" marginBottom={[4, 0]} display={['flex', 'unset']} w={['full', 'unset']} justifyContent={['space-between', 'unset']}>
         Current balance
         <Text as="span" color="gray.100" fontWeight={600} marginLeft={3}>
-          5000 $PRINTS
+          {prints.toLocaleString()} $PRINTS
         </Text>
       </Text>
     </Box>
