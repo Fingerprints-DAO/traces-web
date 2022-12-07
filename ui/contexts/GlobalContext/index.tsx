@@ -1,9 +1,4 @@
-import React, {
-  createContext,
-  useRef,
-  MutableRefObject,
-  PropsWithChildren,
-} from 'react'
+import React, { createContext, PropsWithChildren } from 'react'
 
 type ContextType = {}
 
@@ -11,18 +6,8 @@ const DEFAULT_CONTEXT = {} as ContextType
 
 const GlobalContext = createContext(DEFAULT_CONTEXT)
 
-export const GlobalContextProvider: React.FC<PropsWithChildren> = ({
-  children,
-}) => {
-  return (
-    <GlobalContext.Provider
-      value={{
-        ...DEFAULT_CONTEXT,
-      }}
-    >
-      {children}
-    </GlobalContext.Provider>
-  )
+export const GlobalContextProvider = ({ children }: PropsWithChildren) => {
+  return <GlobalContext.Provider value={DEFAULT_CONTEXT}>{children}</GlobalContext.Provider>
 }
 
 export default GlobalContext
