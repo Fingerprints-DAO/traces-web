@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 
 // Dependencies
 import { useRouter } from 'next/router'
@@ -10,11 +10,13 @@ import Drawer from '../drawer'
 import Logo from '@ui/components/atoms/logo'
 import { ModalContext, ModalContextValue } from '@ui/contexts/Modal'
 import Wallet from '@ui/components/molecules/wallet'
+import { useIsBrowser } from '@ui/hooks/use-is-browser'
 
 const Header = () => {
   const router = useRouter()
   const { handleOpenModal } = useContext(ModalContext)
   const { isOpen: isDrawerOpen, onClose: onCloseDrawer, onOpen: onOpenDrawer } = useDisclosure()
+  const isBrowser = useIsBrowser()
 
   useEffect(() => {
     onCloseDrawer()
@@ -28,7 +30,7 @@ const Header = () => {
 
   return (
     <>
-      <Box as="header" paddingY="3" background="gray.900" position="sticky" left={0} top={0} zIndex="sticky">
+      <Box as="header" paddingY="3" background="gray.900" position="sticky" left={0} top={0} zIndex="sticky" suppressHydrationWarning={true}>
         <Container maxWidth="7xl" display="flex" justifyContent="space-between" alignItems="center">
           <Box display="flex" alignItems="center">
             <Button variant="unstyled" display="block" minWidth="unset" height="unset" padding="3px" marginRight={[2, 4]} onClick={onOpenDrawer}>
@@ -36,7 +38,7 @@ const Header = () => {
             </Button>
             <Logo />
           </Box>
-          <Wallet variant="header" />
+          {isBrowser && <Wallet variant="header" />}
         </Container>
       </Box>
       <Drawer
