@@ -5,7 +5,7 @@ import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 import { createClient, configureChains, chain } from 'wagmi'
 
 const { chains, provider } = configureChains(
-  [chain.mainnet, chain.hardhat],
+  [chain.mainnet, chain.goerli, chain.hardhat],
   [
     infuraProvider({ apiKey: process.env.NEXT_PUBLIC_PROVIDER_KEY || '' }),
     jsonRpcProvider({
