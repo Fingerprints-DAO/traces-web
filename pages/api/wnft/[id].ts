@@ -1,10 +1,11 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { getWNFTMetadata } from '@web3/services/getWNFTMetadata'
 import { readContract } from '@wagmi/core'
-import { getChainId, handleToken } from '../helpers/_web3'
+import { handleToken } from '../helpers/_web3'
 import { Token, WNFTMetadata } from '../helpers/_types'
 import TracesContract from '@web3/contracts/traces/contract'
 import { BigNumber } from 'ethers/lib/ethers'
+import { getChainId } from '@web3/helpers/chain'
 
 // bitchcoin
 // address 0x5e86f887ff9676a58f25a6e057b7a6b8d65e1874
