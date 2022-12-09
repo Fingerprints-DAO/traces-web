@@ -23,14 +23,23 @@ const Wallet = ({ variant }: WalletProps) => {
   const { address, isConnected } = useAccount()
 
   const { data: ensName } = useEnsName({ address, enabled: Boolean(address) })
-  const { data: balance } = useBalance({ address, token: printContractAddress, enabled: isConnected && !!printContractAddress })
+  const { data: balance } = useBalance({
+    address,
+    enabled: Boolean(address) && Boolean(printContractAddress),
+    token: printContractAddress,
+  })
 
   const isDrawer = variant === 'drawer'
 
   const handleConnectWallet = useCallback(() => (isConnected ? disconnect() : open()), [isConnected, disconnect, open])
 
   return (
-    <Box display="flex" alignItems={isDrawer ? 'flex-start' : 'center'} flexDirection={isDrawer ? 'column' : 'row'} width={isDrawer ? '100%' : 'auto'}>
+    <Box
+      display="flex"
+      alignItems={isDrawer ? 'flex-start' : 'center'}
+      flexDirection={isDrawer ? 'column' : 'row'}
+      width={isDrawer ? '100%' : 'auto'}
+    >
       {isConnected && (
         <Box display="flex" flexDirection={isDrawer ? 'row-reverse' : 'row'} alignItems="center" mr={isDrawer ? 0 : [3, 6]} mb={isDrawer ? 6 : 0}>
           <Box textAlign={isDrawer ? 'left' : 'right'} mr={2}>
@@ -44,7 +53,14 @@ const Wallet = ({ variant }: WalletProps) => {
           <Avatar variant={variant} />
         </Box>
       )}
-      <Button borderColor="gray.200" color={isConnected ? 'gray.200' : 'gray.900'} colorScheme="primary" variant={isConnected ? 'outline' : 'solid'} size={['xs', 'md']} onClick={handleConnectWallet}>
+      <Button
+        borderColor="gray.200"
+        color={isConnected ? 'gray.200' : 'gray.900'}
+        colorScheme="primary"
+        variant={isConnected ? 'outline' : 'solid'}
+        size={['xs', 'md']}
+        onClick={handleConnectWallet}
+      >
         {!isConnected ? 'Connect' : 'Disconnect'} wallet
       </Button>
     </Box>

@@ -4,11 +4,13 @@ import React from 'react'
 import { useAccount } from 'wagmi'
 import { useWeb3Modal } from '@web3modal/react'
 import { Box, Button, Container, Heading, Text, useMediaQuery } from '@chakra-ui/react'
+import { useIsBrowser } from '@ui/hooks/use-is-browser'
 
 const HomeHero = () => {
   const { open } = useWeb3Modal()
   const { isConnected } = useAccount()
   const [isMobile] = useMediaQuery('(max-width: 30em)')
+  const isBrowser = useIsBrowser()
 
   const handleOpenModal = () => open()
 
@@ -24,7 +26,7 @@ const HomeHero = () => {
             FP members can hold and enjoy usage permissions from {!isMobile && <br />}
             {"FP's"} NFTs through a staking system
           </Text>
-          {!isConnected && (
+          {isBrowser && !isConnected && (
             <Button color="gray.900" colorScheme="primary" size="lg" mt={8} onClick={handleOpenModal}>
               {!isConnected ? 'Connect' : 'Disconnect'} wallet
             </Button>

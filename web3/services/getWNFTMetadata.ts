@@ -61,8 +61,8 @@ export const getWNFTMetadata = async (address: string, tokenId: string, stakedAm
         name: tokens[0].token.name,
         image: tokens[0].token.image,
         description: `FP members can hold and enjoy usage permissions from FP's NFTs through a staking system`,
-        externalUrl: `https://fingerprintsdao.xyz/traces/${tokens[0].token.contract}/${tokens[0].token.id}`,
-        openseaUrl: `https://testnets.opensea.io/assets/${tokens[0].token.contract}/${tokens[0].token.id}`,
+        externalUrl: `https://fingerprintsdao.xyz/traces/${tokens[0].token.contract}/${tokens[0].token.tokenId}`,
+        openseaUrl: `https://testnets.opensea.io/assets/${tokens[0].token.contract}/${tokens[0].token.tokenId}`,
         attributes: [
           {
             trait_type: 'Collection Address',
@@ -70,11 +70,11 @@ export const getWNFTMetadata = async (address: string, tokenId: string, stakedAm
           },
           {
             trait_type: 'Collection Name',
-            value: tokens[0].token.collectionName,
+            value: tokens[0].token.collection.name,
           },
           {
             trait_type: 'NFT ID',
-            value: tokens[0].token.id,
+            value: tokens[0].token.tokenId,
           },
           {
             trait_type: 'Staked $PRINTS',
