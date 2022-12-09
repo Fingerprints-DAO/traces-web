@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 // Dependencies
 import { BigNumber } from 'ethers'
@@ -10,30 +10,28 @@ import Stake from './stake'
 import Actions from './actions'
 import ModalMintHeader from './header'
 import usePrintsRead from '@web3/contracts/prints/use-prints-read'
-import usePrintsApprove from '@web3/contracts/prints/use-prints-approve'
 
 type ModalMintProps = {
   isOpen: boolean
   onClose: () => void
 }
 
+const fakeMinPrints = 1000
 const printContractAddress = process.env.NEXT_PUBLIC_PRINTS_CONTRACT_ADDRESS || ('' as any)
 
 const ModalMint = ({ isOpen, onClose }: ModalMintProps) => {
-  const amountHook = useState<BigNumber>()
-  const [amount] = amountHook
-  console.log('amount', amount)
+  const [amount, setAmount] = useState<BigNumber>()
 
   const { address } = useAccount()
   const { allowance } = usePrintsRead()
 
-  const { write: approvePrints } = usePrintsApprove(amount)
   const { data: balance } = useBalance({ address, enabled: Boolean(address) && Boolean(printContractAddress), token: printContractAddress })
 
-  const handleMint = () => {
-    console.log('approvePrints', approvePrints)
-    approvePrints && approvePrints()
-  }
+  useEffect(() => {
+    if ((allowance?.toNumber() || 0) >= fakeMinPrints) {
+      setAmount(allowance)
+    }
+  }, [allowance])
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered={true}>
@@ -41,10 +39,10 @@ const ModalMint = ({ isOpen, onClose }: ModalMintProps) => {
       <ModalContent background="gray.900" padding={[6, 12]} minW={['unset', 650]} maxW={['90%', '90%', '90%', 'md']}>
         <ModalMintHeader prints={Number(balance?.formatted)} />
         <ModalBody padding={0}>
-          {!!amount ? (
-            <Actions amount={amount} onClose={onClose} />
+          {!!amount?.toNumber() ? (
+            <Actions amount={amount!} minPrints={fakeMinPrints} onClose={onClose} />
           ) : (
-            <Stake allowance={allowance} amountHook={amountHook} prints={Number(balance?.formatted)} onSubmit={handleMint} onClose={onClose} />
+            <Stake allowance={allowance} minPrints={fakeMinPrints} userPrints={Number(balance?.formatted)} onSuccess={setAmount} onClose={onClose} />
           )}
         </ModalBody>
       </ModalContent>
