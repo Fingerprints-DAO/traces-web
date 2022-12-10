@@ -1,7 +1,7 @@
 import React, { useContext, useMemo } from 'react'
 
 // Dependencies
-import { BigNumber } from 'ethers'
+import { BigNumber, utils } from 'ethers'
 import { BsCheck2Circle } from 'react-icons/bs'
 import { Box, Button, Icon, ModalFooter, Spinner, Text, useToast } from '@chakra-ui/react'
 import { useContractWrite, usePrepareContractWrite, useWaitForTransaction } from 'wagmi'
@@ -13,23 +13,23 @@ import TracesContract from '@web3/contracts/traces/contract'
 
 type ActionsProps = {
   amount?: BigNumber
-  minPrints: number
   onClose: () => void
 }
 
-const tokenId = BigNumber.from(12)
+const tokenId = BigNumber.from(11)
 
-const Actions = ({ amount, minPrints, onClose }: ActionsProps) => {
+const Actions = ({ amount = BigNumber.from(0), onClose }: ActionsProps) => {
   const toast = useToast()
 
   const { handleCloseModal } = useContext(ModalContext)
 
-  const { config } = usePrepareContractWrite({
+  const { config: configApprove } = usePrepareContractWrite({
     address: process.env.NEXT_PUBLIC_PRINTS_CONTRACT_ADDRESS,
     abi: PrintsContract,
     functionName: 'approve',
     enabled: !!amount,
-    args: [process.env.NEXT_PUBLIC_PRINTS_CONTRACT_ADDRESS || ('' as any), amount!],
+    // spender, amount
+    args: [process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS as `0x${string}`, utils.parseUnits('1000', 18)],
   })
 
   const {
@@ -38,7 +38,7 @@ const Actions = ({ amount, minPrints, onClose }: ActionsProps) => {
     isLoading: isLoadingApprove,
     write: approvePrints,
   } = useContractWrite({
-    ...config,
+    ...configApprove,
     onError: () => {
       toast({ title: 'Error', description: 'Transaction error', status: 'error' })
     },
@@ -70,8 +70,8 @@ const Actions = ({ amount, minPrints, onClose }: ActionsProps) => {
     address: process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS,
     abi: TracesContract,
     functionName: 'outbid',
-    enabled: !!amount && isSuccessApproveTraces,
-    args: ['0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512', BigNumber.from(11), amount!],
+    enabled: isSuccessApprove && isSuccessWaitingApprove,
+    args: ['0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512', BigNumber.from(11), amount],
   })
 
   const {
@@ -154,7 +154,14 @@ const Actions = ({ amount, minPrints, onClose }: ActionsProps) => {
                     <Spinner ml={2} size="sm" speed="0.7s" />
                   </>
                 ) : (
-                  <Button disabled={!outbid} color="gray.900" colorScheme="primary" variant="solid" size="lg" onClick={handleOutbid}>
+                  <Button
+                    disabled={!outbid && isLoadingOutbid}
+                    color="gray.900"
+                    colorScheme="primary"
+                    variant="solid"
+                    size="lg"
+                    onClick={handleOutbid}
+                  >
                     Confirm
                   </Button>
                 )}

@@ -48,7 +48,7 @@ const Stake = ({ allowance, minPrints, userPrints = 0, onClose, onSuccess }: Sta
     abi: PrintsContract,
     functionName: 'approve',
     enabled: amountBN.toNumber() > 0,
-    args: [process.env.NEXT_PUBLIC_PRINTS_CONTRACT_ADDRESS || ('' as any), amountBN!],
+    args: [process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS as `0x${string}`, amountBN!],
   })
 
   const {

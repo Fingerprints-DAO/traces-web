@@ -24,7 +24,6 @@ const ModalMint = ({ isOpen, onClose }: ModalMintProps) => {
 
   const { address } = useAccount()
   const { allowance } = usePrintsRead()
-
   const { data: balance } = useBalance({ address, enabled: Boolean(address) && Boolean(printContractAddress), token: printContractAddress })
 
   useEffect(() => {
@@ -40,7 +39,7 @@ const ModalMint = ({ isOpen, onClose }: ModalMintProps) => {
         <ModalMintHeader amount={amount?.toNumber()} prints={Number(balance?.formatted)} />
         <ModalBody padding={0}>
           {!!amount?.toNumber() ? (
-            <Actions amount={amount!} minPrints={fakeMinPrints} onClose={onClose} />
+            <Actions amount={amount!} onClose={onClose} />
           ) : (
             <Stake allowance={allowance} minPrints={fakeMinPrints} userPrints={Number(balance?.formatted)} onSuccess={setAmount} onClose={onClose} />
           )}
