@@ -116,7 +116,7 @@ const Stake = ({ allowance, minPrints, userPrints = 0, onClose, onSuccess }: Sta
           variant="solid"
           ml={6}
         >
-          {isLoadingWaitingApprove || isLoadingWrite ? 'Confirming stake...' : 'Confirm stake'}
+          {isLoadingWaitingApprove || isLoadingWrite ? 'Confirming approve...' : 'Confirm stake'}
         </Button>
       </ModalFooter>
     </form>

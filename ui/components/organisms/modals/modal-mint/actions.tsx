@@ -17,8 +17,11 @@ type ActionsProps = {
   onClose: () => void
 }
 
+const tokenId = BigNumber.from(12)
+
 const Actions = ({ amount, minPrints, onClose }: ActionsProps) => {
   const toast = useToast()
+
   const { handleCloseModal } = useContext(ModalContext)
 
   const { config } = usePrepareContractWrite({
@@ -53,11 +56,21 @@ const Actions = ({ amount, minPrints, onClose }: ActionsProps) => {
 
   const handleApprove = () => approvePrints && approvePrints()
 
+  const { config: approveTracesConfig } = usePrepareContractWrite({
+    address: process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS,
+    abi: TracesContract,
+    functionName: 'approve',
+    enabled: !!tokenId,
+    args: ['0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512', tokenId],
+  })
+
+  const { isSuccess: isSuccessApproveTraces } = useContractWrite(approveTracesConfig)
+
   const { config: outbidConfig } = usePrepareContractWrite({
     address: process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS,
     abi: TracesContract,
     functionName: 'outbid',
-    enabled: !!amount,
+    enabled: !!amount && isSuccessApproveTraces,
     args: ['0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512', BigNumber.from(11), amount!],
   })
 

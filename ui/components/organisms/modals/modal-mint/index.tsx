@@ -37,7 +37,7 @@ const ModalMint = ({ isOpen, onClose }: ModalMintProps) => {
     <Modal isOpen={isOpen} onClose={onClose} isCentered={true}>
       <ModalOverlay />
       <ModalContent background="gray.900" padding={[6, 12]} minW={['unset', 650]} maxW={['90%', '90%', '90%', 'md']}>
-        <ModalMintHeader prints={Number(balance?.formatted)} />
+        <ModalMintHeader amount={amount?.toNumber()} prints={Number(balance?.formatted)} />
         <ModalBody padding={0}>
           {!!amount?.toNumber() ? (
             <Actions amount={amount!} minPrints={fakeMinPrints} onClose={onClose} />
