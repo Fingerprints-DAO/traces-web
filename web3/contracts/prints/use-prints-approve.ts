@@ -11,7 +11,7 @@ const usePrintsApprove = (amount?: BigNumber) => {
     abi: PrintsContract,
     functionName: 'approve',
     enabled: !!amount,
-    args: [process.env.NEXT_PUBLIC_PRINTS_CONTRACT_ADDRESS || ('' as any), amount!],
+    args: [process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS as `0x${string}`, amount!],
   })
 
   return useContractWrite(config)
