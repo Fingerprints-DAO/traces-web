@@ -5,7 +5,6 @@ import useSWR from 'swr'
 import Link from 'next/link'
 import { Box, Heading, Text } from '@chakra-ui/react'
 import { CollectionMetadata, WNFTMetadata } from 'pages/api/helpers/_types'
-import { getExternalOpenseaUrl } from 'pages/api/helpers/_getLink'
 
 type CollectionCardProps = {
   id: string

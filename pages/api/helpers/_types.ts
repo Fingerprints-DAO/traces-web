@@ -6,6 +6,7 @@ export type WNFTMetadata = {
   description: string
   image: string
   externalUrl: string
+  ogOpenseaUrl: string
   openseaUrl: string
   attributes: Attribute[]
 }

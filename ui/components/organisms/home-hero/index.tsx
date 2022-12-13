@@ -19,7 +19,7 @@ const HomeHero = () => {
       <Container maxWidth="7xl" display={['block', 'flex']} justifyContent="space-between" alignItems="center">
         <Box marginRight={8} flex={1} marginBottom={[8, 0]}>
           <Heading as="h1" color="gray.50" size="3xl" marginBottom={4}>
-            Hold and Use NFTs {!isMobile && <br />}
+            Hold and use NFTs {!isMobile && <br />}
             from the Fingerprints collection
           </Heading>
           <Text color="gray.100" fontSize="lg">

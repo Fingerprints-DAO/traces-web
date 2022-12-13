@@ -25,7 +25,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
   // check if token has ogTokenAddress and ogTokenId
   if (token && token.tokenId) {
-    const data = await getWNFTMetadata(token.ogTokenAddress, token.ogTokenId.toString(), token.stakedAmount, token.lastOutbidTimestamp)
+    const data = await getWNFTMetadata(
+      token.ogTokenAddress,
+      token.ogTokenId.toString(),
+      req.query.id as string,
+      token.stakedAmount,
+      token.lastOutbidTimestamp
+    )
     res.status(200).json(data)
     return
   }
