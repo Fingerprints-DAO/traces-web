@@ -13,6 +13,7 @@ import { ModalContext } from '@ui/contexts/Modal'
 import { getBuiltGraphSDK } from '../../.graphclient'
 import { GetServerSidePropsContext } from 'next/types'
 import { CollectionMetadata } from 'pages/api/helpers/_types'
+import { Address } from 'wagmi'
 
 const arr = [
   { id: 1, status: 'avaliable' },
@@ -29,6 +30,8 @@ export async function fetcher<JSON = any>(input: RequestInfo, init?: RequestInit
   const res = await fetch(input, init)
   return res.json()
 }
+
+const isContract = (address: Address) => address.toLowerCase() === (process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS ?? '').toLowerCase()
 
 const Collection = ({ id }: ServerSideProps) => {
   const { data } = useQuery({ queryKey: 'GetCollection', queryFn: () => sdk.GetCollection({ ogTokenAddress: id }) })
@@ -51,18 +54,18 @@ const Collection = ({ id }: ServerSideProps) => {
             <GridItem w="100%" key={item.id}>
               <CollectionCard cardWidth={['100%']} image={{ height: '400px', marginBottom: 4 }} id={item.id.toString()}>
                 <Box marginTop={6} flex={1} display="flex" flexDirection="column">
-                  {item.currentOwner === process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS && (
+                  {isContract(item.currentOwner) && (
                     <>
                       <Box marginBottom={4}>
                         <Text color="gray.200">Minimum stake</Text>
                         <Text color="gray.100" fontWeight={600}>
-                          1000 PRINTS
+                          {item.firstStakePrice} PRINTS
                         </Text>
                       </Box>
                       <Box marginBottom={6}>
                         <Text color="gray.200">Guaranteed holding period</Text>
                         <Text color="gray.100" fontWeight={600}>
-                          10 days
+                          {item.minHoldPeriod} days
                         </Text>
                       </Box>
                       <Button color="gray.900" colorScheme="primary" width="full" marginTop="auto" onClick={handleOpenMintNftModal}>
@@ -118,13 +121,13 @@ const Collection = ({ id }: ServerSideProps) => {
                     </Button>
                   </>
                 )} */}
-                  {item.currentOwner !== process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS && (
+                  {!isContract(item.currentOwner) && (
                     <>
                       <Box marginBottom={4}>
                         <Text color="gray.200">Value to outbid</Text>
                         <Flex alignItems="baseline">
                           <Text color="gray.100" fontWeight={600} marginRight={2}>
-                            {item.price} PRINTS
+                            {item.lastPrice} PRINTS
                           </Text>
                           <Tooltip
                             label="The value decrease every day until reachs $value at day $date"

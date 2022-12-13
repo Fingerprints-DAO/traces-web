@@ -4,6 +4,8 @@ import { Web3Modal } from '@web3modal/react'
 import { ChakraProvider } from '@chakra-ui/react'
 import { WagmiConfig as Web3Provider } from 'wagmi'
 import { QueryClient, QueryClientProvider } from 'react-query'
+import Router from 'next/router'
+import ReactDOM from 'react-dom'
 
 // Components
 import { ModalProvider } from '@ui/contexts/Modal'
@@ -34,6 +36,25 @@ const queryClient = new QueryClient({
     },
   },
 })
+
+const Loading = () => <div>Loading louco...</div>
+
+const registerLoadingScreen = () => {
+  if (typeof window === 'undefined') return
+  const container = document.createElement('div')
+
+  Router.events.on('routeChangeStart', () => {
+    ReactDOM.render(<Loading />, container)
+    document.body.appendChild(container)
+  })
+
+  Router.events.on('routeChangeComplete', () => {
+    ReactDOM.unmountComponentAtNode(container)
+    // hide the loading screen
+    document.body.removeChild(container)
+  })
+}
+registerLoadingScreen()
 
 function Traces({ Component, pageProps, router }: AppProps) {
   useScrollRestoration(router)

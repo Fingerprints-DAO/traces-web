@@ -6,7 +6,7 @@ sources:
         # endpoint: https://api.studio.thegraph.com/query/38826/traces/v0.0.34
         # endpoint: https://api.studio.thegraph.com/d7e93acd35c73f0cdedadad7b0984645/subgraphs/id/38826
         # endpoint: http://localhost:8000/subgraphs/name/traces
-        endpoint: https://api.studio.thegraph.com/query/38826/traces/v0.0.34
+        endpoint: https://api.studio.thegraph.com/query/38826/traces/v0.0.36
         # endpoint: https://gateway.testnet.thegraph.com/api/d7e93acd35c73f0cdedadad7b0984645/subgraphs/id/GfYyAcCM67iwVMQDtawzKV4eH9zRwTtdDohQ4trxAWW8 # goerli
 
 documents:

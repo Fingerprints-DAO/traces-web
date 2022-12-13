@@ -34,7 +34,11 @@ const CollectionCard = ({ id, isCollection, cardWidth = ['100%', 96], image, chi
 
   const RenderLink = ({ children }: PropsWithChildren) => {
     if (isCollection) {
-      return <Link href={`collections/${id}`}>{children}</Link>
+      return (
+        <Link href={`collections/${id}`} prefetch>
+          {children}
+        </Link>
+      )
     }
     return (
       <a href={data?.openseaUrl} target={'_blank'} rel="noreferrer">
