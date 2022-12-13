@@ -1,0 +1,15 @@
+# Get collection by id passed as a variable
+query GetCollection($ogTokenAddress: String!) {
+  collections(where: {ogTokenAddress: $ogTokenAddress}) {
+    id
+    ogTokenAddress
+    blockTimestamp
+    tokens {
+      id
+      currentOwner
+      ogTokenId
+      price
+      tokenId
+    }
+  }
+}

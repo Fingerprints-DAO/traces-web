@@ -3,6 +3,7 @@ import type { AppProps } from 'next/app'
 import { Web3Modal } from '@web3modal/react'
 import { ChakraProvider } from '@chakra-ui/react'
 import { WagmiConfig as Web3Provider } from 'wagmi'
+import { QueryClient, QueryClientProvider } from 'react-query'
 
 // Components
 import { ModalProvider } from '@ui/contexts/Modal'
@@ -26,19 +27,29 @@ import '@fontsource/inter/700.css'
 import '@fontsource/inter/800.css'
 import '@fontsource/inter/900.css'
 
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+    },
+  },
+})
+
 function Traces({ Component, pageProps, router }: AppProps) {
   useScrollRestoration(router)
 
   return (
     <ChakraProvider theme={theme}>
-      <ModalProvider>
-        <Web3Provider client={web3Config}>
-          <Layout>
-            <Component {...pageProps} />
-            <Modal />
-          </Layout>
-        </Web3Provider>
-      </ModalProvider>
+      <QueryClientProvider client={queryClient}>
+        <ModalProvider>
+          <Web3Provider client={web3Config}>
+            <Layout>
+              <Component {...pageProps} />
+              <Modal />
+            </Layout>
+          </Web3Provider>
+        </ModalProvider>
+      </QueryClientProvider>
       <Web3Modal projectId={process.env.NEXT_PUBLIC_WALLET_CONNECT_KEY || ''} themeMode="dark" themeColor="default" ethereumClient={ethereumClient} />
     </ChakraProvider>
   )

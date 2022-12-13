@@ -49,11 +49,11 @@ const ModalAddNft = ({ isOpen, onClose }: ModalProps) => {
     resolver: yupResolver(schema),
     defaultValues: {
       ogTokenAddress: '',
+      dutchAuctionDuration: 10,
     },
   })
 
   const form = watch()
-
   const addNft = useTracesAddNft(formState.isSubmitted, form)
 
   const submit = () => addNft && addNft()

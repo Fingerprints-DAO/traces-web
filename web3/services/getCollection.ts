@@ -34,7 +34,7 @@ export const getCollectionInfo = async (address: string): Promise<CollectionMeta
       limit: '20',
       accept: '*/*',
     })
-    console.log(collections)
+
     const { id, name, description, image, externalUrl, sampleImages } = collections[0]
     return {
       id,
