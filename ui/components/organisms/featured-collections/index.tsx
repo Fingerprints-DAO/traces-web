@@ -5,19 +5,26 @@ import Link from 'next/link'
 import { ArrowBackIcon, ArrowForwardIcon } from '@chakra-ui/icons'
 import { Box, ButtonGroup, Container, Heading, IconButton, Text } from '@chakra-ui/react'
 import Swiper, { Pagination, Navigation } from 'swiper'
+import { useQuery } from 'react-query'
+import { getBuiltGraphSDK } from '../../../../.graphclient'
 
 // Components
 import Slider from '@ui/components/molecules/slider'
 import useMediaQuery from '@ui/hooks/use-media-query'
 import CollectionCard from '@ui/components/molecules/collection-card'
 
+const sdk = getBuiltGraphSDK()
+
 const FeaturedCollections = () => {
   const [swiper, setSwiper] = useState<Swiper>()
+  const { data, isLoading } = useQuery({ queryKey: 'GetCollections', queryFn: () => sdk.GetCollections() })
   const isMobile = useMediaQuery('(max-width: 479px)')
 
   const handleSliderNavigation = (action: 'previous' | 'next') => () => {
     return action === 'previous' ? swiper?.slidePrev() : swiper?.slideNext()
   }
+
+  if (data?.collections.length === 0) return null
 
   return (
     <Box as="section" paddingBottom={[20, 28]}>
@@ -51,8 +58,16 @@ const FeaturedCollections = () => {
         scrollbar={{ draggable: true }}
         modules={[Pagination, Navigation]}
         className="featured-collections"
-        items={Array.from(Array(8), (_, index) => {
-          return <CollectionCard path="collections/1" key={index} />
+        items={data?.collections.map((collection) => {
+          return (
+            <CollectionCard
+              key={collection.id}
+              isCollection
+              id={collection.ogTokenAddress}
+              cardWidth={['100%']}
+              image={{ height: '400px', marginBottom: 4 }}
+            />
+          )
         })}
       />
     </Box>

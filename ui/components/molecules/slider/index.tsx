@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react'
+import React from 'react'
 
 // Dependencies
 import { Swiper, SwiperProps, SwiperSlide } from 'swiper/react'
@@ -9,10 +9,11 @@ import 'swiper/css/pagination'
 import 'swiper/css/navigation'
 
 type SliderProps = {
-  items: React.ReactNode[]
+  items?: JSX.Element[]
 } & SwiperProps
 
 const Slider = ({ items, ...props }: SliderProps) => {
+  if (!items) return null
   return (
     <Swiper {...props}>
       {items.map((item, index) => {
