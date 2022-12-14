@@ -1,19 +1,28 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 
 // Dependencies
 import { Box, Heading, Text } from '@chakra-ui/react'
+import usePrintsRead from '@web3/contracts/prints/use-prints-read'
 
 type ModalMintHeaderProps = {
-  amount?: number
   prints?: number
+  showAllowance: boolean
 }
 
-const ModalMintHeader = ({ amount, prints = 0 }: ModalMintHeaderProps) => {
+const ModalMintHeader = ({ showAllowance, prints = 0 }: ModalMintHeaderProps) => {
+  const { allowance, refetchAllowance } = usePrintsRead()
+
+  useEffect(() => {
+    if (showAllowance) {
+      refetchAllowance()
+    }
+  }, [showAllowance, refetchAllowance])
+
   return (
     <Box
       display="flex"
       flexDirection={['column-reverse', 'row']}
-      alignItems={!!amount ? 'end' : 'start'}
+      alignItems={!!allowance ? 'end' : 'start'}
       justifyContent="space-between"
       marginBottom={10}
     >
@@ -25,9 +34,9 @@ const ModalMintHeader = ({ amount, prints = 0 }: ModalMintHeaderProps) => {
           Autoglyph#131
         </Text>
       </Box>
-      {!!amount ? (
+      {showAllowance && (allowance?.toNumber() || 0) > 0 ? (
         <Text as="span" color="gray.100">
-          {amount.toLocaleString()} $PRINTS
+          {allowance?.toNumber().toLocaleString()} $PRINTS
         </Text>
       ) : (
         <Text

@@ -44,7 +44,7 @@ const Wallet = ({ variant }: WalletProps) => {
         <Box display="flex" flexDirection={isDrawer ? 'row-reverse' : 'row'} alignItems="center" mr={isDrawer ? 0 : [3, 6]} mb={isDrawer ? 6 : 0}>
           <Box textAlign={isDrawer ? 'left' : 'right'} mr={2}>
             <Text as="strong" color="gray.200" display="block" fontSize={['xs', 'sm']} fontWeight={600} mb="-2px">
-              {parseFloat(balance?.formatted || '').toLocaleString()} PRINTS
+              {parseFloat(balance?.formatted || '0').toLocaleString()} PRINTS
             </Text>
             <Text as="span" color="gray.400" fontSize={['xs', 'sm']} display="block">
               {ensName || shortenAddress(address)}
