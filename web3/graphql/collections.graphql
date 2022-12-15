@@ -2,5 +2,6 @@ query GetCollections {
   collections {
     id
     ogTokenAddress
+    blockTimestamp
   }
 }

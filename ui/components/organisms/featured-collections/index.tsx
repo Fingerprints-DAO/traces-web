@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import useSWR from 'swr'
 
 // Dependencies
 import Link from 'next/link'
@@ -17,7 +18,7 @@ const sdk = getBuiltGraphSDK()
 
 const FeaturedCollections = () => {
   const [swiper, setSwiper] = useState<Swiper>()
-  const { data, isLoading } = useQuery({ queryKey: 'GetCollections', queryFn: () => sdk.GetCollections() })
+  const { data } = useQuery({ queryKey: 'GetCollections', queryFn: () => sdk.GetCollections() })
   const isMobile = useMediaQuery('(max-width: 479px)')
 
   const handleSliderNavigation = (action: 'previous' | 'next') => () => {
@@ -60,13 +61,7 @@ const FeaturedCollections = () => {
         className="featured-collections"
         items={data?.collections.map((collection) => {
           return (
-            <CollectionCard
-              key={collection.id}
-              isCollection
-              id={collection.ogTokenAddress}
-              cardWidth={['100%']}
-              image={{ height: '400px', marginBottom: 4 }}
-            />
+            <CollectionCard key={collection.id} id={collection.ogTokenAddress} cardWidth={['100%']} image={{ height: '400px', marginBottom: 4 }} />
           )
         })}
       />

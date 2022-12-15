@@ -1322,7 +1322,7 @@ export type GetCollectionQueryVariables = Exact<{
 
 export type GetCollectionQuery = { collections: Array<(
     Pick<Collection, 'id' | 'ogTokenAddress' | 'blockTimestamp'>
-    & { tokens: Array<Pick<WNFT, 'id' | 'lastPrice' | 'minHoldPeriod' | 'ogTokenId' | 'ogTokenAddress' | 'tokenId' | 'firstStakePrice' | 'currentOwner'>> }
+    & { tokens: Array<Pick<WNFT, 'id' | 'ogTokenAddress' | 'ogTokenId' | 'tokenId' | 'currentOwner' | 'lastPrice' | 'firstStakePrice' | 'minHoldPeriod'>> }
   )> };
 
 export type GetCollectionsQueryVariables = Exact<{ [key: string]: never; }>;
@@ -1339,13 +1339,13 @@ export const GetCollectionDocument = gql`
     blockTimestamp
     tokens {
       id
-      lastPrice
-      minHoldPeriod
-      ogTokenId
       ogTokenAddress
+      ogTokenId
       tokenId
-      firstStakePrice
       currentOwner
+      lastPrice
+      firstStakePrice
+      minHoldPeriod
     }
   }
 }

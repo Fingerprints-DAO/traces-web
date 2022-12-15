@@ -4,16 +4,21 @@ import { createContext, PropsWithChildren, useState } from 'react'
 import { useDisclosure } from '@chakra-ui/react'
 
 export enum ModalElement {
-  Mint = 'mint',
-  AddNFT = 'add-nft',
-  UpdateConfigs = 'update-configs',
-  Administrators = 'administrators',
-  Default = '',
+  Mint,
+  AddNFT,
+  UpdateConfigs,
+  Administrators,
+  Default,
 }
 
+type WNFTModalProps = {
+  id: string
+  name: string
+  minAmount: string
+}
 export type ModalContextValue = {
   isOpen?: boolean
-  payload?: Partial<{ id: string }>
+  payload?: WNFTModalProps | {}
   element: ModalElement
   handleOpenModal: (element: ModalElement, payload?: ModalContextValue['payload']) => () => void
   handleCloseModal: () => void
@@ -26,7 +31,7 @@ export type ModalProps = {
 
 const INITIAL_STATE: ModalContextValue = {
   element: ModalElement.Default,
-  handleOpenModal: (element: ModalElement, payload?: ModalContextValue['payload']) => () => {},
+  handleOpenModal: () => () => {},
   handleCloseModal: () => {},
 }
 
@@ -47,11 +52,12 @@ const ModalProvider = ({ children }: PropsWithChildren) => {
     }
 
   const handleCloseModal = () => {
-    setElement(ModalElement.Default)
+    setElement(INITIAL_STATE.element)
+    setPayload(INITIAL_STATE.payload)
     onClose()
   }
 
-  const values: ModalContextValue = { element, isOpen, payload, handleOpenModal, handleCloseModal }
+  const values = { element, isOpen, payload, handleOpenModal, handleCloseModal }
 
   return <ModalContext.Provider value={values}>{children}</ModalContext.Provider>
 }

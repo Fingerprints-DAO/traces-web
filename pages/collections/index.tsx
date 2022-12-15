@@ -37,7 +37,7 @@ const CollectionsPage = () => {
       <Grid templateColumns={['repeat(1, 1fr)', 'repeat(2, 1fr)', 'repeat(2, 1fr)', 'repeat(3, 1fr)', 'repeat(4, 1fr)']} gap={8} rowGap={12}>
         {data?.collections.map((collection) => (
           <GridItem w="100%" key={collection.id}>
-            <CollectionCard isCollection id={collection.ogTokenAddress} cardWidth={['100%']} image={{ height: '400px', marginBottom: 4 }} />
+            <CollectionCard id={collection.ogTokenAddress} cardWidth={['100%']} image={{ height: '400px', marginBottom: 4 }} />
           </GridItem>
         ))}
       </Grid>

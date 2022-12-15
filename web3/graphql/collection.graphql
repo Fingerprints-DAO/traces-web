@@ -6,13 +6,13 @@ query GetCollection($ogTokenAddress: String!) {
     blockTimestamp
     tokens {
       id
-      lastPrice
-      minHoldPeriod
-      ogTokenId
       ogTokenAddress
+      ogTokenId
       tokenId
-      firstStakePrice
       currentOwner
+      lastPrice
+      firstStakePrice
+      minHoldPeriod
     }
   }
 }
