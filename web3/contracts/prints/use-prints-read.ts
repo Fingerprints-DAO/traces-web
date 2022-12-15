@@ -1,11 +1,12 @@
 // Dependencies
-import { Address, useAccount, useContractRead } from 'wagmi'
+import { Address, useContractRead } from 'wagmi'
 
 // Helpers
 import PrintsContract from './contract'
+import useWallet from '@web3/wallet/use-wallet'
 
 const usePrintsRead = () => {
-  const { address } = useAccount()
+  const { address } = useWallet()
 
   const { data: allowance, refetch: refetchAllowance } = useContractRead({
     address: process.env.NEXT_PUBLIC_PRINTS_CONTRACT_ADDRESS,

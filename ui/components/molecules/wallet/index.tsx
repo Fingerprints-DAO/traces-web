@@ -3,12 +3,13 @@ import React, { useCallback } from 'react'
 // Dependencies
 import { useWeb3Modal } from '@web3modal/react'
 import { Box, Button, Text } from '@chakra-ui/react'
-import { useAccount, useBalance, useDisconnect, useEnsName } from 'wagmi'
+import { useBalance, useDisconnect, useEnsName } from 'wagmi'
 
 // Components
 import Avatar from '@ui/components/atoms/avatar'
 
 // Helpers
+import useWallet from '@web3/wallet/use-wallet'
 import { shortenAddress } from '@ui/utils/string'
 
 type WalletProps = {
@@ -20,7 +21,7 @@ const printContractAddress = process.env.NEXT_PUBLIC_PRINTS_CONTRACT_ADDRESS || 
 const Wallet = ({ variant }: WalletProps) => {
   const { open } = useWeb3Modal()
   const { disconnect } = useDisconnect()
-  const { address, isConnected } = useAccount()
+  const { address, isConnected } = useWallet()
 
   const { data: ensName } = useEnsName({ address, enabled: Boolean(address) })
   const { data: balance } = useBalance({
