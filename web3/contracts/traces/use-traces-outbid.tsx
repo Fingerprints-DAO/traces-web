@@ -3,15 +3,19 @@ import { Address } from 'wagmi'
 import { BigNumber } from 'ethers'
 import { useMutation } from 'react-query'
 import { Box, Text, useToast } from '@chakra-ui/react'
+import useTraces from './use-traces'
 
-// Helpers
-import usePrints from './use-prints'
+type Payload = {
+  tokenAddress: Address
+  tokenId: BigNumber
+  amount: BigNumber
+}
 
-const usePrintsApprove = () => {
+const useTracesOutbid = () => {
   const toast = useToast()
-  const prints = usePrints()
+  const traces = useTraces()
 
-  const request = async (balanceToApprove: BigNumber) => prints?.approve(process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS as Address, balanceToApprove)
+  const request = async ({ amount, tokenAddress, tokenId }: Payload) => traces?.outbid(tokenAddress, tokenId, amount)
 
   return useMutation(request, {
     onSuccess: () => {},
@@ -32,4 +36,4 @@ const usePrintsApprove = () => {
   })
 }
 
-export default usePrintsApprove
+export default useTracesOutbid

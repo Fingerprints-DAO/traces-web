@@ -1,15 +1,19 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
 // Dependencies
+import { Address } from 'wagmi'
 import { BigNumber } from 'ethers'
-import { useAccount, useBalance } from 'wagmi'
 import { Modal, ModalBody, ModalContent, ModalOverlay } from '@chakra-ui/react'
 
 // Components
 import Stake from './stake'
-import ModalMintHeader from './header'
-import usePrintsApprove from '@web3/contracts/prints/use-prints-approve'
 import Actions from './actions'
+import ModalMintHeader from './header'
+
+// Helpers
+import useWallet from '@web3/wallet/use-wallet'
+import usePrints from '@web3/contracts/prints/use-prints'
+import usePrintsApprove from '@web3/contracts/prints/use-prints-approve'
 
 type ModalMintProps = {
   isOpen: boolean
@@ -17,45 +21,72 @@ type ModalMintProps = {
 }
 
 const fakeMinPrints = 1000
-const printContractAddress = process.env.NEXT_PUBLIC_PRINTS_CONTRACT_ADDRESS || ('' as any)
 
 const ModalMint = ({ isOpen, onClose }: ModalMintProps) => {
-  const [canGoToActions, setCanGoToActions] = useState(false)
+  const prints = usePrints()
+  const { address, printsBalance } = useWallet()
 
-  const { address } = useAccount()
-  const printsApprove = usePrintsApprove(fakeMinPrints)
+  const [isFetched, setIsFetched] = useState(false)
+  const [amount, setAmount] = useState<BigNumber>()
+  const [allowance, setAllowance] = useState<BigNumber>()
 
-  const { allowance, isFetched, canStake, setAmount, isFetchedPrepare } = printsApprove
+  const printsApprove = usePrintsApprove()
 
-  const { data: balance } = useBalance({ address, enabled: Boolean(address) && Boolean(printContractAddress), token: printContractAddress })
+  const getAllowance = useCallback(async () => {
+    try {
+      if (prints) {
+        const allowance = await prints.allowance(address as Address, process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS as Address)
+
+        setAllowance(allowance)
+      }
+    } catch (error) {
+      console.log('getAllowance', error)
+    }
+  }, [address, prints])
+
+  useEffect(() => {
+    getAllowance()
+  }, [getAllowance])
+
+  const canStake = useMemo(() => (allowance?.toNumber() || 0) >= fakeMinPrints, [allowance])
 
   useEffect(() => {
     if (canStake) {
-      if ((allowance?.toNumber() || 0) > 0) {
-        setAmount(allowance)
-      }
-      setCanGoToActions(true)
+      setAmount(allowance)
     }
   }, [allowance, canStake, setAmount])
 
-  const handleSubmit = (data: { amount: number }) => setAmount(BigNumber.from(data.amount))
+  const canGoToActions = useMemo(() => isFetched || canStake, [canStake, isFetched])
 
-  useEffect(() => {
-    if (isFetched && isFetchedPrepare && !canGoToActions) {
-      setCanGoToActions(true)
+  const handleSubmit = async (data: { amount: number }) => {
+    try {
+      setIsFetched(true)
+
+      const allowance = await prints?.allowance(address as Address, process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS as Address)
+      const allowanceUntilNow = allowance?.toNumber()
+
+      const balanceToApprove = data.amount - (allowanceUntilNow || 0)
+
+      const amount = BigNumber.from(balanceToApprove)
+
+      setAmount(amount)
+
+      await printsApprove.mutateAsync(amount)
+    } catch (error) {
+      console.log('handleSubmit', error)
     }
-  }, [isFetched, isFetchedPrepare, canGoToActions])
+  }
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered={true}>
       <ModalOverlay />
       <ModalContent background="gray.900" padding={[6, 12]} minW={['unset', 650]} maxW={['90%', '90%', '90%', 'md']}>
-        <ModalMintHeader showAllowance={canGoToActions} prints={Number(balance?.formatted || 0)} />
+        <ModalMintHeader showAllowance={false} prints={Number(printsBalance?.formatted || 0)} />
         <ModalBody padding={0}>
           {canGoToActions ? (
-            <Actions {...printsApprove} minPrints={fakeMinPrints} onClose={onClose} />
+            <Actions {...printsApprove} amount={amount} minPrints={fakeMinPrints} onClose={onClose} />
           ) : (
-            <Stake minPrints={fakeMinPrints} userPrints={Number(balance?.formatted)} onSubmit={handleSubmit} onClose={onClose} />
+            <Stake minPrints={fakeMinPrints} userPrints={Number(printsBalance?.formatted)} onSubmit={handleSubmit} onClose={onClose} />
           )}
         </ModalBody>
       </ModalContent>

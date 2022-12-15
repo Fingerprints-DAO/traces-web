@@ -12,11 +12,11 @@ type ModalMintHeaderProps = {
 const ModalMintHeader = ({ showAllowance, prints = 0 }: ModalMintHeaderProps) => {
   const { allowance, refetchAllowance } = usePrintsRead()
 
-  useEffect(() => {
-    if (showAllowance) {
-      refetchAllowance()
-    }
-  }, [showAllowance, refetchAllowance])
+  //   useEffect(() => {
+  //     if (showAllowance) {
+  //       refetchAllowance()
+  //     }
+  //   }, [showAllowance, refetchAllowance])
 
   return (
     <Box

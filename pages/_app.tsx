@@ -11,6 +11,7 @@ import Modal from '@ui/components/organisms/modals'
 
 // Helpers
 import theme from '@ui/base/theme'
+import ReactQueryProvider from '@ui/contexts/ReactQuery'
 import { web3Config, ethereumClient } from '@web3/config'
 import useScrollRestoration from '@ui/hooks/use-scroll-restoration'
 
@@ -30,17 +31,24 @@ function Traces({ Component, pageProps, router }: AppProps) {
   useScrollRestoration(router)
 
   return (
-    <ChakraProvider theme={theme}>
-      <ModalProvider>
-        <Web3Provider client={web3Config}>
-          <Layout>
-            <Component {...pageProps} />
-            <Modal />
-          </Layout>
-        </Web3Provider>
-      </ModalProvider>
-      <Web3Modal projectId={process.env.NEXT_PUBLIC_WALLET_CONNECT_KEY || ''} themeMode="dark" themeColor="default" ethereumClient={ethereumClient} />
-    </ChakraProvider>
+    <ReactQueryProvider>
+      <ChakraProvider theme={theme}>
+        <ModalProvider>
+          <Web3Provider client={web3Config}>
+            <Layout>
+              <Component {...pageProps} />
+              <Modal />
+            </Layout>
+          </Web3Provider>
+        </ModalProvider>
+        <Web3Modal
+          projectId={process.env.NEXT_PUBLIC_WALLET_CONNECT_KEY || ''}
+          themeMode="dark"
+          themeColor="default"
+          ethereumClient={ethereumClient}
+        />
+      </ChakraProvider>
+    </ReactQueryProvider>
   )
 }
 
