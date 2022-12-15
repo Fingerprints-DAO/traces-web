@@ -4,7 +4,22 @@ import React from 'react'
 import { useForm } from 'react-hook-form'
 import { number, object, string } from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { Box, Button, Grid, GridItem, Heading, Input, InputGroup, InputRightAddon, Modal, ModalBody, ModalContent, ModalFooter, ModalOverlay, Text, useToast } from '@chakra-ui/react'
+import {
+  Box,
+  Button,
+  Grid,
+  GridItem,
+  Heading,
+  Input,
+  InputGroup,
+  InputRightAddon,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalOverlay,
+  Text,
+} from '@chakra-ui/react'
 
 // Helpers
 import { ModalProps } from '@ui/contexts/Modal'
@@ -107,7 +122,7 @@ const ModalAddNft = ({ isOpen, onClose }: ModalProps) => {
                 <InputGroup>
                   <Input {...register('dutchAuctionDuration')} type="number" size="lg" borderColor="gray.600" placeholder="Ex: 100" />
                   <InputRightAddon background="gray.800" borderColor="gray.600" color="gray.400" height={12}>
-                    seconds
+                    hours
                   </InputRightAddon>
                 </InputGroup>
               </GridItem>

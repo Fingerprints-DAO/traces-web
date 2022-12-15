@@ -1,14 +1,16 @@
 import React from 'react'
 
 // Dependencies
-import { useAccount } from 'wagmi'
 import { useWeb3Modal } from '@web3modal/react'
 import { Box, Button, Container, Heading, Text, useMediaQuery } from '@chakra-ui/react'
+
+// Helpers
+import useWallet from '@web3/wallet/use-wallet'
 import { useIsBrowser } from '@ui/hooks/use-is-browser'
 
 const HomeHero = () => {
   const { open } = useWeb3Modal()
-  const { isConnected } = useAccount()
+  const { isConnected } = useWallet()
   const [isMobile] = useMediaQuery('(max-width: 30em)')
   const isBrowser = useIsBrowser()
 

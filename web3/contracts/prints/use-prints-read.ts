@@ -1,22 +1,24 @@
 // Dependencies
-import { useAccount, useContractRead } from 'wagmi'
+import { Address, useContractRead } from 'wagmi'
 
 // Helpers
 import PrintsContract from './contract'
+import useWallet from '@web3/wallet/use-wallet'
 
 const usePrintsRead = () => {
-  const { address } = useAccount()
-  const { data: allowance } = useContractRead({
+  const { address } = useWallet()
+
+  const { data: allowance, refetch: refetchAllowance } = useContractRead({
     address: process.env.NEXT_PUBLIC_PRINTS_CONTRACT_ADDRESS,
     abi: PrintsContract,
     functionName: 'allowance',
     enabled: !!address,
-    // owner, spender
-    args: [address as `0x${string}`, process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS as `0x${string}`],
+    args: [address as Address, process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS as Address],
   })
 
   return {
     allowance,
+    refetchAllowance,
   }
 }
 
