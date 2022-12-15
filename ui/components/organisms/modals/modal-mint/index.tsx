@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 
 // Dependencies
 import { Address } from 'wagmi'
@@ -14,30 +14,32 @@ import ModalMintHeader from './header'
 import useWallet from '@web3/wallet/use-wallet'
 import usePrints from '@web3/contracts/prints/use-prints'
 import usePrintsApprove from '@web3/contracts/prints/use-prints-approve'
+import { ModalContext, WNFTModalProps } from '@ui/contexts/Modal'
 
 type ModalMintProps = {
   isOpen: boolean
   onClose: () => void
 }
 
-const fakeMinPrints = 1000
-
 const ModalMint = ({ isOpen, onClose }: ModalMintProps) => {
+  const { payload } = useContext(ModalContext) as { payload: WNFTModalProps }
+  const minPrints = Number(payload.minAmount) ?? 0
+
   const prints = usePrints()
   const { address, printsBalance } = useWallet()
 
   const [isFetched, setIsFetched] = useState(false)
-  const [amount, setAmount] = useState<BigNumber>()
-  const [allowance, setAllowance] = useState<BigNumber>()
+  const [amount, setAmount] = useState<number>(0)
+  const [allowance, setAllowance] = useState<number>(0)
 
   const printsApprove = usePrintsApprove()
 
   const getAllowance = useCallback(async () => {
     try {
       if (prints) {
-        const allowance = await prints.allowance(address as Address, process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS as Address)
+        const newAllowance = await prints.allowance(address as Address, process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS as Address)
 
-        setAllowance(allowance)
+        setAllowance(newAllowance?.toNumber() ?? 0)
       }
     } catch (error) {
       console.log('getAllowance', error)
@@ -48,7 +50,7 @@ const ModalMint = ({ isOpen, onClose }: ModalMintProps) => {
     getAllowance()
   }, [getAllowance])
 
-  const canStake = useMemo(() => (allowance?.toNumber() || 0) >= fakeMinPrints, [allowance])
+  const canStake = useMemo(() => allowance >= minPrints, [allowance, minPrints])
 
   useEffect(() => {
     if (canStake) {
@@ -62,16 +64,16 @@ const ModalMint = ({ isOpen, onClose }: ModalMintProps) => {
     try {
       setIsFetched(true)
 
-      const allowance = await prints?.allowance(address as Address, process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS as Address)
-      const allowanceUntilNow = allowance?.toNumber()
+      const currentAllowance = await prints?.allowance(address as Address, process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS as Address)
+      const allowanceUntilNow = currentAllowance?.toNumber()
 
       const balanceToApprove = data.amount - (allowanceUntilNow || 0)
 
-      const amount = BigNumber.from(balanceToApprove)
+      const currentAmount = balanceToApprove
 
-      setAmount(amount)
+      setAmount(currentAmount)
 
-      await printsApprove.mutateAsync(amount)
+      await printsApprove.mutateAsync(BigNumber.from(currentAmount))
     } catch (error) {
       console.log('handleSubmit', error)
     }
@@ -81,12 +83,12 @@ const ModalMint = ({ isOpen, onClose }: ModalMintProps) => {
     <Modal isOpen={isOpen} onClose={onClose} isCentered={true}>
       <ModalOverlay />
       <ModalContent background="gray.900" padding={[6, 12]} minW={['unset', 650]} maxW={['90%', '90%', '90%', 'md']}>
-        <ModalMintHeader showAllowance={false} prints={Number(printsBalance?.formatted || 0)} />
+        <ModalMintHeader showAllowance={allowance > 0} prints={Number(printsBalance?.formatted || 0)} />
         <ModalBody padding={0}>
           {canGoToActions ? (
-            <Actions {...printsApprove} amount={amount} minPrints={fakeMinPrints} onClose={onClose} />
+            <Actions {...printsApprove} amount={amount} minPrints={minPrints} onClose={onClose} />
           ) : (
-            <Stake minPrints={fakeMinPrints} userPrints={Number(printsBalance?.formatted)} onSubmit={handleSubmit} onClose={onClose} />
+            <Stake userPrints={Number(printsBalance?.formatted)} onSubmit={handleSubmit} onClose={onClose} />
           )}
         </ModalBody>
       </ModalContent>

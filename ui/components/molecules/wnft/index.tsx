@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, useContext } from 'react'
+import React, { PropsWithChildren, useContext, useMemo } from 'react'
 import useSWR from 'swr'
 
 // Dependencies
@@ -22,14 +22,17 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
   // fetch http api on route `api/collection/${id}` and return the collection data, do not use react-query here
   const { data, error } = useSWR<WNFTMetadata>(`/api/wnft/${item.id}`, fetcher)
 
+  const handleOpenMintNftModal = useMemo(
+    () => handleOpenModal(ModalElement.Mint, { id: item.id, name: data?.name, minAmount: item.firstStakePrice }),
+    [handleOpenModal, item.id, data?.name, item.firstStakePrice]
+  )
+
   if (error) {
     return <div>failed to load</div>
   }
   if (!data) {
     return <div>loading...</div>
   }
-
-  const handleOpenMintNftModal = handleOpenModal(ModalElement.Mint, { id: item.id, name: 'item', minAmount: item.firstStakePrice })
 
   return (
     <GridItem w="100%" key={item.id}>

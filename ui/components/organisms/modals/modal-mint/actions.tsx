@@ -16,7 +16,7 @@ import useTracesOutbid from '@web3/contracts/traces/use-traces-outbid'
 
 type ActionsProps = {
   minPrints: number
-  amount?: BigNumber
+  amount: number
   onClose: () => void
 } & UseMutationResult<ContractTransaction | undefined, any, BigNumber, unknown>
 
@@ -54,7 +54,7 @@ const Actions = (props: ActionsProps) => {
     try {
       console.log('amount', amount)
       if (amount) {
-        await outbid.mutateAsync({ amount, tokenAddress: '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512', tokenId })
+        await outbid.mutateAsync({ amount: BigNumber.from(amount), tokenAddress: '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512', tokenId })
 
         setIsOutbidSubmitted(true)
       }
@@ -68,7 +68,7 @@ const Actions = (props: ActionsProps) => {
   const handleApprove = async () => {
     try {
       if (amount) {
-        await approvePrints(amount)
+        await approvePrints(BigNumber.from(amount))
       }
     } catch (error) {
       console.log('handleApprove', error)
@@ -104,7 +104,7 @@ const Actions = (props: ActionsProps) => {
   }, [canStake, handleOutbid, isOutbidSubmitted])
 
   const value = useMemo(() => {
-    return (allowance?.toNumber() || 0) > 0 ? allowance?.toNumber().toLocaleString() : (amount?.toNumber() || 0).toLocaleString()
+    return (allowance?.toNumber() || 0) > 0 ? allowance?.toNumber().toLocaleString() : amount.toLocaleString()
   }, [allowance, amount])
 
   return (

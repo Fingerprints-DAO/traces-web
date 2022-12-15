@@ -11,7 +11,7 @@ export enum ModalElement {
   Default,
 }
 
-type WNFTModalProps = {
+export type WNFTModalProps = {
   id: string
   name: string
   minAmount: string

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useContext, useMemo } from 'react'
 
 // Dependencies
 import get from 'lodash/get'
@@ -6,15 +6,19 @@ import { number, object } from 'yup'
 import { Controller, useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Box, Button, FormControl, FormErrorMessage, Input, InputGroup, InputRightAddon, ModalFooter, Text } from '@chakra-ui/react'
+import { ModalContext, WNFTModalProps } from '@ui/contexts/Modal'
+import usePrintsRead from '@web3/contracts/prints/use-prints-read'
 
 type StakeProps = {
   onClose: () => void
   onSubmit: (data: { amount: number }) => void
-  minPrints: number
   userPrints?: number
 }
 
-const Stake = ({ minPrints, userPrints = 0, onClose, onSubmit }: StakeProps) => {
+const Stake = ({ userPrints = 0, onClose, onSubmit }: StakeProps) => {
+  const { payload } = useContext(ModalContext) as { payload: WNFTModalProps }
+  const { allowance } = usePrintsRead()
+  const minPrints = (Number(payload.minAmount) ?? 0) - (allowance?.toNumber() ?? 0)
   const schema = object({
     amount: number()
       .min(minPrints, `Minimum amount allowed is ${minPrints.toLocaleString()} $PRINTS`)
