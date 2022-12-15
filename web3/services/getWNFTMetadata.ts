@@ -7,21 +7,28 @@ const getRandomData = (address: string, tokenId: string) => {
     description: "FP members can hold and enjoy usage permissions from FP's NFTs through a staking system",
     image: `https://storage.googleapis.com/opensea-prod.appspot.com/puffs/${Math.floor(Math.random() * 10)}.png?w=500&auto=format`,
     externalUrl: `https://fingerprintsdao.xyz/traces/${tokenId}`,
+    ogOpenseaUrl: `https://testnets.opensea.io/assets/${address}/${tokenId}`,
     openseaUrl: `https://testnets.opensea.io/assets/${address}/${tokenId}`,
     attributes: [],
   }
 }
 
-export const getWNFTMetadata = async (address: string, tokenId: string, stakedAmount: number, stakedDate: number): Promise<WNFTMetadata> => {
+export const getWNFTMetadata = async (
+  ogTokenAddress: string,
+  ogTokenId: string,
+  tokenId: string,
+  stakedAmount: number,
+  stakedDate: number
+): Promise<WNFTMetadata> => {
   // return random data if network is local
   if (process.env.NEXT_PUBLIC_WEB3_NETWORK === 'local') {
     return {
-      ...getRandomData(address, tokenId),
-      name: `Mock erc721 NFT #${tokenId}`,
+      ...getRandomData(ogTokenAddress, ogTokenId),
+      name: `Mock erc721 NFT #${ogTokenId}`,
       attributes: [
         {
           trait_type: 'Collection Address',
-          value: address,
+          value: ogTokenAddress,
         },
         {
           trait_type: 'Collection Name',
@@ -29,7 +36,7 @@ export const getWNFTMetadata = async (address: string, tokenId: string, stakedAm
         },
         {
           trait_type: 'NFT ID',
-          value: tokenId,
+          value: ogTokenId,
         },
         {
           trait_type: 'Staked $PRINTS',
@@ -51,7 +58,7 @@ export const getWNFTMetadata = async (address: string, tokenId: string, stakedAm
     const {
       data: { tokens },
     } = await reservoirAPI.getTokensV5({
-      tokens: `${address}%3A${tokenId}`,
+      tokens: `${ogTokenAddress}%3A${ogTokenId}`,
     })
     // cache tokens[0].token for 24 hours and returns the cached version or fetch a new version
 
@@ -62,7 +69,8 @@ export const getWNFTMetadata = async (address: string, tokenId: string, stakedAm
         image: tokens[0].token.image,
         description: `FP members can hold and enjoy usage permissions from FP's NFTs through a staking system`,
         externalUrl: `https://fingerprintsdao.xyz/traces/${tokens[0].token.contract}/${tokens[0].token.tokenId}`,
-        openseaUrl: `https://testnets.opensea.io/assets/${tokens[0].token.contract}/${tokens[0].token.tokenId}`,
+        ogOpenseaUrl: `https://testnets.opensea.io/assets/${tokens[0].token.contract}/${tokens[0].token.tokenId}`,
+        openseaUrl: `https://testnets.opensea.io/assets/${process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS}/${tokenId}`,
         attributes: [
           {
             trait_type: 'Collection Address',
@@ -92,10 +100,10 @@ export const getWNFTMetadata = async (address: string, tokenId: string, stakedAm
         ],
       }
     }
-    return getRandomData(address, tokenId)
+    return getRandomData(ogTokenAddress, ogTokenId)
   } catch (error) {
     console.error(error)
     // return random data if there is an error
-    return getRandomData(address, tokenId)
+    return getRandomData(ogTokenAddress, ogTokenId)
   }
 }

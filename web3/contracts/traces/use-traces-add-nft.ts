@@ -26,6 +26,7 @@ const useTracesAddNft = (isSubmitted: boolean, payload: AddNftPayload) => {
       payload?.minStake as any,
       payload?.minHoldPeriod as any,
       payload?.dutchMultiplier as any,
+      // payload?.dutchAuctionDuration as any,
       BigNumber.from(payload?.dutchAuctionDuration).mul(60),
     ],
     enabled: isSubmitted && !!isEditor && !!payload,
