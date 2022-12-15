@@ -2,25 +2,19 @@ import React, { useMemo } from 'react'
 
 // Dependencies
 import get from 'lodash/get'
-import { BigNumber } from 'ethers'
 import { number, object } from 'yup'
 import { Controller, useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { Box, Button, FormControl, FormErrorMessage, Input, InputGroup, InputRightAddon, ModalFooter, Text, useToast } from '@chakra-ui/react'
-import { useContractWrite, usePrepareContractWrite, useWaitForTransaction } from 'wagmi'
-import PrintsContract from '@web3/contracts/prints/contract'
+import { Box, Button, FormControl, FormErrorMessage, Input, InputGroup, InputRightAddon, ModalFooter, Text } from '@chakra-ui/react'
 
 type StakeProps = {
   onClose: () => void
-  onSuccess: (amount: BigNumber) => void
+  onSubmit: (data: { amount: number }) => void
   minPrints: number
   userPrints?: number
-  allowance?: BigNumber
 }
 
-const Stake = ({ allowance, minPrints, userPrints = 0, onClose, onSuccess }: StakeProps) => {
-  const toast = useToast()
-
+const Stake = ({ minPrints, userPrints = 0, onClose, onSubmit }: StakeProps) => {
   const schema = object({
     amount: number()
       .min(minPrints, `Minimum amount allowed is ${minPrints.toLocaleString()} $PRINTS`)
@@ -28,59 +22,18 @@ const Stake = ({ allowance, minPrints, userPrints = 0, onClose, onSuccess }: Sta
       .required(),
   })
 
-  const { control, formState, handleSubmit, watch } = useForm<{ amount: number }>({
+  const { control, formState, handleSubmit } = useForm<{ amount: number }>({
     mode: 'onSubmit',
     resolver: yupResolver(schema),
-  })
-
-  const amount = watch('amount')
-
-  const amountBN = useMemo(() => {
-    const allowanceUntilNow = allowance?.toNumber()
-
-    const balanceToApprove = (amount || 0) - (allowanceUntilNow || 0)
-
-    return BigNumber.from(balanceToApprove)
-  }, [allowance, amount])
-
-  const { config } = usePrepareContractWrite({
-    address: process.env.NEXT_PUBLIC_PRINTS_CONTRACT_ADDRESS,
-    abi: PrintsContract,
-    functionName: 'approve',
-    enabled: amountBN.toNumber() > 0,
-    args: [process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS as `0x${string}`, amountBN!],
-  })
-
-  const {
-    data: approved,
-    isSuccess: isSuccessApprove,
-    isLoading: isLoadingWrite,
-    write: approvePrints,
-  } = useContractWrite({
-    ...config,
-    onError: () => {
-      toast({ title: 'Error', description: 'Transaction error', status: 'error' })
-    },
-  })
-
-  const { isLoading: isLoadingWaitingApprove } = useWaitForTransaction({
-    hash: approved?.hash,
-    enabled: isSuccessApprove,
-    onSettled: (data, error) => {
-      if (!error) {
-        onSuccess(amountBN)
-      }
+    defaultValues: {
+      amount: 0,
     },
   })
 
   const formError = useMemo(() => get(formState.errors, 'amount'), [formState.errors])
 
-  const submit = () => {
-    approvePrints?.()
-  }
-
   return (
-    <form onSubmit={handleSubmit(submit)}>
+    <form onSubmit={handleSubmit(onSubmit)}>
       <Box>
         <Text color="gray.100" display="block" as="label" htmlFor="amount" fontWeight="semibold" marginBottom={2}>
           Amount to stake
@@ -108,15 +61,8 @@ const Stake = ({ allowance, minPrints, userPrints = 0, onClose, onSuccess }: Sta
         <Button colorScheme="red" variant="outline" onClick={onClose}>
           Cancel
         </Button>
-        <Button
-          disabled={isLoadingWrite || isLoadingWaitingApprove || !approvePrints}
-          type="submit"
-          color="gray.900"
-          colorScheme="primary"
-          variant="solid"
-          ml={6}
-        >
-          {isLoadingWaitingApprove || isLoadingWrite ? 'Confirming approve...' : 'Confirm stake'}
+        <Button type="submit" color="gray.900" colorScheme="primary" variant="solid" ml={6}>
+          Confirm stake
         </Button>
       </ModalFooter>
     </form>
