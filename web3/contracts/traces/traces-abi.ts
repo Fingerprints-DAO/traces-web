@@ -382,13 +382,13 @@ const TracesContract = [
       {
         indexed: false,
         internalType: 'uint256',
-        name: '',
+        name: 'price',
         type: 'uint256',
       },
       {
         indexed: false,
         internalType: 'uint256',
-        name: '',
+        name: 'minHoldPeriod',
         type: 'uint256',
       },
     ],

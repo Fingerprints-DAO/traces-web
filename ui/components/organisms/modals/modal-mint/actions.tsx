@@ -8,7 +8,7 @@ import { TransactionReceipt } from '@ethersproject/providers'
 import { Box, Button, Icon, ModalFooter, Spinner, Text, useToast } from '@chakra-ui/react'
 
 // Helpers
-import { ModalContext } from '@ui/contexts/Modal'
+import { ModalContext, WNFTModalProps } from '@ui/contexts/Modal'
 import { Address, useWaitForTransaction } from 'wagmi'
 import usePrints from '@web3/contracts/prints/use-prints'
 import useWallet from '@web3/wallet/use-wallet'
@@ -20,9 +20,8 @@ type ActionsProps = {
   onClose: () => void
 } & UseMutationResult<ContractTransaction | undefined, any, BigNumber, unknown>
 
-const tokenId = BigNumber.from(11)
-
 const Actions = (props: ActionsProps) => {
+  const { payload } = useContext(ModalContext) as { payload: WNFTModalProps }
   const toast = useToast()
   const prints = usePrints()
   const { address } = useWallet()
@@ -49,19 +48,20 @@ const Actions = (props: ActionsProps) => {
   }, [getAllowance])
 
   const { handleCloseModal } = useContext(ModalContext)
-
+  console.log('payload', payload)
   const handleOutbid = useCallback(async () => {
     try {
       console.log('amount', amount)
       if (amount) {
-        await outbid.mutateAsync({ amount: BigNumber.from(amount), tokenAddress: '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512', tokenId })
+        console.log('here', payload.ogTokenAddress)
+        await outbid.mutateAsync({ amount: BigNumber.from(amount), tokenAddress: payload.ogTokenAddress, tokenId: BigNumber.from(payload.ogTokenId) })
 
         setIsOutbidSubmitted(true)
       }
     } catch (error) {
       console.log('handleWaitingApproveSuccess', error)
     }
-  }, [amount, outbid])
+  }, [amount, outbid, payload.ogTokenAddress, payload.ogTokenId])
 
   const waitingApprove = useWaitForTransaction({ hash: approve?.hash as Address })
 

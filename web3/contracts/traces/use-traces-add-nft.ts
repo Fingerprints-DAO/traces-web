@@ -6,7 +6,7 @@ import { Address, useContractWrite, usePrepareContractWrite } from 'wagmi'
 
 // Helpers
 import useTracesRead from './use-traces-read'
-import TracesContract from '@web3/contracts/traces/contract'
+import TracesContract from '@web3/contracts/traces/traces-abi'
 import { ModalContext } from '@ui/contexts/Modal'
 import { AddNftPayload } from '@ui/components/organisms/modals/modal-add-nft'
 import { BigNumber } from 'ethers'

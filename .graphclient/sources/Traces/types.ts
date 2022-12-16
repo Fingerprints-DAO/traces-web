@@ -545,6 +545,8 @@ export type TokenAdded = {
   tokenId: Scalars['BigInt'];
   blockNumber: Scalars['BigInt'];
   blockTimestamp: Scalars['BigInt'];
+  param3: Scalars['BigInt'];
+  param4: Scalars['BigInt'];
   transactionHash: Scalars['Bytes'];
 };
 
@@ -593,6 +595,22 @@ export type TokenAdded_filter = {
   blockTimestamp_lte?: InputMaybe<Scalars['BigInt']>;
   blockTimestamp_in?: InputMaybe<Array<Scalars['BigInt']>>;
   blockTimestamp_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  param3?: InputMaybe<Scalars['BigInt']>;
+  param3_not?: InputMaybe<Scalars['BigInt']>;
+  param3_gt?: InputMaybe<Scalars['BigInt']>;
+  param3_lt?: InputMaybe<Scalars['BigInt']>;
+  param3_gte?: InputMaybe<Scalars['BigInt']>;
+  param3_lte?: InputMaybe<Scalars['BigInt']>;
+  param3_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  param3_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  param4?: InputMaybe<Scalars['BigInt']>;
+  param4_not?: InputMaybe<Scalars['BigInt']>;
+  param4_gt?: InputMaybe<Scalars['BigInt']>;
+  param4_lt?: InputMaybe<Scalars['BigInt']>;
+  param4_gte?: InputMaybe<Scalars['BigInt']>;
+  param4_lte?: InputMaybe<Scalars['BigInt']>;
+  param4_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  param4_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
   transactionHash?: InputMaybe<Scalars['Bytes']>;
   transactionHash_not?: InputMaybe<Scalars['Bytes']>;
   transactionHash_in?: InputMaybe<Array<Scalars['Bytes']>>;
@@ -610,6 +628,8 @@ export type TokenAdded_orderBy =
   | 'tokenId'
   | 'blockNumber'
   | 'blockTimestamp'
+  | 'param3'
+  | 'param4'
   | 'transactionHash';
 
 export type TokenDeleted = {
@@ -696,6 +716,7 @@ export type WNFT = {
   lastPrice: Scalars['BigInt'];
   firstStakePrice: Scalars['BigInt'];
   minHoldPeriod: Scalars['BigInt'];
+  blockTimestamp: Scalars['BigInt'];
 };
 
 export type WNFT_filter = {
@@ -806,6 +827,14 @@ export type WNFT_filter = {
   minHoldPeriod_lte?: InputMaybe<Scalars['BigInt']>;
   minHoldPeriod_in?: InputMaybe<Array<Scalars['BigInt']>>;
   minHoldPeriod_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  blockTimestamp?: InputMaybe<Scalars['BigInt']>;
+  blockTimestamp_not?: InputMaybe<Scalars['BigInt']>;
+  blockTimestamp_gt?: InputMaybe<Scalars['BigInt']>;
+  blockTimestamp_lt?: InputMaybe<Scalars['BigInt']>;
+  blockTimestamp_gte?: InputMaybe<Scalars['BigInt']>;
+  blockTimestamp_lte?: InputMaybe<Scalars['BigInt']>;
+  blockTimestamp_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  blockTimestamp_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
 };
@@ -819,7 +848,8 @@ export type WNFT_orderBy =
   | 'currentOwner'
   | 'lastPrice'
   | 'firstStakePrice'
-  | 'minHoldPeriod';
+  | 'minHoldPeriod'
+  | 'blockTimestamp';
 
 export type _Block_ = {
   /** The hash of the block */

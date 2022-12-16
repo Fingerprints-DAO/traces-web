@@ -22,7 +22,7 @@ const Collection = ({ id }: ServerSideProps) => {
   const { data } = useQuery({ queryKey: 'GetCollection', queryFn: () => sdk.GetCollection({ ogTokenAddress: id }) })
   const { data: collectionData } = useSWR<CollectionMetadata>(`/api/collection/${id}`, fetcher)
   const tokens = useMemo(() => data?.collections[0]?.tokens ?? [], [data?.collections])
-
+  console.log(tokens)
   return (
     <Container maxWidth="7xl" paddingTop={14} paddingBottom={28}>
       <PageHeader

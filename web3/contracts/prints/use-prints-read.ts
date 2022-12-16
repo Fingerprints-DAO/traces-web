@@ -2,7 +2,7 @@
 import { Address, useContractRead } from 'wagmi'
 
 // Helpers
-import PrintsContract from './contract'
+import PrintsContract from './prints-abi'
 import useWallet from '@web3/wallet/use-wallet'
 
 const usePrintsRead = () => {

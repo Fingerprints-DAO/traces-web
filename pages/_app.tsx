@@ -3,7 +3,6 @@ import type { AppProps } from 'next/app'
 import { Web3Modal } from '@web3modal/react'
 import { ChakraProvider } from '@chakra-ui/react'
 import { WagmiConfig as Web3Provider } from 'wagmi'
-import { QueryClient } from 'react-query'
 import Router from 'next/router'
 import ReactDOM from 'react-dom'
 

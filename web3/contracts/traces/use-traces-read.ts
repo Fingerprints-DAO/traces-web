@@ -3,7 +3,7 @@ import { useContractRead } from 'wagmi'
 
 // Helpers
 import useWallet from '@web3/wallet/use-wallet'
-import TracesContract from '@web3/contracts/traces/contract'
+import TracesContract from '@web3/contracts/traces/traces-abi'
 
 const useTracesRead = () => {
   const { address, isConnected } = useWallet()

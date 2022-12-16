@@ -8,7 +8,7 @@ import { Box, Button, Container, useDisclosure } from '@chakra-ui/react'
 // Components
 import Drawer from '../drawer'
 import Logo from '@ui/components/atoms/logo'
-import { ModalContext, ModalContextValue } from '@ui/contexts/Modal'
+import { ModalContext, ModalContextValue, ModalElement } from '@ui/contexts/Modal'
 import Wallet from '@ui/components/molecules/wallet'
 import { useIsBrowser } from '@ui/hooks/use-is-browser'
 
@@ -44,9 +44,9 @@ const Header = () => {
       <Drawer
         isOpen={isDrawerOpen}
         onClose={onCloseDrawer}
-        onOpenAddNftModal={handleModal('add-nft')}
-        onOpenUpdateConfigsModal={handleModal('update-configs')}
-        onOpenAdministratorsModal={handleModal('administrators')}
+        onOpenAddNftModal={handleModal(ModalElement.AddNFT)}
+        onOpenUpdateConfigsModal={handleModal(ModalElement.UpdateConfigs)}
+        onOpenAdministratorsModal={handleModal(ModalElement.Administrators)}
       />
     </>
   )

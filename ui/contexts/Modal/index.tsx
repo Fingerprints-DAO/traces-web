@@ -2,6 +2,7 @@ import { createContext, PropsWithChildren, useState } from 'react'
 
 // Dependencies
 import { useDisclosure } from '@chakra-ui/react'
+import { Address } from 'wagmi'
 
 export enum ModalElement {
   Mint,
@@ -15,6 +16,8 @@ export type WNFTModalProps = {
   id: string
   name: string
   minAmount: string
+  ogTokenAddress: Address
+  ogTokenId: string
 }
 export type ModalContextValue = {
   isOpen?: boolean

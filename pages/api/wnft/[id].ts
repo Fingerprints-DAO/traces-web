@@ -3,7 +3,7 @@ import { getWNFTMetadata } from '@web3/services/getWNFTMetadata'
 import { readContract } from '@wagmi/core'
 import { handleToken } from '../helpers/_web3'
 import { Token, WNFTMetadata } from '../helpers/_types'
-import TracesContract from '@web3/contracts/traces/contract'
+import TracesContract from '@web3/contracts/traces/traces-abi'
 import { BigNumber } from 'ethers/lib/ethers'
 import { getChainId } from '@web3/helpers/chain'
 

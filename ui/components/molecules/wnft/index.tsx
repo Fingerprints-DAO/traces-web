@@ -23,8 +23,15 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
   const { data, error } = useSWR<WNFTMetadata>(`/api/wnft/${item.id}`, fetcher)
 
   const handleOpenMintNftModal = useMemo(
-    () => handleOpenModal(ModalElement.Mint, { id: item.id, name: data?.name, minAmount: item.firstStakePrice }),
-    [handleOpenModal, item.id, data?.name, item.firstStakePrice]
+    () =>
+      handleOpenModal(ModalElement.Mint, {
+        id: item.id,
+        name: data?.name,
+        minAmount: item.firstStakePrice,
+        ogTokenAddress: item.ogTokenAddress,
+        ogTokenId: item.ogTokenId,
+      }),
+    [handleOpenModal, item.id, item.firstStakePrice, item.ogTokenAddress, item.ogTokenId, data?.name]
   )
 
   if (error) {
@@ -156,7 +163,7 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
                   {item.currentOwner}
                 </Text>
               </Box>
-              <Button color="gray.900" colorScheme="primary" width="full" marginTop="auto">
+              <Button color="gray.900" colorScheme="primary" width="full" marginTop="auto" onClick={handleOpenMintNftModal}>
                 Outbid WNFT
               </Button>
             </>

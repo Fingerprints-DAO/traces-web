@@ -6,7 +6,7 @@ import { Box, Text, useToast } from '@chakra-ui/react'
 import useTraces from './use-traces'
 
 type Payload = {
-  tokenAddress: Address
+  tokenAddress?: Address
   tokenId: BigNumber
   amount: BigNumber
 }
@@ -15,7 +15,10 @@ const useTracesOutbid = () => {
   const toast = useToast()
   const traces = useTraces()
 
-  const request = async ({ amount, tokenAddress, tokenId }: Payload) => traces?.outbid(tokenAddress, tokenId, amount)
+  const request = async ({ amount, tokenAddress, tokenId }: Payload) => {
+    console.log(tokenAddress, tokenId, amount)
+    return tokenAddress && traces?.outbid(tokenAddress, tokenId, amount)
+  }
 
   return useMutation(request, {
     onSuccess: () => {},

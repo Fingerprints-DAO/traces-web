@@ -2279,7 +2279,7 @@
     "@graphql-typed-document-node/core" "3.1.1"
     tslib "^2.4.0"
 
-"@graphql-mesh/utils@0.43.3":
+"@graphql-mesh/utils@0.43.3", "@graphql-mesh/utils@^0.43.3":
   version "0.43.3"
   resolved "https://registry.yarnpkg.com/@graphql-mesh/utils/-/utils-0.43.3.tgz#44e93235d2a9f9d5b722588b4d021309e39933e7"
   integrity sha512-dfgkCrPsz8H1gMXEDnYqy0AQkj4AlvZlRkmGarR/0+cA0h3E8+eAR6CFDPKzC5CjpSS0LTYGGy1tu7jNRmVmPQ==
@@ -2357,6 +2357,20 @@
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/@graphql-tools/executor-http/-/executor-http-0.0.6.tgz#66c45b3ab3b1ff8d4ed0205207ce741ba087b315"
   integrity sha512-EF7eZ7GeXP6YSEgXJqFzfQtN80BUCbMrMeZxGnnOggWOJ1lKvYfSGQZ7+HcJRNUXQCZn/SV4lTJSVZW80GITWA==
+  dependencies:
+    "@graphql-tools/utils" "9.1.3"
+    "@repeaterjs/repeater" "3.0.4"
+    "@whatwg-node/fetch" "0.5.3"
+    dset "3.1.2"
+    extract-files "^11.0.0"
+    meros "1.2.1"
+    tslib "^2.4.0"
+    value-or-promise "1.0.11"
+
+"@graphql-tools/executor-http@0.0.7":
+  version "0.0.7"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/executor-http/-/executor-http-0.0.7.tgz#0fcbd8905e23c690e38a28ad87d7262d2e712a2c"
+  integrity sha512-g0NV4HVZVABsylk6SIA/gfjQbMIsy3NjZYW0k0JZmTcp9698J37uG50GZC2mKe0F8pIlDvPLvrPloqdKGX3ZAA==
   dependencies:
     "@graphql-tools/utils" "9.1.3"
     "@repeaterjs/repeater" "3.0.4"
@@ -2508,6 +2522,25 @@
     "@graphql-tools/delegate" "9.0.20"
     "@graphql-tools/executor-graphql-ws" "0.0.5"
     "@graphql-tools/executor-http" "0.0.6"
+    "@graphql-tools/executor-legacy-ws" "0.0.5"
+    "@graphql-tools/utils" "9.1.3"
+    "@graphql-tools/wrap" "9.2.21"
+    "@types/ws" "^8.0.0"
+    "@whatwg-node/fetch" "^0.5.0"
+    isomorphic-ws "5.0.0"
+    tslib "^2.4.0"
+    value-or-promise "^1.0.11"
+    ws "8.11.0"
+
+"@graphql-tools/url-loader@^7.16.26":
+  version "7.16.26"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/url-loader/-/url-loader-7.16.26.tgz#5bc78038ab21331c51b48b3bd9b5264ea3533bc1"
+  integrity sha512-mrbFhShlthSdvMD3GPeKYxUt54CBUteN0eR6WgJJSXibycTSA6h0LAn6iyCAg+uUsBP/KR6GcjvQHifl00Q7rQ==
+  dependencies:
+    "@ardatan/sync-fetch" "0.0.1"
+    "@graphql-tools/delegate" "9.0.20"
+    "@graphql-tools/executor-graphql-ws" "0.0.5"
+    "@graphql-tools/executor-http" "0.0.7"
     "@graphql-tools/executor-legacy-ws" "0.0.5"
     "@graphql-tools/utils" "9.1.3"
     "@graphql-tools/wrap" "9.2.21"

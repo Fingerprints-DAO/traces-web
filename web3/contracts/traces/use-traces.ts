@@ -2,7 +2,7 @@
 import { useContract, useSigner } from 'wagmi'
 
 // Helpers
-import TracesContract from './contract'
+import TracesContract from './traces-abi'
 
 const useTraces = () => {
   const { data } = useSigner()
