@@ -6798,7 +6798,7 @@ const schemaAST = {
           "kind": "FieldDefinition",
           "name": {
             "kind": "Name",
-            "value": "param3"
+            "value": "price"
           },
           "arguments": [],
           "type": {
@@ -6817,7 +6817,7 @@ const schemaAST = {
           "kind": "FieldDefinition",
           "name": {
             "kind": "Name",
-            "value": "param4"
+            "value": "minHoldPeriod"
           },
           "arguments": [],
           "type": {
@@ -7598,7 +7598,7 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "param3"
+            "value": "price"
           },
           "type": {
             "kind": "NamedType",
@@ -7613,7 +7613,7 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "param3_not"
+            "value": "price_not"
           },
           "type": {
             "kind": "NamedType",
@@ -7628,7 +7628,7 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "param3_gt"
+            "value": "price_gt"
           },
           "type": {
             "kind": "NamedType",
@@ -7643,7 +7643,7 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "param3_lt"
+            "value": "price_lt"
           },
           "type": {
             "kind": "NamedType",
@@ -7658,7 +7658,7 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "param3_gte"
+            "value": "price_gte"
           },
           "type": {
             "kind": "NamedType",
@@ -7673,7 +7673,7 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "param3_lte"
+            "value": "price_lte"
           },
           "type": {
             "kind": "NamedType",
@@ -7688,7 +7688,7 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "param3_in"
+            "value": "price_in"
           },
           "type": {
             "kind": "ListType",
@@ -7709,7 +7709,7 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "param3_not_in"
+            "value": "price_not_in"
           },
           "type": {
             "kind": "ListType",
@@ -7730,7 +7730,7 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "param4"
+            "value": "minHoldPeriod"
           },
           "type": {
             "kind": "NamedType",
@@ -7745,7 +7745,7 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "param4_not"
+            "value": "minHoldPeriod_not"
           },
           "type": {
             "kind": "NamedType",
@@ -7760,7 +7760,7 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "param4_gt"
+            "value": "minHoldPeriod_gt"
           },
           "type": {
             "kind": "NamedType",
@@ -7775,7 +7775,7 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "param4_lt"
+            "value": "minHoldPeriod_lt"
           },
           "type": {
             "kind": "NamedType",
@@ -7790,7 +7790,7 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "param4_gte"
+            "value": "minHoldPeriod_gte"
           },
           "type": {
             "kind": "NamedType",
@@ -7805,7 +7805,7 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "param4_lte"
+            "value": "minHoldPeriod_lte"
           },
           "type": {
             "kind": "NamedType",
@@ -7820,7 +7820,7 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "param4_in"
+            "value": "minHoldPeriod_in"
           },
           "type": {
             "kind": "ListType",
@@ -7841,7 +7841,7 @@ const schemaAST = {
           "kind": "InputValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "param4_not_in"
+            "value": "minHoldPeriod_not_in"
           },
           "type": {
             "kind": "ListType",
@@ -8042,7 +8042,7 @@ const schemaAST = {
           "kind": "EnumValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "param3"
+            "value": "price"
           },
           "directives": []
         },
@@ -8050,7 +8050,7 @@ const schemaAST = {
           "kind": "EnumValueDefinition",
           "name": {
             "kind": "Name",
-            "value": "param4"
+            "value": "minHoldPeriod"
           },
           "directives": []
         },

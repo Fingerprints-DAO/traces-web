@@ -566,8 +566,8 @@ export type TokenAdded = {
   tokenId: Scalars['BigInt'];
   blockNumber: Scalars['BigInt'];
   blockTimestamp: Scalars['BigInt'];
-  param3: Scalars['BigInt'];
-  param4: Scalars['BigInt'];
+  price: Scalars['BigInt'];
+  minHoldPeriod: Scalars['BigInt'];
   transactionHash: Scalars['Bytes'];
 };
 
@@ -616,22 +616,22 @@ export type TokenAdded_filter = {
   blockTimestamp_lte?: InputMaybe<Scalars['BigInt']>;
   blockTimestamp_in?: InputMaybe<Array<Scalars['BigInt']>>;
   blockTimestamp_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
-  param3?: InputMaybe<Scalars['BigInt']>;
-  param3_not?: InputMaybe<Scalars['BigInt']>;
-  param3_gt?: InputMaybe<Scalars['BigInt']>;
-  param3_lt?: InputMaybe<Scalars['BigInt']>;
-  param3_gte?: InputMaybe<Scalars['BigInt']>;
-  param3_lte?: InputMaybe<Scalars['BigInt']>;
-  param3_in?: InputMaybe<Array<Scalars['BigInt']>>;
-  param3_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
-  param4?: InputMaybe<Scalars['BigInt']>;
-  param4_not?: InputMaybe<Scalars['BigInt']>;
-  param4_gt?: InputMaybe<Scalars['BigInt']>;
-  param4_lt?: InputMaybe<Scalars['BigInt']>;
-  param4_gte?: InputMaybe<Scalars['BigInt']>;
-  param4_lte?: InputMaybe<Scalars['BigInt']>;
-  param4_in?: InputMaybe<Array<Scalars['BigInt']>>;
-  param4_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  price?: InputMaybe<Scalars['BigInt']>;
+  price_not?: InputMaybe<Scalars['BigInt']>;
+  price_gt?: InputMaybe<Scalars['BigInt']>;
+  price_lt?: InputMaybe<Scalars['BigInt']>;
+  price_gte?: InputMaybe<Scalars['BigInt']>;
+  price_lte?: InputMaybe<Scalars['BigInt']>;
+  price_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  price_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  minHoldPeriod?: InputMaybe<Scalars['BigInt']>;
+  minHoldPeriod_not?: InputMaybe<Scalars['BigInt']>;
+  minHoldPeriod_gt?: InputMaybe<Scalars['BigInt']>;
+  minHoldPeriod_lt?: InputMaybe<Scalars['BigInt']>;
+  minHoldPeriod_gte?: InputMaybe<Scalars['BigInt']>;
+  minHoldPeriod_lte?: InputMaybe<Scalars['BigInt']>;
+  minHoldPeriod_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  minHoldPeriod_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
   transactionHash?: InputMaybe<Scalars['Bytes']>;
   transactionHash_not?: InputMaybe<Scalars['Bytes']>;
   transactionHash_in?: InputMaybe<Array<Scalars['Bytes']>>;
@@ -649,8 +649,8 @@ export type TokenAdded_orderBy =
   | 'tokenId'
   | 'blockNumber'
   | 'blockTimestamp'
-  | 'param3'
-  | 'param4'
+  | 'price'
+  | 'minHoldPeriod'
   | 'transactionHash';
 
 export type TokenDeleted = {
@@ -1152,8 +1152,8 @@ export type TokenAddedResolvers<ContextType = MeshContext, ParentType extends Re
   tokenId?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
   blockNumber?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
   blockTimestamp?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
-  param3?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
-  param4?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
+  price?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
+  minHoldPeriod?: Resolver<ResolversTypes['BigInt'], ParentType, ContextType>;
   transactionHash?: Resolver<ResolversTypes['Bytes'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
@@ -1265,7 +1265,7 @@ const tracesTransforms = [];
 const additionalTypeDefs = [] as any[];
 const tracesHandler = new GraphqlHandler({
               name: "Traces",
-              config: {"endpoint":"http://localhost:8000/subgraphs/name/traces"},
+              config: {"endpoint":"https://api.studio.thegraph.com/query/38826/traces/v0.0.4"},
               baseDir,
               cache,
               pubsub,

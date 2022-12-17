@@ -599,8 +599,8 @@ type TokenAdded {
   tokenId: BigInt!
   blockNumber: BigInt!
   blockTimestamp: BigInt!
-  param3: BigInt!
-  param4: BigInt!
+  price: BigInt!
+  minHoldPeriod: BigInt!
   transactionHash: Bytes!
 }
 
@@ -649,22 +649,22 @@ input TokenAdded_filter {
   blockTimestamp_lte: BigInt
   blockTimestamp_in: [BigInt!]
   blockTimestamp_not_in: [BigInt!]
-  param3: BigInt
-  param3_not: BigInt
-  param3_gt: BigInt
-  param3_lt: BigInt
-  param3_gte: BigInt
-  param3_lte: BigInt
-  param3_in: [BigInt!]
-  param3_not_in: [BigInt!]
-  param4: BigInt
-  param4_not: BigInt
-  param4_gt: BigInt
-  param4_lt: BigInt
-  param4_gte: BigInt
-  param4_lte: BigInt
-  param4_in: [BigInt!]
-  param4_not_in: [BigInt!]
+  price: BigInt
+  price_not: BigInt
+  price_gt: BigInt
+  price_lt: BigInt
+  price_gte: BigInt
+  price_lte: BigInt
+  price_in: [BigInt!]
+  price_not_in: [BigInt!]
+  minHoldPeriod: BigInt
+  minHoldPeriod_not: BigInt
+  minHoldPeriod_gt: BigInt
+  minHoldPeriod_lt: BigInt
+  minHoldPeriod_gte: BigInt
+  minHoldPeriod_lte: BigInt
+  minHoldPeriod_in: [BigInt!]
+  minHoldPeriod_not_in: [BigInt!]
   transactionHash: Bytes
   transactionHash_not: Bytes
   transactionHash_in: [Bytes!]
@@ -682,8 +682,8 @@ enum TokenAdded_orderBy {
   tokenId
   blockNumber
   blockTimestamp
-  param3
-  param4
+  price
+  minHoldPeriod
   transactionHash
 }
 
