@@ -5,6 +5,9 @@ import { ChakraProvider } from '@chakra-ui/react'
 import { WagmiConfig as Web3Provider } from 'wagmi'
 import Router from 'next/router'
 import ReactDOM from 'react-dom'
+import dayjs from 'dayjs'
+import duration from 'dayjs/plugin/duration'
+import relativeTime from 'dayjs/plugin/relativeTime'
 
 // Components
 import { ModalProvider } from '@ui/contexts/Modal'
@@ -28,6 +31,9 @@ import '@fontsource/inter/600.css'
 import '@fontsource/inter/700.css'
 import '@fontsource/inter/800.css'
 import '@fontsource/inter/900.css'
+
+dayjs.extend(duration)
+dayjs.extend(relativeTime)
 
 const Loading = () => <div>Loading louco...</div>
 

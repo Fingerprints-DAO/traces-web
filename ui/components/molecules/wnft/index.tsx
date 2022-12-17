@@ -1,26 +1,83 @@
-import React, { PropsWithChildren, useContext, useMemo } from 'react'
+import React, { PropsWithChildren, useContext, useMemo, useState } from 'react'
 import useSWR from 'swr'
 
 // Dependencies
 import { Box, Button, Flex, GridItem, Heading, Icon, Text, Tooltip } from '@chakra-ui/react'
 import { BsArrowDownRightCircle } from 'react-icons/bs'
-import { Address } from 'wagmi'
+import { useContractRead } from 'wagmi'
 
 import { WNFT } from '.graphclient'
 import { ModalContext, ModalElement } from '@ui/contexts/Modal'
-import { WNFTMetadata } from 'pages/api/helpers/_types'
+import { Token, WNFTMetadata } from 'pages/api/helpers/_types'
 import { fetcher } from '@ui/utils/fetcher'
+import TracesContract from '@web3/contracts/traces/traces-abi'
+import { getChainId } from '@web3/helpers/chain'
+import { BigNumber } from 'ethers'
+import { HandledToken } from 'pages/api/helpers/_web3'
+import dayjs from 'dayjs'
 
 type WNFTProps = {
   item: Pick<WNFT, 'id' | 'ogTokenAddress' | 'ogTokenId' | 'tokenId' | 'currentOwner' | 'lastPrice' | 'firstStakePrice' | 'minHoldPeriod'>
 }
 
-const isContract = (address: Address) => address.toLowerCase() === (process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS ?? '').toLowerCase()
+interface RevertError extends Error {
+  errorName?: string
+}
+
+const shortAddress = (address: string) => `${address.slice(0, 6)}...${address.slice(-4)}`
+
+function formatTime(timeInSeconds: number) {
+  // If time is less than an hour, display in seconds
+  if (timeInSeconds < 3600) {
+    return `${timeInSeconds} seconds`
+  }
+
+  // If time is less than a day, display in hours
+  if (timeInSeconds < 86400) {
+    const hours = dayjs.duration(timeInSeconds, 'seconds').hours()
+    return `${hours} hours`
+  }
+
+  // If time is more than a day, display in days
+  const days = dayjs.duration(timeInSeconds, 'seconds').days()
+  return `${days} days`
+}
+
+enum WNFTState {
+  Idle,
+  Loading,
+  Holding,
+  Minting,
+  Outbidding,
+}
 
 const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
+  const [currentState, setCurrentState] = useState<WNFTState>(WNFTState.Loading)
   const { handleOpenModal } = useContext(ModalContext)
-  // fetch http api on route `api/collection/${id}` and return the collection data, do not use react-query here
-  const { data, error } = useSWR<WNFTMetadata>(`/api/wnft/${item.id}`, fetcher)
+  const { data, error } = useSWR<HandledToken>(`/api/outbid/${item.id}`, fetcher)
+
+  const price = useContractRead({
+    address: process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS ?? '',
+    abi: TracesContract,
+    functionName: 'getWNFTPrice',
+    chainId: getChainId(),
+    args: [BigNumber.from(item.id)],
+    onSuccess(data) {
+      if (data.toString() === item.firstStakePrice) {
+        setCurrentState(WNFTState.Minting)
+        return
+      }
+
+      setCurrentState(WNFTState.Outbidding)
+    },
+    onError(error) {
+      const revertError = error as RevertError
+      if (revertError.errorName === 'HoldPeriod') {
+        console.log('holding')
+        setCurrentState(WNFTState.Holding)
+      }
+    },
+  })
 
   const handleOpenMintNftModal = useMemo(
     () =>
@@ -61,18 +118,20 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
           {data?.name}
         </Heading>
         <Box marginTop={6} flex={1} display="flex" flexDirection="column">
-          {isContract(item.currentOwner) && (
+          {currentState === WNFTState.Minting && (
             <>
-              <Box marginBottom={4}>
-                <Text color="gray.200">Minimum stake</Text>
-                <Text color="gray.100" fontWeight={600}>
-                  {item.firstStakePrice} PRINTS
-                </Text>
-              </Box>
+              {!price.isLoading && (
+                <Box marginBottom={4}>
+                  <Text color="gray.200">Minimum stake</Text>
+                  <Text color="gray.100" fontWeight={600}>
+                    {price.data?.toNumber()} PRINTS
+                  </Text>
+                </Box>
+              )}
               <Box marginBottom={6}>
                 <Text color="gray.200">Guaranteed holding period</Text>
                 <Text color="gray.100" fontWeight={600}>
-                  {item.minHoldPeriod} days
+                  {formatTime(item.minHoldPeriod)}
                 </Text>
               </Box>
               <Button color="gray.900" colorScheme="primary" width="full" marginTop="auto" onClick={handleOpenMintNftModal}>
@@ -80,62 +139,56 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
               </Button>
             </>
           )}
-          {/* {item.status === 'expiring' && (
-          <>
-            <Box marginBottom={4}>
-              <Text color="gray.200">Staked</Text>
-              <Flex alignItems="baseline">
-                <Text color="gray.100" fontWeight={600} marginRight={2}>
-                  1500 PRINTS
+          {currentState === WNFTState.Holding && (
+            <>
+              <Box marginBottom={4}>
+                <Text color="gray.200">Staked</Text>
+                <Flex alignItems="baseline">
+                  <Text color="gray.100" fontWeight={600} marginRight={2}>
+                    1500 PRINTS
+                  </Text>
+                  <Tooltip
+                    label="The value decrease every day until reachs $value at day $date"
+                    fontSize="sm"
+                    color="gray.50"
+                    textAlign="center"
+                    placement="top-start"
+                    hasArrow={true}
+                    arrowSize={8}
+                  >
+                    <span>
+                      <Icon as={BsArrowDownRightCircle} color="gray.300" boxSize={3} />
+                    </span>
+                  </Tooltip>
+                </Flex>
+              </Box>
+              <Box marginBottom={4}>
+                <Text color="gray.200">Holding during</Text>
+                <Text color="gray.100" fontWeight={600}>
+                  {dayjs.unix(data.lastOutbidTimestamp).fromNow(true)}
                 </Text>
-                <Tooltip
-                  label="The value decrease every day until reachs $value at day $date"
-                  fontSize="sm"
-                  color="gray.50"
-                  textAlign="center"
-                  placement="top-start"
-                  hasArrow={true}
-                  arrowSize={8}
-                >
-                  <span>
-                    <Icon as={BsArrowDownRightCircle} color="gray.300" boxSize={3} />
-                  </span>
-                </Tooltip>
-              </Flex>
-            </Box>
-            <Box marginBottom={4}>
-              <Text color="gray.200">Holding during</Text>
-              <Text color="gray.100" fontWeight={600}>
-                20 days
-              </Text>
-            </Box>
-            <Box marginBottom={6}>
-              <Text color="gray.200">Current holder</Text>
-              <Text color="gray.100" fontWeight={600}>
-                sandrini.eth
-              </Text>
-            </Box>
-            <Button
-              disabled={true}
-              borderColor="gray.200"
-              color="gray.200"
-              colorScheme="primary"
-              variant="outline"
-              width="full"
-              marginTop="auto"
-            >
-              72 hours to outbid
-            </Button>
-          </>
-        )} */}
-          {!isContract(item.currentOwner) && (
+              </Box>
+              <Box marginBottom={6}>
+                <Text color="gray.200">Current holder</Text>
+                <Text color="gray.100" fontWeight={600}>
+                  {shortAddress(item.currentOwner)}
+                </Text>
+              </Box>
+              <Button disabled={true} borderColor="gray.200" color="gray.200" colorScheme="primary" variant="outline" width="full" marginTop="auto">
+                {dayjs.unix(data.lastOutbidTimestamp).add(item.minHoldPeriod, 'seconds').fromNow(true)} to outbid
+              </Button>
+            </>
+          )}
+          {currentState === WNFTState.Outbidding && (
             <>
               <Box marginBottom={4}>
                 <Text color="gray.200">Value to outbid</Text>
                 <Flex alignItems="baseline">
-                  <Text color="gray.100" fontWeight={600} marginRight={2}>
-                    {item.lastPrice} PRINTS
-                  </Text>
+                  {!price.isLoading && !price.error && (
+                    <Text color="gray.100" fontWeight={600} marginRight={2}>
+                      {price.data?.toNumber()} PRINTS
+                    </Text>
+                  )}
                   <Tooltip
                     label="The value decrease every day until reachs $value at day $date"
                     fontSize="sm"
@@ -160,7 +213,7 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
               <Box marginBottom={6}>
                 <Text color="gray.200">Current holder</Text>
                 <Text color="gray.100" fontWeight={600}>
-                  {item.currentOwner}
+                  {shortAddress(item.currentOwner)}
                 </Text>
               </Box>
               <Button color="gray.900" colorScheme="primary" width="full" marginTop="auto" onClick={handleOpenMintNftModal}>
