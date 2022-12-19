@@ -1,13 +1,15 @@
 // Dependencies
 import type { AppProps } from 'next/app'
+import { useRouter } from 'next/router'
+import { useEffect } from 'react'
 import { Web3Modal } from '@web3modal/react'
 import { ChakraProvider } from '@chakra-ui/react'
 import { WagmiConfig as Web3Provider } from 'wagmi'
-import Router from 'next/router'
-import ReactDOM from 'react-dom'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
 import relativeTime from 'dayjs/plugin/relativeTime'
+import NProgress from 'nprogress'
+import 'nprogress/nprogress.css'
 
 // Components
 import { ModalProvider } from '@ui/contexts/Modal'
@@ -34,28 +36,32 @@ import '@fontsource/inter/900.css'
 
 dayjs.extend(duration)
 dayjs.extend(relativeTime)
+NProgress.configure({ showSpinner: false })
 
-const Loading = () => <div>Loading louco...</div>
-
-const registerLoadingScreen = () => {
-  if (typeof window === 'undefined') return
-  const container = document.createElement('div')
-
-  Router.events.on('routeChangeStart', () => {
-    ReactDOM.render(<Loading />, container)
-    document.body.appendChild(container)
-  })
-
-  Router.events.on('routeChangeComplete', () => {
-    ReactDOM.unmountComponentAtNode(container)
-    // hide the loading screen
-    document.body.removeChild(container)
-  })
-}
-registerLoadingScreen()
-
-function Traces({ Component, pageProps, router }: AppProps) {
+function Traces({ Component, pageProps }: AppProps) {
+  const router = useRouter()
   useScrollRestoration(router)
+
+  useEffect(() => {
+    const handleStart = (url: string) => {
+      console.log(`Loading: ${url}`)
+      NProgress.start()
+    }
+
+    const handleStop = () => {
+      NProgress.done()
+    }
+
+    router.events.on('routeChangeStart', handleStart)
+    router.events.on('routeChangeComplete', handleStop)
+    router.events.on('routeChangeError', handleStop)
+
+    return () => {
+      router.events.off('routeChangeStart', handleStart)
+      router.events.off('routeChangeComplete', handleStop)
+      router.events.off('routeChangeError', handleStop)
+    }
+  }, [router])
 
   return (
     <ReactQueryProvider>
