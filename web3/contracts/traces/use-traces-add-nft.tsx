@@ -3,7 +3,6 @@ import { BigNumber } from 'ethers'
 import dayjs from 'dayjs'
 
 // Dependencies
-import { Box, useToast } from '@chakra-ui/react'
 import { Address, useContractWrite, usePrepareContractWrite } from 'wagmi'
 
 // Helpers
@@ -14,7 +13,7 @@ import { AddNftPayload } from '@ui/components/organisms/modals/modal-add-nft'
 import useTxToast from '@ui/hooks/use-tx-toast'
 
 const useTracesAddNft = (isSubmitted: boolean) => {
-  const { showTxSentToast, showTxErrorToast } = useTxToast()
+  const { showTxSentToast, showTxErrorToast, showTxExecutedToast } = useTxToast()
   const { isEditor } = useTracesRead()
   const { handleCloseModal } = useContext(ModalContext)
   const [formIsReady, setFormIsReady] = useState(false)
@@ -26,18 +25,28 @@ const useTracesAddNft = (isSubmitted: boolean) => {
     functionName: 'addToken',
     args: params,
     enabled: isSubmitted && !!isEditor,
+    onError(error) {
+      showTxErrorToast(error)
+    },
   })
 
   const { write } = useContractWrite({
     ...config,
     onSettled: (data, error) => {
+      setFormIsReady(false)
       if (error) {
         showTxErrorToast(error)
         return
       }
 
       showTxSentToast(data?.hash)
-      handleCloseModal()
+      handleCloseModal(data?.hash as Address, () => {
+        showTxExecutedToast({
+          title: 'WNFT created. Reload the collection page to see it in few seconds.',
+          txHash: data?.hash,
+          id: 'wnft-created',
+        })
+      })
     },
     onError: showTxErrorToast,
   })

@@ -66,14 +66,14 @@ function Traces({ Component, pageProps }: AppProps) {
   return (
     <ReactQueryProvider>
       <ChakraProvider theme={theme}>
-        <ModalProvider>
-          <Web3Provider client={web3Config}>
+        <Web3Provider client={web3Config}>
+          <ModalProvider>
             <Layout>
               <Component {...pageProps} />
               <Modal />
             </Layout>
-          </Web3Provider>
-        </ModalProvider>
+          </ModalProvider>
+        </Web3Provider>
         <Web3Modal
           projectId={process.env.NEXT_PUBLIC_WALLET_CONNECT_KEY || ''}
           themeMode="dark"

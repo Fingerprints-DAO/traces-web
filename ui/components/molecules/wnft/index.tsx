@@ -22,9 +22,15 @@ type WNFTProps = {
 const shortAddress = (address: string) => `${address.slice(0, 6)}...${address.slice(-4)}`
 
 function formatTime(timeInSeconds: number) {
-  // If time is less than an hour, display in seconds
-  if (timeInSeconds < 3600) {
+  // If time is less than an hour, display in second
+  if (timeInSeconds < 60) {
     return `${timeInSeconds} seconds`
+  }
+
+  // If time is less than an hour, display in minutes
+  if (timeInSeconds < 3600) {
+    const minutes = dayjs.duration(timeInSeconds, 'seconds').minutes()
+    return `${minutes} minutes`
   }
 
   // If time is less than a day, display in hours
