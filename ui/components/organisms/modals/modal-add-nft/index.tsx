@@ -44,7 +44,7 @@ const schema = object({
 })
 
 const ModalAddNft = ({ isOpen, onClose }: ModalProps) => {
-  const { control, formState, register, handleSubmit, watch } = useForm<AddNftPayload>({
+  const { formState, register, handleSubmit, watch } = useForm<AddNftPayload>({
     mode: 'onSubmit',
     resolver: yupResolver(schema),
     defaultValues: {
@@ -54,9 +54,9 @@ const ModalAddNft = ({ isOpen, onClose }: ModalProps) => {
   })
 
   const form = watch()
-  const addNft = useTracesAddNft(formState.isSubmitted, form)
+  const [onAddNFT] = useTracesAddNft(formState.isSubmitted)
 
-  const submit = () => addNft && addNft()
+  const submit = () => onAddNFT(form)
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered={true}>
