@@ -44,7 +44,7 @@ const ModalContext = createContext<ModalContextValue>(INITIAL_STATE)
 const ModalProvider = ({ children }: PropsWithChildren) => {
   const [payload, setPayload] = useState<ModalContextValue['payload']>({})
   const [element, setElement] = useState<ModalElement>(INITIAL_STATE.element)
-  const { showTxErrorToast, showTxExecutedToast } = useTxToast()
+  const { showTxErrorToast } = useTxToast()
   const [lastTxHash, setLastTxHash] = useState<Address | undefined>(undefined)
   const [lastTxCallback, setLastTxCallback] = useState<Function | undefined>(undefined)
 
@@ -61,12 +61,14 @@ const ModalProvider = ({ children }: PropsWithChildren) => {
 
       lastTxCallback && lastTxCallback()
     },
+    enabled: !!lastTxHash && typeof lastTxHash === 'string',
   })
 
   const handleOpenModal =
     (element: ModalElement, payload: ModalContextValue['payload'] = {}) =>
     () => {
       setElement(element)
+      console.log(payload)
       setPayload(payload)
       onOpen()
     }
@@ -75,6 +77,7 @@ const ModalProvider = ({ children }: PropsWithChildren) => {
     setElement(INITIAL_STATE.element)
     setPayload(INITIAL_STATE.payload)
     onClose()
+    if (typeof hash !== 'string') return
     setLastTxHash(hash)
     setLastTxCallback(callback)
   }

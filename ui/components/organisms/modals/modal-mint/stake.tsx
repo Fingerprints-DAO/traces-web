@@ -18,7 +18,8 @@ type StakeProps = {
 const Stake = ({ userPrints = 0, onClose, onSubmit }: StakeProps) => {
   const { payload } = useContext(ModalContext) as { payload: WNFTModalProps }
   const { allowance } = usePrintsRead()
-  const minPrints = (Number(payload.minAmount) ?? 0) - (allowance?.toNumber() ?? 0)
+  // const minPrints = (Number(payload.minAmount) ?? 0) - (allowance?.toNumber() ?? 0)
+  const minPrints = Number(payload.minAmount) ?? 0
   const schema = object({
     amount: number()
       .min(minPrints, `Minimum amount allowed is ${minPrints.toLocaleString()} $PRINTS`)
@@ -26,11 +27,12 @@ const Stake = ({ userPrints = 0, onClose, onSubmit }: StakeProps) => {
       .required(),
   })
 
+  console.log(minPrints)
   const { control, formState, handleSubmit } = useForm<{ amount: number }>({
     mode: 'onSubmit',
     resolver: yupResolver(schema),
     defaultValues: {
-      amount: 0,
+      amount: minPrints,
     },
   })
 

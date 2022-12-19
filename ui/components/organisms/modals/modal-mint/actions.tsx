@@ -18,7 +18,7 @@ type ActionsProps = {
   minPrints: number
   amount: number
   onClose: () => void
-} & UseMutationResult<ContractTransaction | undefined, any, BigNumber, unknown>
+} & UseMutationResult<ContractTransaction | undefined, any, { amount: BigNumber; isIncrease?: boolean | undefined }, unknown>
 
 const Actions = (props: ActionsProps) => {
   const { payload } = useContext(ModalContext) as { payload: WNFTModalProps }
@@ -48,7 +48,7 @@ const Actions = (props: ActionsProps) => {
   }, [getAllowance])
 
   const { handleCloseModal } = useContext(ModalContext)
-  console.log('payload', payload)
+
   const handleOutbid = useCallback(async () => {
     try {
       console.log('amount', amount)
@@ -68,7 +68,7 @@ const Actions = (props: ActionsProps) => {
   const handleApprove = async () => {
     try {
       if (amount) {
-        await approvePrints(BigNumber.from(amount))
+        await approvePrints({ amount: BigNumber.from(amount) })
       }
     } catch (error) {
       console.log('handleApprove', error)

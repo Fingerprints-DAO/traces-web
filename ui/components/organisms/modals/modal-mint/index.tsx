@@ -23,16 +23,17 @@ type ModalMintProps = {
 
 const ModalMint = ({ isOpen, onClose }: ModalMintProps) => {
   const { payload } = useContext(ModalContext) as { payload: WNFTModalProps }
-  const minPrints = Number(payload.minAmount) ?? 0
-
   const prints = usePrints()
   const { address, printsBalance } = useWallet()
+  const printsApprove = usePrintsApprove()
 
   const [isFetched, setIsFetched] = useState(false)
   const [amount, setAmount] = useState<number>(0)
   const [allowance, setAllowance] = useState<number>(0)
 
-  const printsApprove = usePrintsApprove()
+  const minPrints = Number(payload.minAmount) ?? 0
+  const canStake = useMemo(() => allowance >= minPrints, [allowance, minPrints])
+  const canGoToActions = useMemo(() => isFetched || canStake, [canStake, isFetched])
 
   const getAllowance = useCallback(async () => {
     try {
@@ -50,15 +51,11 @@ const ModalMint = ({ isOpen, onClose }: ModalMintProps) => {
     getAllowance()
   }, [getAllowance])
 
-  const canStake = useMemo(() => allowance >= minPrints, [allowance, minPrints])
-
   useEffect(() => {
     if (canStake) {
       setAmount(allowance)
     }
   }, [allowance, canStake, setAmount])
-
-  const canGoToActions = useMemo(() => isFetched || canStake, [canStake, isFetched])
 
   const handleSubmit = async (data: { amount: number }) => {
     try {
@@ -68,12 +65,8 @@ const ModalMint = ({ isOpen, onClose }: ModalMintProps) => {
       const allowanceUntilNow = currentAllowance?.toNumber()
 
       const balanceToApprove = data.amount - (allowanceUntilNow || 0)
-
-      const currentAmount = balanceToApprove
-
-      setAmount(currentAmount)
-
-      await printsApprove.mutateAsync(BigNumber.from(currentAmount))
+      const isIncrease = balanceToApprove !== amount
+      await printsApprove.mutateAsync({ amount: BigNumber.from(balanceToApprove), isIncrease })
     } catch (error) {
       console.log('handleSubmit', error)
     }

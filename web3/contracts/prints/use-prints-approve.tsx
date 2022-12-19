@@ -11,7 +11,8 @@ const usePrintsApprove = () => {
   const toast = useToast()
   const prints = usePrints()
 
-  const request = async (balanceToApprove: BigNumber) => prints?.approve(process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS as Address, balanceToApprove)
+  const request = async ({ amount, isIncrease }: { amount: BigNumber; isIncrease?: boolean }) =>
+    prints?.[isIncrease ? 'increaseAllowance' : 'approve'](process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS as Address, amount)
 
   return useMutation(request, {
     onSuccess: () => {},

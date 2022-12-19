@@ -14,7 +14,7 @@ const usePrints = () => {
   })
 
   if (!prints) {
-    return
+    return undefined
   }
 
   return prints

@@ -74,7 +74,6 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
     onError(error) {
       const revertError = error as RevertError
       if (revertError.errorName === 'HoldPeriod') {
-        console.log('holding')
         setCurrentState(WNFTState.Holding)
       }
     },
