@@ -8,7 +8,6 @@ import { useContractRead } from 'wagmi'
 
 import { WNFT } from '.graphclient'
 import { ModalContext, ModalElement } from '@ui/contexts/Modal'
-import { Token, WNFTMetadata } from 'pages/api/helpers/_types'
 import { fetcher } from '@ui/utils/fetcher'
 import TracesContract from '@web3/contracts/traces/traces-abi'
 import { getChainId } from '@web3/helpers/chain'
@@ -18,10 +17,6 @@ import dayjs from 'dayjs'
 
 type WNFTProps = {
   item: Pick<WNFT, 'id' | 'ogTokenAddress' | 'ogTokenId' | 'tokenId' | 'currentOwner' | 'lastPrice' | 'firstStakePrice' | 'minHoldPeriod'>
-}
-
-interface RevertError extends Error {
-  errorName?: string
 }
 
 const shortAddress = (address: string) => `${address.slice(0, 6)}...${address.slice(-4)}`
