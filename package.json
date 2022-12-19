@@ -3,9 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
+    "build-subgraph": "yarn graphclient build",
+    "dev": "yarn build-subgraph && next dev",
+    "build": "yarn build-subgraph && next build",
+    "start": "yarn build-subgraph && next start",
     "lint": "next lint"
   },
   "dependencies": {
