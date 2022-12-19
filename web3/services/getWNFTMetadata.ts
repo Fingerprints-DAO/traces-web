@@ -5,7 +5,7 @@ const getRandomData = (address: string, tokenId: string) => {
   return {
     name: `${tokenId} ${Math.random() * 100}`,
     description: "FP members can hold and enjoy usage permissions from FP's NFTs through a staking system",
-    image: `https://storage.googleapis.com/opensea-prod.appspot.com/puffs/${Math.floor(Math.random() * 10)}.png?w=500&auto=format`,
+    image: `https://picsum.photos/id/${tokenId}/200/300`,
     externalUrl: `https://fingerprintsdao.xyz/traces/${tokenId}`,
     ogOpenseaUrl: `https://testnets.opensea.io/assets/${address}/${tokenId}`,
     openseaUrl: `https://testnets.opensea.io/assets/${address}/${tokenId}`,
