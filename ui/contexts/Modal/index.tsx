@@ -8,6 +8,7 @@ export enum ModalElement {
   AddNFT = 'add-nft',
   UpdateConfigs = 'update-configs',
   Administrators = 'administrators',
+  AddRole = 'add-role',
   Default = '',
 }
 

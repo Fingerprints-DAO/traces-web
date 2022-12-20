@@ -6,6 +6,7 @@ import { ModalContext, ModalContextValue, ModalElement } from '@ui/contexts/Moda
 // Components
 import ModalMint from './modal-mint'
 import ModalAddNft from './modal-add-nft'
+import ModalAddRole from './modal-add-role'
 import ModalUpdateConfigs from './modal-update-configs'
 import ModalAdministrators from './modal-administrators'
 
@@ -18,6 +19,7 @@ const Modal = () => {
       [ModalElement.Mint, ModalMint],
       [ModalElement.UpdateConfigs, ModalUpdateConfigs],
       [ModalElement.Administrators, ModalAdministrators],
+      [ModalElement.AddRole, ModalAddRole],
     ])
 
     return map.get(element)

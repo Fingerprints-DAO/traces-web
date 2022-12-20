@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect } from 'react'
 
 // Dependencies
 import { useRouter } from 'next/router'
@@ -8,9 +8,11 @@ import { Box, Button, Container, useDisclosure } from '@chakra-ui/react'
 // Components
 import Drawer from '../drawer'
 import Logo from '@ui/components/atoms/logo'
-import { ModalContext, ModalContextValue } from '@ui/contexts/Modal'
 import Wallet from '@ui/components/molecules/wallet'
+
+// Helpers
 import { useIsBrowser } from '@ui/hooks/use-is-browser'
+import { ModalContext, ModalElement } from '@ui/contexts/Modal'
 
 const Header = () => {
   const router = useRouter()
@@ -22,7 +24,7 @@ const Header = () => {
     onCloseDrawer()
   }, [router.route, onCloseDrawer])
 
-  const handleModal = (element: ModalContextValue['element']) => () => {
+  const handleModal = (element: ModalElement) => {
     onCloseDrawer()
 
     handleOpenModal(element)()
@@ -41,13 +43,7 @@ const Header = () => {
           {isBrowser && <Wallet variant="header" />}
         </Container>
       </Box>
-      <Drawer
-        isOpen={isDrawerOpen}
-        onClose={onCloseDrawer}
-        onOpenAddNftModal={handleModal('add-nft')}
-        onOpenUpdateConfigsModal={handleModal('update-configs')}
-        onOpenAdministratorsModal={handleModal('administrators')}
-      />
+      <Drawer isOpen={isDrawerOpen} onClose={onCloseDrawer} onOpenModal={handleModal} />
     </>
   )
 }
