@@ -53,7 +53,6 @@ const ModalProvider = ({ children }: PropsWithChildren) => {
   useWaitForTransaction({
     hash: lastTxHash,
     onSettled(_, error) {
-      console.log(_, error, lastTxHash)
       if (error) {
         showTxErrorToast(error)
         return
@@ -68,7 +67,6 @@ const ModalProvider = ({ children }: PropsWithChildren) => {
     (element: ModalElement, payload: ModalContextValue['payload'] = {}) =>
     () => {
       setElement(element)
-      console.log(payload)
       setPayload(payload)
       onOpen()
     }

@@ -51,7 +51,6 @@ const Actions = (props: ActionsProps) => {
 
   const handleOutbid = useCallback(async () => {
     try {
-      console.log('amount', amount)
       if (amount) {
         await outbid.mutateAsync({ amount, tokenAddress: payload.ogTokenAddress, tokenId: BigNumber.from(payload.ogTokenId) })
 
@@ -103,7 +102,6 @@ const Actions = (props: ActionsProps) => {
   }, [canStake, handleOutbid, isOutbidSubmitted])
 
   const value = useMemo(() => {
-    console.log(allowance, amount)
     return (allowance?.toNumber() || 0) > 0 ? allowance?.toNumber().toLocaleString() : amount.toLocaleString()
   }, [allowance, amount])
 

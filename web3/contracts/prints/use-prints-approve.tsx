@@ -12,7 +12,6 @@ const usePrintsApprove = () => {
   const prints = usePrints()
 
   const request = async ({ amount, isIncrease }: { amount: BigNumber; isIncrease?: boolean }) => {
-    console.log(amount, isIncrease)
     return prints?.[isIncrease ? 'increaseAllowance' : 'approve'](process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS as Address, amount)
   }
 
