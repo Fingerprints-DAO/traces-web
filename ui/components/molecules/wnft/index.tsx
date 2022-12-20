@@ -10,10 +10,11 @@ import { WNFT } from '.graphclient'
 import { ModalContext, ModalElement } from '@ui/contexts/Modal'
 import { fetcher } from '@ui/utils/fetcher'
 import TracesContract from '@web3/contracts/traces/traces-abi'
-import { getChainId } from '@web3/helpers/chain'
 import { BigNumber } from 'ethers'
 import { HandledToken } from 'pages/api/helpers/_web3'
 import dayjs from 'dayjs'
+import { formatUnits } from 'ethers/lib/utils.js'
+import { parseAmountToDisplay } from '@web3/helpers/handleAmount'
 
 type WNFTProps = {
   item: Pick<WNFT, 'id' | 'ogTokenAddress' | 'ogTokenId' | 'tokenId' | 'currentOwner' | 'lastPrice' | 'firstStakePrice' | 'minHoldPeriod'>
@@ -61,10 +62,9 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
     address: process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS ?? '',
     abi: TracesContract,
     functionName: 'getWNFTPrice',
-    chainId: getChainId(),
     args: [BigNumber.from(item.id)],
     onSuccess(data) {
-      if (data.toString() === item.firstStakePrice) {
+      if (data.eq(item.firstStakePrice)) {
         setCurrentState(WNFTState.Minting)
         return
       }
@@ -84,11 +84,11 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
       handleOpenModal(ModalElement.Mint, {
         id: item.id,
         name: data?.name,
-        minAmount: item.firstStakePrice,
+        minAmount: Math.round(parseAmountToDisplay(price.data ?? item.firstStakePrice)),
         ogTokenAddress: item.ogTokenAddress,
         ogTokenId: item.ogTokenId,
       }),
-    [handleOpenModal, item.id, item.firstStakePrice, item.ogTokenAddress, item.ogTokenId, data?.name]
+    [handleOpenModal, item.id, item.firstStakePrice, item.ogTokenAddress, item.ogTokenId, data?.name, price.data]
   )
 
   if (error) {
@@ -124,7 +124,7 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
                 <Box marginBottom={4}>
                   <Text color="gray.200">Minimum stake</Text>
                   <Text color="gray.100" fontWeight={600}>
-                    {price.data?.toNumber()} PRINTS
+                    {Number(formatUnits(price?.data ?? '', 18))} PRINTS
                   </Text>
                 </Box>
               )}
@@ -145,21 +145,8 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
                 <Text color="gray.200">Staked</Text>
                 <Flex alignItems="baseline">
                   <Text color="gray.100" fontWeight={600} marginRight={2}>
-                    1500 PRINTS
+                    {parseAmountToDisplay(price.data ?? '0')} PRINTS
                   </Text>
-                  <Tooltip
-                    label="The value decrease every day until reachs $value at day $date"
-                    fontSize="sm"
-                    color="gray.50"
-                    textAlign="center"
-                    placement="top-start"
-                    hasArrow={true}
-                    arrowSize={8}
-                  >
-                    <span>
-                      <Icon as={BsArrowDownRightCircle} color="gray.300" boxSize={3} />
-                    </span>
-                  </Tooltip>
                 </Flex>
               </Box>
               <Box marginBottom={4}>
@@ -186,11 +173,13 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
                 <Flex alignItems="baseline">
                   {!price.isLoading && !price.error && (
                     <Text color="gray.100" fontWeight={600} marginRight={2}>
-                      {price.data?.toNumber()} PRINTS
+                      {Math.round(parseAmountToDisplay(price?.data ?? '0'))} PRINTS
                     </Text>
                   )}
                   <Tooltip
-                    label="The value decrease every day until reachs $value at day $date"
+                    label={`The value decreases constantly until reachs ${parseAmountToDisplay(item.firstStakePrice)} at ${dayjs
+                      .unix(data.lastOutbidTimestamp)
+                      .add(data.minHoldPeriod, 'seconds')}`}
                     fontSize="sm"
                     color="gray.50"
                     textAlign="center"
@@ -207,7 +196,7 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
               <Box marginBottom={4}>
                 <Text color="gray.200">Holding during</Text>
                 <Text color="gray.100" fontWeight={600}>
-                  10 days
+                  {dayjs.unix(data.lastOutbidTimestamp).fromNow(true)}
                 </Text>
               </Box>
               <Box marginBottom={6}>

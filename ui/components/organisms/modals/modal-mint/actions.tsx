@@ -13,6 +13,7 @@ import { Address, useWaitForTransaction } from 'wagmi'
 import usePrints from '@web3/contracts/prints/use-prints'
 import useWallet from '@web3/wallet/use-wallet'
 import useTracesOutbid from '@web3/contracts/traces/use-traces-outbid'
+import { parseAmountToContract, parseAmountToDisplay } from '@web3/helpers/handleAmount'
 
 type ActionsProps = {
   minPrints: number
@@ -21,6 +22,7 @@ type ActionsProps = {
 } & UseMutationResult<ContractTransaction | undefined, any, { amount: BigNumber; isIncrease?: boolean | undefined }, unknown>
 
 const Actions = (props: ActionsProps) => {
+  const { onClose, amount, minPrints, isLoading, isSuccess: isSuccessApprove, data: approve, mutateAsync: approvePrints } = props
   const { payload } = useContext(ModalContext) as { payload: WNFTModalProps }
   const toast = useToast()
   const prints = usePrints()
@@ -29,15 +31,13 @@ const Actions = (props: ActionsProps) => {
   const [allowance, setAllowance] = useState<BigNumber>()
   const [isOutbidSubmitted, setIsOutbidSubmitted] = useState(false)
 
-  const { onClose, amount, minPrints, isLoading, isSuccess: isSuccessApprove, data: approve, mutateAsync: approvePrints } = props
-
   const outbid = useTracesOutbid()
 
   const getAllowance = useCallback(async () => {
     try {
       const allowance = await prints?.allowance(address as Address, process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS as Address)
 
-      setAllowance(allowance)
+      setAllowance(BigNumber.from(parseAmountToDisplay(allowance?.toString() ?? '0')))
     } catch (error) {
       console.log('getAllowance', error)
     }
@@ -53,8 +53,7 @@ const Actions = (props: ActionsProps) => {
     try {
       console.log('amount', amount)
       if (amount) {
-        console.log('here', payload.ogTokenAddress)
-        await outbid.mutateAsync({ amount: BigNumber.from(amount), tokenAddress: payload.ogTokenAddress, tokenId: BigNumber.from(payload.ogTokenId) })
+        await outbid.mutateAsync({ amount, tokenAddress: payload.ogTokenAddress, tokenId: BigNumber.from(payload.ogTokenId) })
 
         setIsOutbidSubmitted(true)
       }
@@ -68,7 +67,7 @@ const Actions = (props: ActionsProps) => {
   const handleApprove = async () => {
     try {
       if (amount) {
-        await approvePrints({ amount: BigNumber.from(amount) })
+        await approvePrints({ amount: parseAmountToContract(amount) })
       }
     } catch (error) {
       console.log('handleApprove', error)
@@ -104,6 +103,7 @@ const Actions = (props: ActionsProps) => {
   }, [canStake, handleOutbid, isOutbidSubmitted])
 
   const value = useMemo(() => {
+    console.log(allowance, amount)
     return (allowance?.toNumber() || 0) > 0 ? allowance?.toNumber().toLocaleString() : amount.toLocaleString()
   }, [allowance, amount])
 

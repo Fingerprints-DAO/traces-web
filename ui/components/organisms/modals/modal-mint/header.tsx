@@ -4,6 +4,7 @@ import React, { useContext, useEffect } from 'react'
 import { Box, Heading, Text } from '@chakra-ui/react'
 import usePrintsRead from '@web3/contracts/prints/use-prints-read'
 import { ModalContext, WNFTModalProps } from '@ui/contexts/Modal'
+import { parseAmountToDisplay } from '@web3/helpers/handleAmount'
 
 type ModalMintHeaderProps = {
   prints?: number
@@ -51,7 +52,7 @@ const ModalMintHeader = ({ showAllowance, prints = 0 }: ModalMintHeaderProps) =>
             {prints.toLocaleString()} $PRINTS
           </Text>
         </Text>
-        {showAllowance && (allowance?.toNumber() ?? 0) > 0 && (
+        {showAllowance && allowance?.gt(0) && (
           <Text
             as="div"
             color="gray.300"
@@ -62,7 +63,7 @@ const ModalMintHeader = ({ showAllowance, prints = 0 }: ModalMintHeaderProps) =>
           >
             Approved to stake
             <Text as="span" color="gray.100" fontWeight={600} marginLeft={3}>
-              {allowance?.toNumber().toLocaleString()} $PRINTS
+              {parseAmountToDisplay(allowance?.toString() ?? '')} $PRINTS
             </Text>
           </Text>
         )}

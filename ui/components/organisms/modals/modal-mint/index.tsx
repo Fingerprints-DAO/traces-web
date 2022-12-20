@@ -15,6 +15,7 @@ import useWallet from '@web3/wallet/use-wallet'
 import usePrints from '@web3/contracts/prints/use-prints'
 import usePrintsApprove from '@web3/contracts/prints/use-prints-approve'
 import { ModalContext, WNFTModalProps } from '@ui/contexts/Modal'
+import { parseAmountToContract, parseAmountToDisplay } from '@web3/helpers/handleAmount'
 
 type ModalMintProps = {
   isOpen: boolean
@@ -40,7 +41,7 @@ const ModalMint = ({ isOpen, onClose }: ModalMintProps) => {
       if (prints) {
         const newAllowance = await prints.allowance(address as Address, process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS as Address)
 
-        setAllowance(newAllowance?.toNumber() ?? 0)
+        setAllowance(parseAmountToDisplay(newAllowance?.toString() ?? ''))
       }
     } catch (error) {
       console.log('getAllowance', error)
@@ -57,16 +58,16 @@ const ModalMint = ({ isOpen, onClose }: ModalMintProps) => {
     }
   }, [allowance, canStake, setAmount])
 
-  const handleSubmit = async (data: { amount: number }) => {
+  const handleSubmit = async ({ amount }: { amount: number }) => {
     try {
       setIsFetched(true)
 
       const currentAllowance = await prints?.allowance(address as Address, process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS as Address)
-      const allowanceUntilNow = currentAllowance?.toNumber()
 
-      const balanceToApprove = data.amount - (allowanceUntilNow || 0)
-      const isIncrease = balanceToApprove !== amount
-      await printsApprove.mutateAsync({ amount: BigNumber.from(balanceToApprove), isIncrease })
+      const balanceToApprove = parseAmountToContract(amount).sub(currentAllowance ?? 0)
+      const isIncrease = currentAllowance && currentAllowance.gt(0)
+      setAmount(parseAmountToDisplay(balanceToApprove))
+      await printsApprove.mutateAsync({ amount: balanceToApprove, isIncrease })
     } catch (error) {
       console.log('handleSubmit', error)
     }

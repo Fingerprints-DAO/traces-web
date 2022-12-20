@@ -16,7 +16,7 @@ export enum ModalElement {
 export type WNFTModalProps = {
   id: string
   name: string
-  minAmount: string
+  minAmount: number
   ogTokenAddress: Address
   ogTokenId: string
 }

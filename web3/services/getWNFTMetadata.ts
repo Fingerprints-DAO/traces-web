@@ -1,3 +1,4 @@
+import dayjs from 'dayjs'
 import reservoirAPI from 'pages/api/helpers/_api'
 import { WNFTMetadata } from 'pages/api/helpers/_types'
 
@@ -85,6 +86,7 @@ export const getWNFTMetadata = async (
             value: tokens[0].token.tokenId,
           },
           {
+            display_type: 'number',
             trait_type: 'Staked $PRINTS',
             value: stakedAmount,
           },
@@ -95,7 +97,8 @@ export const getWNFTMetadata = async (
           // },
           {
             trait_type: 'Stake Date',
-            value: stakedDate, // timestamp
+            display_type: 'date',
+            value: dayjs.unix(stakedDate).toString(), // timestamp
           },
         ],
       }

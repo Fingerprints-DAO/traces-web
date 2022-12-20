@@ -11,6 +11,7 @@ import TracesContract from '@web3/contracts/traces/traces-abi'
 import { ModalContext } from '@ui/contexts/Modal'
 import { AddNftPayload } from '@ui/components/organisms/modals/modal-add-nft'
 import useTxToast from '@ui/hooks/use-tx-toast'
+import { parseUnits } from 'ethers/lib/utils.js'
 
 const useTracesAddNft = (isSubmitted: boolean) => {
   const { showTxSentToast, showTxErrorToast, showTxExecutedToast } = useTxToast()
@@ -58,7 +59,7 @@ const useTracesAddNft = (isSubmitted: boolean) => {
       setParams([
         ogTokenAddress as Address,
         BigNumber.from(ogTokenId),
-        BigNumber.from(minStake),
+        parseUnits(minStake.toString(), 18),
         BigNumber.from(dayjs.duration(minHoldPeriod, 'day').as('second')),
         BigNumber.from(dutchMultiplier),
         BigNumber.from(dayjs.duration(dutchAuctionDuration, 'day').as('second')),

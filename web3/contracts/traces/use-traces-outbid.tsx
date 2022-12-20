@@ -4,11 +4,12 @@ import { BigNumber } from 'ethers'
 import { useMutation } from 'react-query'
 import { Box, Text, useToast } from '@chakra-ui/react'
 import useTraces from './use-traces'
+import { parseAmountToContract } from '@web3/helpers/handleAmount'
 
 type Payload = {
   tokenAddress?: Address
   tokenId: BigNumber
-  amount: BigNumber
+  amount: number
 }
 
 const useTracesOutbid = () => {
@@ -16,8 +17,7 @@ const useTracesOutbid = () => {
   const traces = useTraces()
 
   const request = async ({ amount, tokenAddress, tokenId }: Payload) => {
-    console.log(tokenAddress, tokenId, amount)
-    return tokenAddress && traces?.outbid(tokenAddress, tokenId, amount)
+    return tokenAddress && traces?.outbid(tokenAddress, tokenId, parseAmountToContract(amount))
   }
 
   return useMutation(request, {
