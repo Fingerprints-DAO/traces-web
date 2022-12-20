@@ -9352,11 +9352,7 @@ remove-trailing-separator@^1.0.1:
   resolved "https://registry.yarnpkg.com/remove-trailing-separator/-/remove-trailing-separator-1.1.0.tgz#c24bce2a283adad5bc3f58e0d48249b92379d8ef"
   integrity sha512-/hS+Y0u3aOfIETiaiirUFwDBDzmXPvO+jAfKTitUngIPzdKc6Z0LoFjM/CK5PL4C+eKwHohlHAb6H0VFfmmUsw==
 
-<<<<<<< HEAD
-remove-undefined-objects@^2.0.0, remove-undefined-objects@^2.0.1:
-=======
 remove-undefined-objects@^2.0.0, remove-undefined-objects@^2.0.2:
->>>>>>> develop
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/remove-undefined-objects/-/remove-undefined-objects-2.0.2.tgz#d323b075b12439077454ecf056a72dc2c94c9945"
   integrity sha512-b6x4MUtR4YBW1aCoGx3tE4mA2PFjiXSmtSdNmLexQzUdZa4ybnJAItXLKpkcVgCUJIzJtk2DFG402sMSEMlonQ==
