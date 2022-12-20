@@ -50,7 +50,7 @@ export const getWNFTMetadata = async (
         // },
         {
           trait_type: 'Last Outbid',
-          value: stakedDate, // timestamp
+          value: dayjs.unix(stakedDate).toString(), // timestamp
         },
       ],
     }

@@ -24,7 +24,7 @@ const usePrintsApprove = () => {
         description: (
           <>
             <Text mb={4}>{error?.reason || 'Transaction error'}</Text>
-            <Box as="a" href={`https://etherscan.io/tx/`} target="_blank" textDecoration="underline">
+            <Box as="a" href={`${process.env.NEXT_PUBLIC_ETHERSCAN_URL}/tx/`} target="_blank" textDecoration="underline">
               Click here to see transaction
             </Box>
           </>

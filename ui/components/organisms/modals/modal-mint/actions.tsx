@@ -80,7 +80,7 @@ const Actions = (props: ActionsProps) => {
       title: 'Success',
       status: 'success',
       description: (
-        <Box as="a" href={`https://etherscan.io/tx/${data.transactionHash}`} target="_blank" textDecoration="underline">
+        <Box as="a" href={`${process.env.NEXT_PUBLIC_ETHERSCAN_URL}/tx/${data.transactionHash}`} target="_blank" textDecoration="underline">
           Click here to see transaction
         </Box>
       ),
