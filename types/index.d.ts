@@ -3,3 +3,7 @@ declare global {
     ethereum: any
   }
 }
+
+interface RevertError extends Error {
+  errorName?: string
+}

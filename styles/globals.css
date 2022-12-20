@@ -5,6 +5,19 @@
 .featured-collections .swiper-slide {
   width: 100% !important;
 }
+body {
+  padding-top: 2px;
+}
+
+#nprogress {
+  position: absolute;
+  z-index: 10000;
+  top: 0;
+}
+
+#nprogress .bar {
+  background-color: white;
+}
 
 @media (min-width: 30em) {
   .featured-collections.swiper {

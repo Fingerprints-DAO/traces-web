@@ -2,6 +2,8 @@ import { createContext, PropsWithChildren, useState } from 'react'
 
 // Dependencies
 import { useDisclosure } from '@chakra-ui/react'
+import { Address, useWaitForTransaction } from 'wagmi'
+import useTxToast from '@ui/hooks/use-tx-toast'
 
 export enum ModalElement {
   Mint = 'mint',
@@ -12,12 +14,19 @@ export enum ModalElement {
   Default = '',
 }
 
+export type WNFTModalProps = {
+  id: string
+  name: string
+  minAmount: number
+  ogTokenAddress: Address
+  ogTokenId: string
+}
 export type ModalContextValue = {
   isOpen?: boolean
-  payload?: Partial<{ id: string }>
+  payload?: WNFTModalProps | {}
   element: ModalElement
   handleOpenModal: (element: ModalElement, payload?: ModalContextValue['payload']) => () => void
-  handleCloseModal: () => void
+  handleCloseModal: (hash?: Address, callback?: Function) => void
 }
 
 export type ModalProps = {
@@ -27,7 +36,7 @@ export type ModalProps = {
 
 const INITIAL_STATE: ModalContextValue = {
   element: ModalElement.Default,
-  handleOpenModal: (element: ModalElement, payload?: ModalContextValue['payload']) => () => {},
+  handleOpenModal: () => () => {},
   handleCloseModal: () => {},
 }
 
@@ -36,8 +45,24 @@ const ModalContext = createContext<ModalContextValue>(INITIAL_STATE)
 const ModalProvider = ({ children }: PropsWithChildren) => {
   const [payload, setPayload] = useState<ModalContextValue['payload']>({})
   const [element, setElement] = useState<ModalElement>(INITIAL_STATE.element)
+  const { showTxErrorToast } = useTxToast()
+  const [lastTxHash, setLastTxHash] = useState<Address | undefined>(undefined)
+  const [lastTxCallback, setLastTxCallback] = useState<Function | undefined>(undefined)
 
   const { isOpen, onClose, onOpen } = useDisclosure()
+
+  useWaitForTransaction({
+    hash: lastTxHash,
+    onSettled(_, error) {
+      if (error) {
+        showTxErrorToast(error)
+        return
+      }
+
+      lastTxCallback && lastTxCallback()
+    },
+    enabled: !!lastTxHash && typeof lastTxHash === 'string',
+  })
 
   const handleOpenModal =
     (element: ModalElement, payload: ModalContextValue['payload'] = {}) =>
@@ -47,12 +72,16 @@ const ModalProvider = ({ children }: PropsWithChildren) => {
       onOpen()
     }
 
-  const handleCloseModal = () => {
-    setElement(ModalElement.Default)
+  const handleCloseModal = (hash?: Address, callback?: Function) => {
+    setElement(INITIAL_STATE.element)
+    setPayload(INITIAL_STATE.payload)
     onClose()
+    if (typeof hash !== 'string') return
+    setLastTxHash(hash)
+    setLastTxCallback(callback)
   }
 
-  const values: ModalContextValue = { element, isOpen, payload, handleOpenModal, handleCloseModal }
+  const values = { element, isOpen, payload, handleOpenModal, handleCloseModal }
 
   return <ModalContext.Provider value={values}>{children}</ModalContext.Provider>
 }

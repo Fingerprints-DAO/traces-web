@@ -11,7 +11,9 @@ const usePrintsApprove = () => {
   const toast = useToast()
   const prints = usePrints()
 
-  const request = async (balanceToApprove: BigNumber) => prints?.approve(process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS as Address, balanceToApprove)
+  const request = async ({ amount, isIncrease }: { amount: BigNumber; isIncrease?: boolean }) => {
+    return prints?.[isIncrease ? 'increaseAllowance' : 'approve'](process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS as Address, amount)
+  }
 
   return useMutation(request, {
     onSuccess: () => {},
@@ -22,7 +24,7 @@ const usePrintsApprove = () => {
         description: (
           <>
             <Text mb={4}>{error?.reason || 'Transaction error'}</Text>
-            <Box as="a" href={`https://etherscan.io/tx/`} target="_blank" textDecoration="underline">
+            <Box as="a" href={`${process.env.NEXT_PUBLIC_ETHERSCAN_URL}/tx/`} target="_blank" textDecoration="underline">
               Click here to see transaction
             </Box>
           </>

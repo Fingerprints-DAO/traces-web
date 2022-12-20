@@ -6,7 +6,7 @@ import { useContractWrite, usePrepareContractWrite } from 'wagmi'
 
 // Helpers
 import useTracesRead from './use-traces-read'
-import TracesContract from '@web3/contracts/traces/contract'
+import TracesContract from '@web3/contracts/traces/traces-abi'
 import { ModalContext } from '@ui/contexts/Modal'
 
 const useTracesUpdateConfigs = (isSubmitted: boolean, vaultAddress: `0x${string}`) => {

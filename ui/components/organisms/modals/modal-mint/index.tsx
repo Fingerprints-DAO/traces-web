@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 
 // Dependencies
 import { Address } from 'wagmi'
@@ -14,30 +14,34 @@ import ModalMintHeader from './header'
 import useWallet from '@web3/wallet/use-wallet'
 import usePrints from '@web3/contracts/prints/use-prints'
 import usePrintsApprove from '@web3/contracts/prints/use-prints-approve'
+import { ModalContext, WNFTModalProps } from '@ui/contexts/Modal'
+import { parseAmountToContract, parseAmountToDisplay } from '@web3/helpers/handleAmount'
 
 type ModalMintProps = {
   isOpen: boolean
   onClose: () => void
 }
 
-const fakeMinPrints = 1000
-
 const ModalMint = ({ isOpen, onClose }: ModalMintProps) => {
+  const { payload } = useContext(ModalContext) as { payload: WNFTModalProps }
   const prints = usePrints()
   const { address, printsBalance } = useWallet()
+  const printsApprove = usePrintsApprove()
 
   const [isFetched, setIsFetched] = useState(false)
-  const [amount, setAmount] = useState<BigNumber>()
-  const [allowance, setAllowance] = useState<BigNumber>()
+  const [amount, setAmount] = useState<number>(0)
+  const [allowance, setAllowance] = useState<number>(0)
 
-  const printsApprove = usePrintsApprove()
+  const minPrints = Number(payload.minAmount) ?? 0
+  const canStake = useMemo(() => allowance >= minPrints, [allowance, minPrints])
+  const canGoToActions = useMemo(() => isFetched || canStake, [canStake, isFetched])
 
   const getAllowance = useCallback(async () => {
     try {
       if (prints) {
-        const allowance = await prints.allowance(address as Address, process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS as Address)
+        const newAllowance = await prints.allowance(address as Address, process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS as Address)
 
-        setAllowance(allowance)
+        setAllowance(parseAmountToDisplay(newAllowance?.toString() ?? ''))
       }
     } catch (error) {
       console.log('getAllowance', error)
@@ -48,30 +52,22 @@ const ModalMint = ({ isOpen, onClose }: ModalMintProps) => {
     getAllowance()
   }, [getAllowance])
 
-  const canStake = useMemo(() => (allowance?.toNumber() || 0) >= fakeMinPrints, [allowance])
-
   useEffect(() => {
     if (canStake) {
       setAmount(allowance)
     }
   }, [allowance, canStake, setAmount])
 
-  const canGoToActions = useMemo(() => isFetched || canStake, [canStake, isFetched])
-
-  const handleSubmit = async (data: { amount: number }) => {
+  const handleSubmit = async ({ amount }: { amount: number }) => {
     try {
       setIsFetched(true)
 
-      const allowance = await prints?.allowance(address as Address, process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS as Address)
-      const allowanceUntilNow = allowance?.toNumber()
+      const currentAllowance = await prints?.allowance(address as Address, process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS as Address)
 
-      const balanceToApprove = data.amount - (allowanceUntilNow || 0)
-
-      const amount = BigNumber.from(balanceToApprove)
-
-      setAmount(amount)
-
-      await printsApprove.mutateAsync(amount)
+      const balanceToApprove = parseAmountToContract(amount).sub(currentAllowance ?? 0)
+      const isIncrease = currentAllowance && currentAllowance.gt(0)
+      setAmount(parseAmountToDisplay(balanceToApprove))
+      await printsApprove.mutateAsync({ amount: balanceToApprove, isIncrease })
     } catch (error) {
       console.log('handleSubmit', error)
     }
@@ -81,12 +77,12 @@ const ModalMint = ({ isOpen, onClose }: ModalMintProps) => {
     <Modal isOpen={isOpen} onClose={onClose} isCentered={true}>
       <ModalOverlay />
       <ModalContent background="gray.900" padding={[6, 12]} minW={['unset', 650]} maxW={['90%', '90%', '90%', 'md']}>
-        <ModalMintHeader showAllowance={false} prints={Number(printsBalance?.formatted || 0)} />
+        <ModalMintHeader showAllowance={allowance > 0} prints={Number(printsBalance?.formatted || 0)} />
         <ModalBody padding={0}>
           {canGoToActions ? (
-            <Actions {...printsApprove} amount={amount} minPrints={fakeMinPrints} onClose={onClose} />
+            <Actions {...printsApprove} amount={amount} minPrints={minPrints} onClose={onClose} />
           ) : (
-            <Stake minPrints={fakeMinPrints} userPrints={Number(printsBalance?.formatted)} onSubmit={handleSubmit} onClose={onClose} />
+            <Stake userPrints={Number(printsBalance?.formatted)} onSubmit={handleSubmit} onClose={onClose} />
           )}
         </ModalBody>
       </ModalContent>

@@ -4,18 +4,21 @@ import { BigNumber } from 'ethers'
 import { useMutation } from 'react-query'
 import { Box, Text, useToast } from '@chakra-ui/react'
 import useTraces from './use-traces'
+import { parseAmountToContract } from '@web3/helpers/handleAmount'
 
 type Payload = {
-  tokenAddress: Address
+  tokenAddress?: Address
   tokenId: BigNumber
-  amount: BigNumber
+  amount: number
 }
 
 const useTracesOutbid = () => {
   const toast = useToast()
   const traces = useTraces()
 
-  const request = async ({ amount, tokenAddress, tokenId }: Payload) => traces?.outbid(tokenAddress, tokenId, amount)
+  const request = async ({ amount, tokenAddress, tokenId }: Payload) => {
+    return tokenAddress && traces?.outbid(tokenAddress, tokenId, parseAmountToContract(amount))
+  }
 
   return useMutation(request, {
     onSuccess: () => {},
@@ -26,7 +29,7 @@ const useTracesOutbid = () => {
         description: (
           <>
             <Text mb={4}>{error?.reason || 'Transaction error'}</Text>
-            <Box as="a" href={`https://etherscan.io/tx/`} target="_blank" textDecoration="underline">
+            <Box as="a" href={`${process.env.NEXT_PUBLIC_ETHERSCAN_URL}/tx/`} target="_blank" textDecoration="underline">
               Click here to see transaction
             </Box>
           </>

@@ -2,7 +2,7 @@
 import { useContract, useSigner } from 'wagmi'
 
 // Helpers
-import PrintsContract from './contract'
+import PrintsContract from './prints-abi'
 
 const usePrints = () => {
   const { data } = useSigner()
@@ -14,7 +14,7 @@ const usePrints = () => {
   })
 
   if (!prints) {
-    return
+    return undefined
   }
 
   return prints

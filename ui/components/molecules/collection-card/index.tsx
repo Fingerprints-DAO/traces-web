@@ -5,24 +5,20 @@ import useSWR from 'swr'
 import Link from 'next/link'
 import { Box, Heading, Text } from '@chakra-ui/react'
 import { CollectionMetadata, WNFTMetadata } from 'pages/api/helpers/_types'
+import { fetcher } from '@ui/utils/fetcher'
 
 type CollectionCardProps = {
-  id: string
-  isCollection?: boolean
+  id: String
   cardWidth?: Array<string | number>
   image?: Partial<{
     height: string
     marginBottom: number
   }>
 }
-export async function fetcher<JSON = any>(input: RequestInfo, init?: RequestInit): Promise<JSON> {
-  const res = await fetch(input, init)
-  return res.json()
-}
 
-const CollectionCard = ({ id, isCollection, cardWidth = ['100%', 96], image, children }: PropsWithChildren<CollectionCardProps>) => {
+const CollectionCard = ({ id, cardWidth = ['100%', 96], image, children }: PropsWithChildren<CollectionCardProps>) => {
   // fetch http api on route `api/collection/${id}` and return the collection data, do not use react-query here
-  const { data, error } = useSWR<CollectionMetadata | WNFTMetadata>(isCollection ? `/api/collection/${id}` : `/api/wnft/${id}`, fetcher)
+  const { data, error } = useSWR<CollectionMetadata>(`/api/collection/${id}`, fetcher)
 
   if (error) {
     return <div>failed to load</div>
@@ -31,24 +27,9 @@ const CollectionCard = ({ id, isCollection, cardWidth = ['100%', 96], image, chi
     return <div>loading...</div>
   }
 
-  const RenderLink = ({ children }: PropsWithChildren) => {
-    if (isCollection) {
-      return (
-        <Link href={`collections/${id}`} prefetch>
-          {children}
-        </Link>
-      )
-    }
-    return (
-      <a href={data?.openseaUrl} target={'_blank'} rel="noreferrer">
-        {children}
-      </a>
-    )
-  }
-
   return (
     <Box display="flex" flexDirection="column" height="full" width={cardWidth} color="gray.100" cursor={'pointer'}>
-      <RenderLink>
+      <Link href={`collections/${id}`}>
         <Box
           width="100%"
           height={image?.height || '549px'}
@@ -60,7 +41,7 @@ const CollectionCard = ({ id, isCollection, cardWidth = ['100%', 96], image, chi
           backgroundPosition={'center'}
           borderRadius={8}
         />
-      </RenderLink>
+      </Link>
       <Heading as="h6" size="md" marginBottom={2}>
         {data?.name}
       </Heading>

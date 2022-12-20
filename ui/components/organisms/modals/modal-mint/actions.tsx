@@ -8,21 +8,22 @@ import { TransactionReceipt } from '@ethersproject/providers'
 import { Box, Button, Icon, ModalFooter, Spinner, Text, useToast } from '@chakra-ui/react'
 
 // Helpers
-import { ModalContext } from '@ui/contexts/Modal'
+import { ModalContext, WNFTModalProps } from '@ui/contexts/Modal'
 import { Address, useWaitForTransaction } from 'wagmi'
 import usePrints from '@web3/contracts/prints/use-prints'
 import useWallet from '@web3/wallet/use-wallet'
 import useTracesOutbid from '@web3/contracts/traces/use-traces-outbid'
+import { parseAmountToContract, parseAmountToDisplay } from '@web3/helpers/handleAmount'
 
 type ActionsProps = {
   minPrints: number
-  amount?: BigNumber
+  amount: number
   onClose: () => void
-} & UseMutationResult<ContractTransaction | undefined, any, BigNumber, unknown>
-
-const tokenId = BigNumber.from(11)
+} & UseMutationResult<ContractTransaction | undefined, any, { amount: BigNumber; isIncrease?: boolean | undefined }, unknown>
 
 const Actions = (props: ActionsProps) => {
+  const { onClose, amount, minPrints, isLoading, isSuccess: isSuccessApprove, data: approve, mutateAsync: approvePrints } = props
+  const { payload } = useContext(ModalContext) as { payload: WNFTModalProps }
   const toast = useToast()
   const prints = usePrints()
   const { address } = useWallet()
@@ -30,15 +31,13 @@ const Actions = (props: ActionsProps) => {
   const [allowance, setAllowance] = useState<BigNumber>()
   const [isOutbidSubmitted, setIsOutbidSubmitted] = useState(false)
 
-  const { onClose, amount, minPrints, isLoading, isSuccess: isSuccessApprove, data: approve, mutateAsync: approvePrints } = props
-
   const outbid = useTracesOutbid()
 
   const getAllowance = useCallback(async () => {
     try {
       const allowance = await prints?.allowance(address as Address, process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS as Address)
 
-      setAllowance(allowance)
+      setAllowance(BigNumber.from(parseAmountToDisplay(allowance?.toString() ?? '0')))
     } catch (error) {
       console.log('getAllowance', error)
     }
@@ -52,23 +51,22 @@ const Actions = (props: ActionsProps) => {
 
   const handleOutbid = useCallback(async () => {
     try {
-      console.log('amount', amount)
       if (amount) {
-        await outbid.mutateAsync({ amount, tokenAddress: '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512', tokenId })
+        await outbid.mutateAsync({ amount, tokenAddress: payload.ogTokenAddress, tokenId: BigNumber.from(payload.ogTokenId) })
 
         setIsOutbidSubmitted(true)
       }
     } catch (error) {
       console.log('handleWaitingApproveSuccess', error)
     }
-  }, [amount, outbid])
+  }, [amount, outbid, payload.ogTokenAddress, payload.ogTokenId])
 
   const waitingApprove = useWaitForTransaction({ hash: approve?.hash as Address })
 
   const handleApprove = async () => {
     try {
       if (amount) {
-        await approvePrints(amount)
+        await approvePrints({ amount: parseAmountToContract(amount) })
       }
     } catch (error) {
       console.log('handleApprove', error)
@@ -82,7 +80,7 @@ const Actions = (props: ActionsProps) => {
       title: 'Success',
       status: 'success',
       description: (
-        <Box as="a" href={`https://etherscan.io/tx/${data.transactionHash}`} target="_blank" textDecoration="underline">
+        <Box as="a" href={`${process.env.NEXT_PUBLIC_ETHERSCAN_URL}/tx/${data.transactionHash}`} target="_blank" textDecoration="underline">
           Click here to see transaction
         </Box>
       ),
@@ -104,7 +102,7 @@ const Actions = (props: ActionsProps) => {
   }, [canStake, handleOutbid, isOutbidSubmitted])
 
   const value = useMemo(() => {
-    return (allowance?.toNumber() || 0) > 0 ? allowance?.toNumber().toLocaleString() : (amount?.toNumber() || 0).toLocaleString()
+    return (allowance?.toNumber() || 0) > 0 ? allowance?.toNumber().toLocaleString() : amount.toLocaleString()
   }, [allowance, amount])
 
   return (

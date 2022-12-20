@@ -44,19 +44,20 @@ const schema = object({
 })
 
 const ModalAddNft = ({ isOpen, onClose }: ModalProps) => {
-  const { control, formState, register, handleSubmit, watch } = useForm<AddNftPayload>({
+  const { formState, register, handleSubmit, watch } = useForm<AddNftPayload>({
     mode: 'onSubmit',
     resolver: yupResolver(schema),
     defaultValues: {
       ogTokenAddress: '',
       dutchAuctionDuration: 10,
+      dutchMultiplier: 10,
     },
   })
 
   const form = watch()
-  const addNft = useTracesAddNft(formState.isSubmitted, form)
+  const [onAddNFT] = useTracesAddNft(formState.isSubmitted)
 
-  const submit = () => addNft && addNft()
+  const submit = () => onAddNFT(form)
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered={true}>
@@ -87,7 +88,7 @@ const ModalAddNft = ({ isOpen, onClose }: ModalProps) => {
                   Guaranteed Holding Period
                 </Text>
                 <InputGroup>
-                  <Input {...register('minHoldPeriod')} type="number" size="lg" borderColor="gray.600" placeholder="Ex: 10" />
+                  <Input {...register('minHoldPeriod')} type="number" size="lg" borderColor="gray.600" placeholder="Ex: 10" step=".01" />
                   <InputRightAddon background="gray.800" borderColor="gray.600" color="gray.400" height={12}>
                     Days
                   </InputRightAddon>
@@ -98,7 +99,7 @@ const ModalAddNft = ({ isOpen, onClose }: ModalProps) => {
                   Min. Stake Qty
                 </Text>
                 <InputGroup>
-                  <Input {...register('minStake')} type="number" size="lg" borderColor="gray.600" placeholder="Ex: 1000" />
+                  <Input {...register('minStake')} type="number" size="lg" borderColor="gray.600" placeholder="Ex: 1000" step=".0001" />
                   <InputRightAddon background="gray.800" borderColor="gray.600" color="gray.400" height={12}>
                     $PRINTS
                   </InputRightAddon>
