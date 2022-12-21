@@ -27,6 +27,7 @@ import {
 import { ModalProps } from '@ui/contexts/Modal'
 import useTracesRead from '@web3/contracts/traces/use-traces-read'
 import useTracesAddRole from '@web3/contracts/traces/use-traces-add-role'
+import { TransactionStatus } from 'types/transaction'
 
 export type AddRolePayload = {
   role: Address
@@ -71,17 +72,19 @@ const ModalAddRole = ({ isOpen, onClose }: ModalProps) => {
 
       const wait = await response?.wait()
 
-      toast({
-        title: 'Success',
-        status: 'success',
-        description: (
-          <Box as="a" href={`https://etherscan.io/tx/${wait?.transactionHash}`} target="_blank" textDecoration="underline">
-            Click here to see transaction
-          </Box>
-        ),
-      })
+      if (wait?.status === TransactionStatus.Success) {
+        toast({
+          title: 'Success',
+          status: 'success',
+          description: (
+            <Box as="a" href={`https://etherscan.io/tx/${wait?.transactionHash}`} target="_blank" textDecoration="underline">
+              Click here to see transaction
+            </Box>
+          ),
+        })
 
-      onClose()
+        onClose()
+      }
     } catch (error) {
       console.log('submit', error)
 

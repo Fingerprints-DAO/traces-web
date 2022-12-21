@@ -2,7 +2,7 @@
 import { EthereumClient, modalConnectors, walletConnectProvider } from '@web3modal/ethereum'
 import { infuraProvider } from 'wagmi/providers/infura'
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
-import { createClient, configureChains, chain } from 'wagmi'
+import { createClient, configureChains } from 'wagmi'
 import { getChain } from './helpers/chain'
 
 const selectedChain = [getChain()]

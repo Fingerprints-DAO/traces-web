@@ -37,7 +37,7 @@ const links = [
 
 const Drawer = ({ isOpen, onClose, onOpenModal }: DrawerProps) => {
   const router = useRouter()
-  const { isEditor } = useTracesRead()
+  const { isAdmin, isEditor } = useTracesRead()
 
   const activeStyles = (path: string) => {
     if (router.pathname === path) {
@@ -79,6 +79,18 @@ const Drawer = ({ isOpen, onClose, onOpenModal }: DrawerProps) => {
         </DrawerBody>
         <DrawerFooter alignItems="flex-start" flexDirection="column" p={8}>
           <Box as="nav" mb={[10, 20]}>
+            {isAdmin && (
+              <Box
+                as="button"
+                display="block"
+                lineHeight={9}
+                fontSize={[18, 18, 18, 18, 24]}
+                mb={[4, 4, 4, 4, 10]}
+                onClick={handleOpenModal(ModalElement.AddRole)}
+              >
+                Manage roles
+              </Box>
+            )}
             {isEditor && (
               <>
                 <Box
@@ -90,16 +102,6 @@ const Drawer = ({ isOpen, onClose, onOpenModal }: DrawerProps) => {
                   onClick={handleOpenModal(ModalElement.AddNFT)}
                 >
                   Add NFT
-                </Box>
-                <Box
-                  as="button"
-                  display="block"
-                  lineHeight={9}
-                  fontSize={[18, 18, 18, 18, 24]}
-                  mb={[4, 4, 4, 4, 10]}
-                  onClick={handleOpenModal(ModalElement.AddRole)}
-                >
-                  Manage roles
                 </Box>
                 <Box
                   as="button"

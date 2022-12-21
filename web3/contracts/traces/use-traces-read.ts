@@ -22,6 +22,9 @@ const useTracesRead = () => {
     enabled: isConnected,
   })
 
+  console.log('adminRole', adminRole)
+  console.log('editorRole', editorRole)
+
   const { data: isEditor } = useContractRead({
     address: process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS,
     abi: TracesContract,
