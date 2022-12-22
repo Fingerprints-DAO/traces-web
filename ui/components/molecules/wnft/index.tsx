@@ -15,6 +15,7 @@ import { HandledToken } from 'pages/api/helpers/_web3'
 import dayjs from 'dayjs'
 import { formatUnits } from 'ethers/lib/utils.js'
 import { parseAmountToDisplay } from '@web3/helpers/handleAmount'
+import ButtonConnectWallet from '../button-connect-wallet'
 
 type WNFTProps = {
   item: Pick<WNFT, 'id' | 'ogTokenAddress' | 'ogTokenId' | 'tokenId' | 'currentOwner' | 'lastPrice' | 'firstStakePrice' | 'minHoldPeriod'>
@@ -91,12 +92,12 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
     [handleOpenModal, item.id, item.firstStakePrice, item.ogTokenAddress, item.ogTokenId, data?.name, price.data]
   )
 
-  if (error) {
-    return <div>failed to load</div>
+  if (error || !data) {
+    return null
   }
-  if (!data) {
-    return <div>loading...</div>
-  }
+  // if (!data) {
+  //   return <div>loading...</div>
+  // }
 
   return (
     <GridItem w="100%" key={item.id}>
@@ -134,9 +135,9 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
                   {formatTime(item.minHoldPeriod)}
                 </Text>
               </Box>
-              <Button color="gray.900" colorScheme="primary" width="full" marginTop="auto" onClick={handleOpenMintNftModal}>
+              <ButtonConnectWallet color="gray.900" colorScheme="primary" width="full" marginTop="auto" onClick={handleOpenMintNftModal}>
                 Mint WNFT
-              </Button>
+              </ButtonConnectWallet>
             </>
           )}
           {currentState === WNFTState.Holding && (
@@ -207,9 +208,10 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
                   {shortAddress(item.currentOwner)}
                 </Text>
               </Box>
-              <Button color="gray.900" colorScheme="primary" width="full" marginTop="auto" onClick={handleOpenMintNftModal}>
+
+              <ButtonConnectWallet color="gray.900" colorScheme="primary" width="full" marginTop="auto" onClick={handleOpenMintNftModal}>
                 Outbid WNFT
-              </Button>
+              </ButtonConnectWallet>
             </>
           )}
         </Box>
