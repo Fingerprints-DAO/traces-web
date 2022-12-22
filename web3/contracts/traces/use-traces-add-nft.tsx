@@ -62,7 +62,7 @@ const useTracesAddNft = (isSubmitted: boolean) => {
         parseUnits(minStake.toString(), 18),
         BigNumber.from(dayjs.duration(minHoldPeriod, 'day').as('second')),
         BigNumber.from(dutchMultiplier),
-        BigNumber.from(dayjs.duration(dutchAuctionDuration, 'day').as('second')),
+        BigNumber.from(dayjs.duration(dutchAuctionDuration, 'hour').as('second')),
       ])
       setFormIsReady(true)
     }
