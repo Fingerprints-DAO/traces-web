@@ -121,7 +121,7 @@ const ModalAddNft = ({ isOpen, onClose }: ModalProps) => {
                   Dutch Auction Duration
                 </Text>
                 <InputGroup>
-                  <Input {...register('dutchAuctionDuration')} type="number" size="lg" borderColor="gray.600" placeholder="Ex: 100" />
+                  <Input {...register('dutchAuctionDuration')} type="number" size="lg" borderColor="gray.600" placeholder="Ex: 100" step=".01" />
                   <InputRightAddon background="gray.800" borderColor="gray.600" color="gray.400" height={12}>
                     hours
                   </InputRightAddon>
