@@ -179,7 +179,9 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
                   <Tooltip
                     label={`The value decreases constantly until reachs ${parseAmountToDisplay(item.firstStakePrice)} at ${dayjs
                       .unix(data.lastOutbidTimestamp)
-                      .add(data.minHoldPeriod, 'seconds')}`}
+                      .add(data.dutchAuctionDuration, 'seconds')
+                      .add(data.minHoldPeriod, 'seconds')
+                      .format('L LT')}`}
                     fontSize="sm"
                     color="gray.50"
                     textAlign="center"
