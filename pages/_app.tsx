@@ -8,7 +8,7 @@ import { WagmiConfig as Web3Provider } from 'wagmi'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
 import relativeTime from 'dayjs/plugin/relativeTime'
-import LocalizedFormat from 'dayjs/plugin/LocalizedFormat'
+import localizedFormat from 'dayjs/plugin/localizedFormat'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 
@@ -37,7 +37,7 @@ import '@fontsource/inter/900.css'
 
 dayjs.extend(duration)
 dayjs.extend(relativeTime)
-dayjs.extend(LocalizedFormat)
+dayjs.extend(localizedFormat)
 NProgress.configure({ showSpinner: false })
 
 function Traces({ Component, pageProps }: AppProps) {
