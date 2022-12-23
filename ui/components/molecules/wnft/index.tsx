@@ -1,21 +1,37 @@
-import React, { PropsWithChildren, useContext, useMemo, useState } from 'react'
+import React, { PropsWithChildren, useContext, useMemo, useState, useEffect } from 'react'
 import useSWR from 'swr'
 
 // Dependencies
-import { Box, Button, Flex, GridItem, Heading, Icon, Text, Tooltip } from '@chakra-ui/react'
+import {
+  Box,
+  Button,
+  Flex,
+  GridItem,
+  Heading,
+  Icon,
+  Link,
+  Popover,
+  PopoverBody,
+  PopoverContent,
+  PopoverTrigger,
+  Text,
+  Tooltip,
+} from '@chakra-ui/react'
 import { BsArrowDownRightCircle } from 'react-icons/bs'
-import { useContractRead } from 'wagmi'
+import { useContractRead, useContractWrite, usePrepareContractWrite } from 'wagmi'
+import { BigNumber } from 'ethers'
+import dayjs from 'dayjs'
+import { formatUnits } from 'ethers/lib/utils.js'
 
 import { WNFT } from '.graphclient'
 import { ModalContext, ModalElement } from '@ui/contexts/Modal'
 import { fetcher } from '@ui/utils/fetcher'
 import TracesContract from '@web3/contracts/traces/traces-abi'
-import { BigNumber } from 'ethers'
 import { HandledToken } from 'pages/api/helpers/_web3'
-import dayjs from 'dayjs'
-import { formatUnits } from 'ethers/lib/utils.js'
 import { parseAmountToDisplay } from '@web3/helpers/handleAmount'
+import useTxToast from '@ui/hooks/use-tx-toast'
 import ButtonConnectWallet from '../button-connect-wallet'
+import useWallet from '@web3/wallet/use-wallet'
 
 type WNFTProps = {
   item: Pick<WNFT, 'id' | 'ogTokenAddress' | 'ogTokenId' | 'tokenId' | 'currentOwner' | 'lastPrice' | 'firstStakePrice' | 'minHoldPeriod'>
@@ -55,10 +71,17 @@ enum WNFTState {
 }
 
 const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
-  const [currentState, setCurrentState] = useState<WNFTState>(WNFTState.Loading)
+  const { showTxSentToast, showTxErrorToast } = useTxToast()
   const { handleOpenModal } = useContext(ModalContext)
+  const { address } = useWallet()
+  const [currentState, setCurrentState] = useState<WNFTState>(WNFTState.Loading)
   const { data, error } = useSWR<HandledToken>(`/api/outbid/${item.id}`, fetcher)
+  const [deleteParam, setDeleteParam] = useState<[BigNumber] | undefined>(undefined)
+  const [unstakeParam, setUnstakeParam] = useState<[BigNumber] | undefined>(undefined)
 
+  const isOwner = useMemo(() => {
+    return item.currentOwner.toLowerCase() === address?.toLowerCase()
+  }, [item.currentOwner, address])
   const price = useContractRead({
     address: process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS ?? '',
     abi: TracesContract,
@@ -79,6 +102,78 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
       }
     },
   })
+
+  const { config } = usePrepareContractWrite({
+    address: process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS,
+    abi: TracesContract,
+    functionName: 'deleteToken',
+    args: deleteParam,
+    enabled: !!deleteParam,
+    onError(error) {
+      showTxErrorToast(error)
+    },
+  })
+
+  const { write: deleteWNFT } = useContractWrite({
+    ...config,
+    onSettled: (data, error) => {
+      if (error) {
+        showTxErrorToast(error)
+        return
+      }
+
+      showTxSentToast(data?.hash)
+
+      // TODO: Add a listener to wait for the transaction to be mined and display toast
+    },
+    onError: showTxErrorToast,
+  })
+
+  useEffect(() => {
+    if (deleteParam && deleteWNFT) {
+      deleteWNFT()
+    }
+  }, [deleteParam, deleteWNFT])
+
+  const handleDelete = () => {
+    setDeleteParam([BigNumber.from(item.id)])
+  }
+
+  const { config: unstakeConfig } = usePrepareContractWrite({
+    address: process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS,
+    abi: TracesContract,
+    functionName: 'unstake',
+    args: unstakeParam,
+    enabled: !!unstakeParam,
+    onError(error) {
+      showTxErrorToast(error)
+    },
+  })
+
+  const { write: unstakeWNFT } = useContractWrite({
+    ...unstakeConfig,
+    onSettled: (data, error) => {
+      if (error) {
+        showTxErrorToast(error)
+        return
+      }
+
+      showTxSentToast(data?.hash)
+
+      // TODO: Add a listener to wait for the transaction to be mined and display toast
+    },
+    onError: showTxErrorToast,
+  })
+
+  useEffect(() => {
+    if (unstakeParam && unstakeWNFT) {
+      unstakeWNFT()
+    }
+  }, [unstakeParam, unstakeWNFT])
+
+  const handleUnstake = () => {
+    setUnstakeParam([BigNumber.from(item.id)])
+  }
 
   const handleOpenMintNftModal = useMemo(
     () =>
@@ -101,7 +196,7 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
 
   return (
     <GridItem w="100%" key={item.id}>
-      <Box display="flex" flexDirection="column" height="full" width={'100%'} color="gray.100" cursor={'pointer'}>
+      <Box display="flex" flexDirection="column" height="full" width={'100%'} color="gray.100">
         <a href={data?.openseaUrl} target={'_blank'} rel="noreferrer">
           <Box
             width="100%"
@@ -115,8 +210,35 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
             borderRadius={8}
           />
         </a>
-        <Heading as="h6" size="md" marginBottom={2}>
-          {data?.name}
+        <Heading as="h6" size="md" marginBottom={2} display={'flex'} justifyContent={'space-between'}>
+          <span>{data?.name}</span>
+          {isOwner && (
+            <Popover placement={'bottom-end'} colorScheme="primary">
+              <PopoverTrigger>
+                <Box as={'button'} display={'flex'} flexDir={'column'} h={'100%'} justifyContent={'space-evenly'} pr={2}>
+                  <Box as="span" w={1} h={1} bgColor={'white'} borderRadius={100} />
+                  <Box as="span" w={1} h={1} bgColor={'white'} borderRadius={100} />
+                  <Box as="span" w={1} h={1} bgColor={'white'} borderRadius={100} />
+                </Box>
+              </PopoverTrigger>
+              <PopoverContent bgColor={'gray.700'} w={'auto'} borderColor={'transparent'}>
+                <PopoverBody>
+                  <Box display={'flex'} flexDir={'column'} alignItems={'start'}>
+                    {currentState !== WNFTState.Minting && (
+                      <Link as={'button'} p={2} onClick={handleUnstake} _hover={{ textDecor: 'none' }}>
+                        Unstake
+                      </Link>
+                    )}
+                    {currentState === WNFTState.Minting && (
+                      <Link as={'button'} p={2} onClick={handleDelete} _hover={{ textDecor: 'none' }}>
+                        Delete
+                      </Link>
+                    )}
+                  </Box>
+                </PopoverBody>
+              </PopoverContent>
+            </Popover>
+          )}
         </Heading>
         <Box marginTop={6} flex={1} display="flex" flexDirection="column">
           {currentState === WNFTState.Minting && (
