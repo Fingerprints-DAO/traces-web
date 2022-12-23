@@ -3,20 +3,30 @@ import React from 'react'
 // Dependencies
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { Drawer as ChakraDrawer, DrawerBody, DrawerFooter, DrawerHeader, DrawerOverlay, DrawerContent, DrawerCloseButton, Heading, Box, Text } from '@chakra-ui/react'
+import {
+  Drawer as ChakraDrawer,
+  DrawerBody,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerCloseButton,
+  Heading,
+  Box,
+  Text,
+} from '@chakra-ui/react'
 
 // Components
 import Wallet from '@ui/components/molecules/wallet'
 
 // Helpers
 import useTracesRead from '@web3/contracts/traces/use-traces-read'
+import { ModalElement } from '@ui/contexts/Modal'
 
 type DrawerProps = {
   isOpen: boolean
   onClose: () => void
-  onOpenAddNftModal: () => void
-  onOpenUpdateConfigsModal: () => void
-  onOpenAdministratorsModal: () => void
+  onOpenModal: (element: ModalElement) => void
 }
 
 const links = [
@@ -25,9 +35,9 @@ const links = [
   { path: '/collections', label: 'Collections' },
 ]
 
-const Drawer = ({ isOpen, onClose, onOpenAddNftModal, onOpenUpdateConfigsModal, onOpenAdministratorsModal }: DrawerProps) => {
+const Drawer = ({ isOpen, onClose, onOpenModal }: DrawerProps) => {
   const router = useRouter()
-  const { isEditor } = useTracesRead()
+  const { isAdmin, isEditor } = useTracesRead()
 
   const activeStyles = (path: string) => {
     if (router.pathname === path) {
@@ -41,6 +51,8 @@ const Drawer = ({ isOpen, onClose, onOpenAddNftModal, onOpenUpdateConfigsModal, 
       fontSize: 18,
     }
   }
+
+  const handleOpenModal = (element: ModalElement) => () => onOpenModal(element)
 
   return (
     <ChakraDrawer isOpen={isOpen} placement="left" onClose={onClose}>
@@ -67,15 +79,47 @@ const Drawer = ({ isOpen, onClose, onOpenAddNftModal, onOpenUpdateConfigsModal, 
         </DrawerBody>
         <DrawerFooter alignItems="flex-start" flexDirection="column" p={8}>
           <Box as="nav" mb={[10, 20]}>
+            {isAdmin && (
+              <Box
+                as="button"
+                display="block"
+                lineHeight={9}
+                fontSize={[18, 18, 18, 18, 24]}
+                mb={[4, 4, 4, 4, 10]}
+                onClick={handleOpenModal(ModalElement.AddRole)}
+              >
+                Manage roles
+              </Box>
+            )}
             {isEditor && (
               <>
-                <Box as="button" display="block" lineHeight={9} fontSize={[18, 18, 18, 18, 24]} mb={[4, 4, 4, 4, 10]} onClick={onOpenAddNftModal}>
+                <Box
+                  as="button"
+                  display="block"
+                  lineHeight={9}
+                  fontSize={[18, 18, 18, 18, 24]}
+                  mb={[4, 4, 4, 4, 10]}
+                  onClick={handleOpenModal(ModalElement.AddNFT)}
+                >
                   Add NFT
                 </Box>
-                <Box as="button" display="block" lineHeight={9} fontSize={[18, 18, 18, 18, 24]} mb={[4, 4, 4, 4, 10]} onClick={onOpenUpdateConfigsModal}>
+                <Box
+                  as="button"
+                  display="block"
+                  lineHeight={9}
+                  fontSize={[18, 18, 18, 18, 24]}
+                  mb={[4, 4, 4, 4, 10]}
+                  onClick={handleOpenModal(ModalElement.UpdateConfigs)}
+                >
                   Update configs
                 </Box>
-                <Box as="button" display="block" lineHeight={9} fontSize={[18, 18, 18, 18, 24]} onClick={onOpenAdministratorsModal}>
+                <Box
+                  as="button"
+                  display="block"
+                  lineHeight={9}
+                  fontSize={[18, 18, 18, 18, 24]}
+                  onClick={handleOpenModal(ModalElement.Administrators)}
+                >
                   Administrators
                 </Box>
               </>

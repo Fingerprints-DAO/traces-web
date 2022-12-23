@@ -15,6 +15,13 @@ const useTracesRead = () => {
     enabled: isConnected,
   })
 
+  const { data: adminRole } = useContractRead({
+    address: process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS,
+    abi: TracesContract,
+    functionName: 'DEFAULT_ADMIN_ROLE',
+    enabled: isConnected,
+  })
+
   const { data: isEditor } = useContractRead({
     address: process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS,
     abi: TracesContract,
@@ -23,8 +30,18 @@ const useTracesRead = () => {
     args: [editorRole!, address!],
   })
 
+  const { data: isAdmin } = useContractRead({
+    address: process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS,
+    abi: TracesContract,
+    functionName: 'hasRole',
+    enabled: !!adminRole && !!address,
+    args: [editorRole!, address!],
+  })
+
   return {
+    isAdmin,
     isEditor,
+    adminRole,
     editorRole,
   }
 }

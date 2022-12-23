@@ -6,11 +6,12 @@ import { Address, useWaitForTransaction } from 'wagmi'
 import useTxToast from '@ui/hooks/use-tx-toast'
 
 export enum ModalElement {
-  Mint,
-  AddNFT,
-  UpdateConfigs,
-  Administrators,
-  Default,
+  Mint = 'mint',
+  AddNFT = 'add-nft',
+  UpdateConfigs = 'update-configs',
+  Administrators = 'administrators',
+  AddRole = 'add-role',
+  Default = '',
 }
 
 export type WNFTModalProps = {
