@@ -75,7 +75,7 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
   const { showTxSentToast, showTxErrorToast } = useTxToast()
   const { handleOpenModal } = useContext(ModalContext)
   const { address } = useWallet()
-  const { isAdminOrEditor } = useTracesRead()
+  const { isEditor } = useTracesRead()
   const [currentState, setCurrentState] = useState<WNFTState>(WNFTState.Loading)
   const { data, error } = useSWR<HandledToken>(`/api/outbid/${item.id}`, fetcher)
   const [deleteParam, setDeleteParam] = useState<[BigNumber] | undefined>(undefined)
@@ -215,7 +215,7 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
         </a>
         <Heading as="h6" size="md" marginBottom={2} display={'flex'} justifyContent={'space-between'}>
           <span>{data?.name}</span>
-          {(isAdminOrEditor || isOwner) && (
+          {(isEditor || isOwner) && (
             <Popover placement={'bottom-end'} colorScheme="primary">
               <PopoverTrigger>
                 <Box as={'button'} display={'flex'} flexDir={'column'} h={'100%'} justifyContent={'space-evenly'} pr={2}>
@@ -229,10 +229,10 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
                   <Box display={'flex'} flexDir={'column'} alignItems={'start'}>
                     {currentState !== WNFTState.Minting && (
                       <Link as={'button'} p={2} onClick={handleUnstake} _hover={{ textDecor: 'none' }}>
-                        {isAdminOrEditor && !isOwner && 'Force '}Unstake
+                        {isEditor && !isOwner && 'Force '}Unstake
                       </Link>
                     )}
-                    {isAdminOrEditor && currentState === WNFTState.Minting && (
+                    {isEditor && currentState === WNFTState.Minting && (
                       <Link as={'button'} p={2} onClick={handleDelete} _hover={{ textDecor: 'none' }}>
                         Delete
                       </Link>

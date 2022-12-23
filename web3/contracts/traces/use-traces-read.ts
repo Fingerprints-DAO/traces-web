@@ -35,7 +35,7 @@ const useTracesRead = () => {
     abi: TracesContract,
     functionName: 'hasRole',
     enabled: !!adminRole && !!address,
-    args: [editorRole!, address!],
+    args: [adminRole!, address!],
   })
 
   return {
