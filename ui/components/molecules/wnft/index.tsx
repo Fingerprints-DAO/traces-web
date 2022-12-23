@@ -32,6 +32,7 @@ import { parseAmountToDisplay } from '@web3/helpers/handleAmount'
 import useTxToast from '@ui/hooks/use-tx-toast'
 import ButtonConnectWallet from '../button-connect-wallet'
 import useWallet from '@web3/wallet/use-wallet'
+import useTracesRead from '@web3/contracts/traces/use-traces-read'
 
 type WNFTProps = {
   item: Pick<WNFT, 'id' | 'ogTokenAddress' | 'ogTokenId' | 'tokenId' | 'currentOwner' | 'lastPrice' | 'firstStakePrice' | 'minHoldPeriod'>
@@ -74,6 +75,7 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
   const { showTxSentToast, showTxErrorToast } = useTxToast()
   const { handleOpenModal } = useContext(ModalContext)
   const { address } = useWallet()
+  const { isAdminOrEditor } = useTracesRead()
   const [currentState, setCurrentState] = useState<WNFTState>(WNFTState.Loading)
   const { data, error } = useSWR<HandledToken>(`/api/outbid/${item.id}`, fetcher)
   const [deleteParam, setDeleteParam] = useState<[BigNumber] | undefined>(undefined)
@@ -82,6 +84,7 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
   const isOwner = useMemo(() => {
     return item.currentOwner.toLowerCase() === address?.toLowerCase()
   }, [item.currentOwner, address])
+
   const price = useContractRead({
     address: process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS ?? '',
     abi: TracesContract,
@@ -212,7 +215,7 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
         </a>
         <Heading as="h6" size="md" marginBottom={2} display={'flex'} justifyContent={'space-between'}>
           <span>{data?.name}</span>
-          {isOwner && (
+          {(isAdminOrEditor || isOwner) && (
             <Popover placement={'bottom-end'} colorScheme="primary">
               <PopoverTrigger>
                 <Box as={'button'} display={'flex'} flexDir={'column'} h={'100%'} justifyContent={'space-evenly'} pr={2}>
@@ -226,10 +229,10 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
                   <Box display={'flex'} flexDir={'column'} alignItems={'start'}>
                     {currentState !== WNFTState.Minting && (
                       <Link as={'button'} p={2} onClick={handleUnstake} _hover={{ textDecor: 'none' }}>
-                        Unstake
+                        {isAdminOrEditor && !isOwner && 'Force '}Unstake
                       </Link>
                     )}
-                    {currentState === WNFTState.Minting && (
+                    {isAdminOrEditor && currentState === WNFTState.Minting && (
                       <Link as={'button'} p={2} onClick={handleDelete} _hover={{ textDecor: 'none' }}>
                         Delete
                       </Link>

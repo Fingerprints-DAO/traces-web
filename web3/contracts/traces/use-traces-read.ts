@@ -43,6 +43,7 @@ const useTracesRead = () => {
     isEditor,
     adminRole,
     editorRole,
+    isAdminOrEditor: isAdmin || isEditor,
   }
 }
 
