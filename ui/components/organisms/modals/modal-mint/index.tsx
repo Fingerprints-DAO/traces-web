@@ -2,7 +2,6 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 
 // Dependencies
 import { Address } from 'wagmi'
-import { BigNumber } from 'ethers'
 import { Modal, ModalBody, ModalContent, ModalOverlay } from '@chakra-ui/react'
 
 // Components
@@ -26,7 +25,7 @@ const ModalMint = ({ isOpen, onClose }: ModalMintProps) => {
   const { payload } = useContext(ModalContext) as { payload: WNFTModalProps }
   const prints = usePrints()
   const { address, printsBalance } = useWallet()
-  const printsApprove = usePrintsApprove()
+  const { approveRequest: printsApprove, isApproved, hash } = usePrintsApprove()
 
   const [isFetched, setIsFetched] = useState(false)
   const [amount, setAmount] = useState<number>(0)
@@ -80,7 +79,7 @@ const ModalMint = ({ isOpen, onClose }: ModalMintProps) => {
         <ModalMintHeader showAllowance={allowance > 0} prints={Number(printsBalance?.formatted || 0)} />
         <ModalBody padding={0}>
           {canGoToActions ? (
-            <Actions {...printsApprove} amount={amount} minPrints={minPrints} onClose={onClose} />
+            <Actions {...printsApprove} waitIsApproved={isApproved} amount={amount} minPrints={minPrints} onClose={onClose} />
           ) : (
             <Stake userPrints={Number(printsBalance?.formatted)} onSubmit={handleSubmit} onClose={onClose} />
           )}

@@ -19,10 +19,11 @@ type ActionsProps = {
   minPrints: number
   amount: number
   onClose: () => void
+  waitIsApproved: boolean
 } & UseMutationResult<ContractTransaction | undefined, any, { amount: BigNumber; isIncrease?: boolean | undefined }, unknown>
 
 const Actions = (props: ActionsProps) => {
-  const { onClose, amount, minPrints, isLoading, isSuccess: isSuccessApprove, data: approve, mutateAsync: approvePrints } = props
+  const { onClose, amount, minPrints, isLoading, waitIsApproved: isSuccessApprove, mutateAsync: approvePrints } = props
   const { payload } = useContext(ModalContext) as { payload: WNFTModalProps }
   const toast = useToast()
   const prints = usePrints()
@@ -61,7 +62,7 @@ const Actions = (props: ActionsProps) => {
     }
   }, [amount, outbid, payload.ogTokenAddress, payload.ogTokenId])
 
-  const waitingApprove = useWaitForTransaction({ hash: approve?.hash as Address })
+  // const waitingApprove = useWaitForTransaction({ hash: approve?.hash as Address })
 
   const handleApprove = async () => {
     try {
@@ -119,7 +120,7 @@ const Actions = (props: ActionsProps) => {
             </Box>
             {!canStake && (
               <Box mt={4}>
-                {isLoading || waitingApprove.isLoading ? (
+                {isLoading || !isSuccessApprove ? (
                   <>
                     <Text fontSize="lg" as="span" fontWeight="semibold">
                       waiting for {isLoading ? 'approval' : 'transaction'}
