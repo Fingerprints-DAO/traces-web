@@ -60,6 +60,8 @@ const ModalProvider = ({ children }: PropsWithChildren) => {
       }
 
       lastTxCallback && lastTxCallback()
+      setLastTxHash(undefined)
+      setLastTxCallback(undefined)
     },
     enabled: !!lastTxHash && typeof lastTxHash === 'string',
   })
@@ -78,7 +80,7 @@ const ModalProvider = ({ children }: PropsWithChildren) => {
     onClose()
     if (typeof hash !== 'string') return
     setLastTxHash(hash)
-    setLastTxCallback(callback)
+    setLastTxCallback(() => callback)
   }
 
   const values = { element, isOpen, payload, handleOpenModal, handleCloseModal }

@@ -60,7 +60,7 @@ const ModalAddNft = ({ isOpen, onClose }: ModalProps) => {
   const submit = () => onAddNFT(form)
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} isCentered={true}>
+    <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
       <ModalContent background="gray.900" padding={[6, 12]} minW={['unset', 650]} maxW={['90%', '90%', '90%', 'md']}>
         <form onSubmit={handleSubmit(submit)}>
