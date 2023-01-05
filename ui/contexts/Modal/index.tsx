@@ -78,7 +78,10 @@ const ModalProvider = ({ children }: PropsWithChildren) => {
     setElement(INITIAL_STATE.element)
     setPayload(INITIAL_STATE.payload)
     onClose()
-    if (typeof hash !== 'string') return
+    if (typeof hash !== 'string') {
+      if (typeof callback === 'function') callback()
+      return
+    }
     setLastTxHash(hash)
     setLastTxCallback(() => callback)
   }
