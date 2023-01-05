@@ -2,6 +2,15 @@ import { BigNumber } from 'ethers'
 import { Address } from 'wagmi'
 
 type Attribute = { trait_type: string; value: string | number; display_type?: string }
+
+export enum WNFTState {
+  idle = 'idle',
+  loading = 'loading',
+  holding = 'holding',
+  minting = 'minting',
+  outbidding = 'outbidding',
+}
+
 export type WNFTMetadata = {
   name: string
   description: string

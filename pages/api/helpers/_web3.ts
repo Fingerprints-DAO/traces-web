@@ -1,11 +1,13 @@
 import { Address } from 'wagmi'
-import { Token, WNFTMetadata } from './_types'
+import { Token, WNFTMetadata, WNFTState } from './_types'
 import { parseAmountToDisplay } from '@web3/helpers/handleAmount'
 
 export type HandledToken = {
   ogTokenAddress: Address
   ogTokenId: number
   tokenId: number
+  price: number
+  state: WNFTState
   stakedAmount: number
   lastOutbidTimestamp: number
   collectionId: number

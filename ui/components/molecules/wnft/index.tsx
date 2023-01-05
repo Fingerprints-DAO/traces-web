@@ -18,10 +18,9 @@ import {
   Tooltip,
 } from '@chakra-ui/react'
 import { BsArrowDownRightCircle } from 'react-icons/bs'
-import { useContractRead, useContractWrite, usePrepareContractWrite } from 'wagmi'
+import { useContractWrite, usePrepareContractWrite } from 'wagmi'
 import { BigNumber } from 'ethers'
 import dayjs from 'dayjs'
-import { formatUnits } from 'ethers/lib/utils.js'
 
 import { WNFT } from '.graphclient'
 import { ModalContext, ModalElement } from '@ui/contexts/Modal'
@@ -33,6 +32,7 @@ import useTxToast from '@ui/hooks/use-tx-toast'
 import ButtonConnectWallet from '../button-connect-wallet'
 import useWallet from '@web3/wallet/use-wallet'
 import useTracesRead from '@web3/contracts/traces/use-traces-read'
+import { WNFTState } from 'pages/api/helpers/_types'
 
 type WNFTProps = {
   item: Pick<WNFT, 'id' | 'ogTokenAddress' | 'ogTokenId' | 'tokenId' | 'currentOwner' | 'lastPrice' | 'firstStakePrice' | 'minHoldPeriod'>
@@ -63,48 +63,20 @@ function formatTime(timeInSeconds: number) {
   return `${days} days`
 }
 
-enum WNFTState {
-  Idle,
-  Loading,
-  Holding,
-  Minting,
-  Outbidding,
-}
-
+const refreshIntervalTime = 1000 * 60 * 2
 const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
   const { showTxSentToast, showTxErrorToast } = useTxToast()
   const { handleOpenModal } = useContext(ModalContext)
   const { address } = useWallet()
   const { isEditor } = useTracesRead()
-  const [currentState, setCurrentState] = useState<WNFTState>(WNFTState.Loading)
-  const { data, error } = useSWR<HandledToken>(`/api/outbid/${item.id}`, fetcher)
+  const [currentState, setCurrentState] = useState<WNFTState>(WNFTState.loading)
+  const { data: wnftMeta, error } = useSWR<HandledToken>(`/api/outbid/${item.id}`, fetcher, { refreshInterval: refreshIntervalTime })
   const [deleteParam, setDeleteParam] = useState<[BigNumber] | undefined>(undefined)
   const [unstakeParam, setUnstakeParam] = useState<[BigNumber] | undefined>(undefined)
 
   const isOwner = useMemo(() => {
     return item.currentOwner.toLowerCase() === address?.toLowerCase()
   }, [item.currentOwner, address])
-
-  const price = useContractRead({
-    address: process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS ?? '',
-    abi: TracesContract,
-    functionName: 'getWNFTPrice',
-    args: [BigNumber.from(item.id)],
-    onSuccess(data) {
-      if (data.eq(item.firstStakePrice)) {
-        setCurrentState(WNFTState.Minting)
-        return
-      }
-
-      setCurrentState(WNFTState.Outbidding)
-    },
-    onError(error) {
-      const revertError = error as RevertError
-      if (revertError.errorName === 'HoldPeriod') {
-        setCurrentState(WNFTState.Holding)
-      }
-    },
-  })
 
   const { config } = usePrepareContractWrite({
     address: process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS,
@@ -117,7 +89,7 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
     },
   })
 
-  const { write: deleteWNFT } = useContractWrite({
+  const { write: deleteWNFT, isIdle: deleteWNFTIsIdle } = useContractWrite({
     ...config,
     onSettled: (data, error) => {
       if (error) {
@@ -133,13 +105,14 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
   })
 
   useEffect(() => {
-    if (deleteParam && deleteWNFT) {
+    if (deleteWNFTIsIdle && deleteParam && deleteWNFT) {
       deleteWNFT()
     }
-  }, [deleteParam, deleteWNFT])
+  }, [deleteParam, deleteWNFT, deleteWNFTIsIdle])
 
-  const handleDelete = () => {
+  const handleDelete = (onClose: Function) => () => {
     setDeleteParam([BigNumber.from(item.id)])
+    onClose()
   }
 
   const { config: unstakeConfig } = usePrepareContractWrite({
@@ -153,7 +126,7 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
     },
   })
 
-  const { write: unstakeWNFT } = useContractWrite({
+  const { write: unstakeWNFT, isIdle: unstakeWNFTIsIdle } = useContractWrite({
     ...unstakeConfig,
     onSettled: (data, error) => {
       if (error) {
@@ -169,28 +142,34 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
   })
 
   useEffect(() => {
-    if (unstakeParam && unstakeWNFT) {
+    if (!wnftMeta) return
+    setCurrentState(wnftMeta.state)
+  }, [currentState, wnftMeta])
+
+  useEffect(() => {
+    if (unstakeWNFTIsIdle && unstakeParam && unstakeWNFT) {
       unstakeWNFT()
     }
-  }, [unstakeParam, unstakeWNFT])
+  }, [unstakeWNFTIsIdle, unstakeParam, unstakeWNFT])
 
-  const handleUnstake = () => {
+  const handleUnstake = (onClose: Function) => () => {
     setUnstakeParam([BigNumber.from(item.id)])
+    onClose()
   }
 
   const handleOpenMintNftModal = useMemo(
     () =>
       handleOpenModal(ModalElement.Mint, {
         id: item.id,
-        name: data?.name,
-        minAmount: Math.round(parseAmountToDisplay(price.data ?? item.firstStakePrice)),
+        name: wnftMeta?.name,
+        minAmount: Math.round(wnftMeta?.price ?? 0),
         ogTokenAddress: item.ogTokenAddress,
         ogTokenId: item.ogTokenId,
       }),
-    [handleOpenModal, item.id, item.firstStakePrice, item.ogTokenAddress, item.ogTokenId, data?.name, price.data]
+    [handleOpenModal, item.id, item.ogTokenAddress, item.ogTokenId, wnftMeta?.name, wnftMeta?.price]
   )
 
-  if (error || !data) {
+  if (error || !wnftMeta) {
     return null
   }
   // if (!data) {
@@ -200,13 +179,13 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
   return (
     <GridItem w="100%" key={item.id}>
       <Box display="flex" flexDirection="column" height="full" width={'100%'} color="gray.100">
-        <a href={data?.openseaUrl} target={'_blank'} rel="noreferrer">
+        <a href={wnftMeta?.openseaUrl} target={'_blank'} rel="noreferrer">
           <Box
             width="100%"
             height={'400px'}
             marginBottom={4}
             background="gray.500"
-            backgroundImage={data?.image}
+            backgroundImage={wnftMeta?.image}
             backgroundSize="cover"
             backgroundRepeat={'no-repeat'}
             backgroundPosition={'center'}
@@ -214,46 +193,48 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
           />
         </a>
         <Heading as="h6" size="md" marginBottom={2} display={'flex'} justifyContent={'space-between'}>
-          <span>{data?.name}</span>
+          <span>{wnftMeta?.name}</span>
           {(isEditor || isOwner) && (
             <Popover placement={'bottom-end'} colorScheme="primary">
-              <PopoverTrigger>
-                <Box as={'button'} display={'flex'} flexDir={'column'} h={'100%'} justifyContent={'space-evenly'} pr={2}>
-                  <Box as="span" w={1} h={1} bgColor={'white'} borderRadius={100} />
-                  <Box as="span" w={1} h={1} bgColor={'white'} borderRadius={100} />
-                  <Box as="span" w={1} h={1} bgColor={'white'} borderRadius={100} />
-                </Box>
-              </PopoverTrigger>
-              <PopoverContent bgColor={'gray.700'} w={'auto'} borderColor={'transparent'}>
-                <PopoverBody>
-                  <Box display={'flex'} flexDir={'column'} alignItems={'start'}>
-                    {currentState !== WNFTState.Minting && (
-                      <Link as={'button'} p={2} onClick={handleUnstake} _hover={{ textDecor: 'none' }}>
-                        {isEditor && !isOwner && 'Force '}Unstake
-                      </Link>
-                    )}
-                    {isEditor && currentState === WNFTState.Minting && (
-                      <Link as={'button'} p={2} onClick={handleDelete} _hover={{ textDecor: 'none' }}>
-                        Delete
-                      </Link>
-                    )}
-                  </Box>
-                </PopoverBody>
-              </PopoverContent>
+              {({ onClose }) => (
+                <>
+                  <PopoverTrigger>
+                    <Box as={'button'} display={'flex'} flexDir={'column'} h={'100%'} justifyContent={'space-evenly'} pr={2}>
+                      <Box as="span" w={1} h={1} bgColor={'white'} borderRadius={100} />
+                      <Box as="span" w={1} h={1} bgColor={'white'} borderRadius={100} />
+                      <Box as="span" w={1} h={1} bgColor={'white'} borderRadius={100} />
+                    </Box>
+                  </PopoverTrigger>
+                  <PopoverContent bgColor={'gray.700'} w={'auto'} borderColor={'transparent'}>
+                    <PopoverBody>
+                      <Box display={'flex'} flexDir={'column'} alignItems={'start'}>
+                        {currentState !== WNFTState.minting && (
+                          <Link as={'button'} p={2} onClick={handleUnstake(onClose)} _hover={{ textDecor: 'none' }}>
+                            {isEditor && !isOwner && 'Force '}Unstake
+                          </Link>
+                        )}
+                        {isEditor && currentState === WNFTState.minting && (
+                          <Link as={'button'} p={2} onClick={handleDelete(onClose)} _hover={{ textDecor: 'none' }}>
+                            Delete
+                          </Link>
+                        )}
+                      </Box>
+                    </PopoverBody>
+                  </PopoverContent>
+                </>
+              )}
             </Popover>
           )}
         </Heading>
         <Box marginTop={6} flex={1} display="flex" flexDirection="column">
-          {currentState === WNFTState.Minting && (
+          {currentState === WNFTState.minting && (
             <>
-              {!price.isLoading && (
-                <Box marginBottom={4}>
-                  <Text color="gray.200">Minimum stake</Text>
-                  <Text color="gray.100" fontWeight={600}>
-                    {Number(formatUnits(price?.data ?? '', 18))} PRINTS
-                  </Text>
-                </Box>
-              )}
+              <Box marginBottom={4}>
+                <Text color="gray.200">Minimum stake</Text>
+                <Text color="gray.100" fontWeight={600}>
+                  {wnftMeta?.price} PRINTS
+                </Text>
+              </Box>
               <Box marginBottom={6}>
                 <Text color="gray.200">Guaranteed holding period</Text>
                 <Text color="gray.100" fontWeight={600}>
@@ -265,20 +246,20 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
               </ButtonConnectWallet>
             </>
           )}
-          {currentState === WNFTState.Holding && (
+          {currentState === WNFTState.holding && (
             <>
               <Box marginBottom={4}>
                 <Text color="gray.200">Staked</Text>
                 <Flex alignItems="baseline">
                   <Text color="gray.100" fontWeight={600} marginRight={2}>
-                    {parseAmountToDisplay(price.data ?? '0')} PRINTS
+                    {wnftMeta.stakedAmount} PRINTS
                   </Text>
                 </Flex>
               </Box>
               <Box marginBottom={4}>
                 <Text color="gray.200">Holding during</Text>
                 <Text color="gray.100" fontWeight={600}>
-                  {dayjs.unix(data.lastOutbidTimestamp).fromNow(true)}
+                  {dayjs.unix(wnftMeta.lastOutbidTimestamp).fromNow(true)}
                 </Text>
               </Box>
               <Box marginBottom={6}>
@@ -288,25 +269,23 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
                 </Text>
               </Box>
               <Button disabled={true} borderColor="gray.200" color="gray.200" colorScheme="primary" variant="outline" width="full" marginTop="auto">
-                {dayjs.unix(data.lastOutbidTimestamp).add(item.minHoldPeriod, 'seconds').fromNow(true)} to outbid
+                {dayjs.unix(wnftMeta.lastOutbidTimestamp).add(item.minHoldPeriod, 'seconds').fromNow(true)} to outbid
               </Button>
             </>
           )}
-          {currentState === WNFTState.Outbidding && (
+          {currentState === WNFTState.outbidding && (
             <>
               <Box marginBottom={4}>
                 <Text color="gray.200">Value to outbid</Text>
                 <Flex alignItems="baseline">
-                  {!price.isLoading && !price.error && (
-                    <Text color="gray.100" fontWeight={600} marginRight={2}>
-                      {Math.round(parseAmountToDisplay(price?.data ?? '0'))} PRINTS
-                    </Text>
-                  )}
+                  <Text color="gray.100" fontWeight={600} marginRight={2}>
+                    {Math.round(wnftMeta.price ?? 0)} PRINTS
+                  </Text>
                   <Tooltip
                     label={`The value decreases constantly until reachs ${parseAmountToDisplay(item.firstStakePrice)} at ${dayjs
-                      .unix(data.lastOutbidTimestamp)
-                      .add(data.dutchAuctionDuration, 'seconds')
-                      .add(data.minHoldPeriod, 'seconds')
+                      .unix(wnftMeta.lastOutbidTimestamp)
+                      .add(wnftMeta.dutchAuctionDuration, 'seconds')
+                      .add(wnftMeta.minHoldPeriod, 'seconds')
                       .format('L LT')}`}
                     fontSize="sm"
                     color="gray.50"
@@ -324,7 +303,7 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
               <Box marginBottom={4}>
                 <Text color="gray.200">Holding during</Text>
                 <Text color="gray.100" fontWeight={600}>
-                  {dayjs.unix(data.lastOutbidTimestamp).fromNow(true)}
+                  {dayjs.unix(wnftMeta.lastOutbidTimestamp).fromNow(true)}
                 </Text>
               </Box>
               <Box marginBottom={6}>

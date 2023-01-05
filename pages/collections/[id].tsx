@@ -4,8 +4,6 @@ import React, { useMemo } from 'react'
 import { Container, Grid } from '@chakra-ui/react'
 import { useQuery } from 'react-query'
 import useSWR from 'swr'
-import { BigNumber } from 'ethers'
-import { useContractRead } from 'wagmi'
 
 // Components
 import PageHeader from '@ui/components/organisms/page-header'
@@ -14,16 +12,20 @@ import { GetServerSidePropsContext } from 'next/types'
 import { CollectionMetadata } from 'pages/api/helpers/_types'
 import WNFT from '@ui/components/molecules/wnft'
 import { fetcher } from '@ui/utils/fetcher'
-import TracesContract from '@web3/contracts/traces/traces-abi'
-import { getChainId } from '@web3/helpers/chain'
 
 type ServerSideProps = {
   id: string
 }
 const sdk = getBuiltGraphSDK()
+const refreshIntervalTime = 1000 * 60 * 3
 
 const Collection = ({ id }: ServerSideProps) => {
-  const { data } = useQuery({ queryKey: 'GetCollection', queryFn: () => sdk.GetCollection({ ogTokenAddress: id }) })
+  const { data } = useQuery({
+    queryKey: 'GetCollection',
+    queryFn: () => sdk.GetCollection({ ogTokenAddress: id }),
+    refetchOnWindowFocus: true,
+    refetchInterval: refreshIntervalTime,
+  })
   const { data: collectionData } = useSWR<CollectionMetadata>(`/api/collection/${id}`, fetcher)
   const tokens = useMemo(() => data?.collections[0]?.tokens ?? [], [data?.collections])
 
@@ -55,7 +57,4 @@ export async function getServerSideProps(context: GetServerSidePropsContext<Serv
       id,
     },
   }
-}
-function readContract(arg0: { address: string; abi: any; functionName: string; chainId: any; args: any[] }): any {
-  throw new Error('Function not implemented.')
 }

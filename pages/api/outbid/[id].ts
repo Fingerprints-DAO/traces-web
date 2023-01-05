@@ -2,12 +2,16 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { getWNFTMetadata } from '@web3/services/getWNFTMetadata'
 import { readContract } from '@wagmi/core'
 import { HandledToken, handleToken } from '../helpers/_web3'
-import { Token } from '../helpers/_types'
+import { Token, WNFTState } from '../helpers/_types'
 import TracesContract from '@web3/contracts/traces/traces-abi'
 import { BigNumber } from 'ethers/lib/ethers'
 import { getChainId } from '@web3/helpers/chain'
+import { formatUnits } from 'ethers/lib/utils.js'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<HandledToken | { error: string }>) {
+  let wnftState = WNFTState.outbidding
+  let price = 0
+
   const token = handleToken(
     (await readContract({
       address: process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS ?? '',
@@ -17,6 +21,30 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       args: [BigNumber.from(req.query.id)],
     })) as Token
   )
+
+  if (token.lastOutbidTimestamp === 0) {
+    wnftState = WNFTState.minting
+  } else {
+    try {
+      const wnftPrice = await readContract({
+        address: process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS ?? '',
+        abi: TracesContract,
+        functionName: 'getWNFTPrice',
+        chainId: getChainId(),
+        args: [BigNumber.from(req.query.id)],
+      })
+      price = Number(formatUnits(wnftPrice.toString() ?? '', 18))
+    } catch (error) {
+      const revertError = error as RevertError
+      if (revertError.errorName === 'HoldPeriod') {
+        wnftState = WNFTState.holding
+      }
+    }
+  }
+
+  if (price === 0) {
+    price = token.firstStakePrice
+  }
 
   // check if token has ogTokenAddress and ogTokenId
   if (token && token.tokenId) {
@@ -30,6 +58,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     res.status(200).json({
       ...metadata,
       ...token,
+      state: wnftState,
+      price,
     })
     return
   }
