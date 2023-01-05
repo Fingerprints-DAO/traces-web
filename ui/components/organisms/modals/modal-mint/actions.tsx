@@ -17,15 +17,15 @@ import { parseAmountToContract, parseAmountToDisplay } from '@web3/helpers/handl
 
 type ActionsProps = {
   minPrints: number
-  amount: number
+  approveAmount: number
+  inputAmount: number
   onClose: () => void
   waitIsApproved: boolean
 } & UseMutationResult<ContractTransaction | undefined, any, { amount: BigNumber; isIncrease?: boolean | undefined }, unknown>
 
 const Actions = (props: ActionsProps) => {
-  const { onClose, amount, minPrints, isLoading, waitIsApproved: isSuccessApprove, mutateAsync: approvePrints } = props
+  const { onClose, approveAmount, inputAmount, minPrints, isLoading, waitIsApproved: isSuccessApprove, mutateAsync: approvePrints } = props
   const { payload } = useContext(ModalContext) as { payload: WNFTModalProps }
-  const toast = useToast()
   const prints = usePrints()
   const { address } = useWallet()
 
@@ -52,22 +52,22 @@ const Actions = (props: ActionsProps) => {
 
   const handleOutbid = useCallback(async () => {
     try {
-      if (amount) {
-        await outbid.mutateAsync({ amount, tokenAddress: payload.ogTokenAddress, tokenId: BigNumber.from(payload.ogTokenId) })
+      if (inputAmount) {
+        await outbid.mutateAsync({ amount: inputAmount, tokenAddress: payload.ogTokenAddress, tokenId: BigNumber.from(payload.ogTokenId) })
 
         setIsOutbidSubmitted(true)
       }
     } catch (error) {
       console.log('handleWaitingApproveSuccess', error)
     }
-  }, [amount, outbid, payload.ogTokenAddress, payload.ogTokenId])
+  }, [inputAmount, outbid, payload.ogTokenAddress, payload.ogTokenId])
 
   // const waitingApprove = useWaitForTransaction({ hash: approve?.hash as Address })
 
   const handleApprove = async () => {
     try {
-      if (amount) {
-        await approvePrints({ amount: parseAmountToContract(amount) })
+      if (approveAmount) {
+        await approvePrints({ amount: parseAmountToContract(approveAmount) })
       }
     } catch (error) {
       console.log('handleApprove', error)
@@ -77,15 +77,7 @@ const Actions = (props: ActionsProps) => {
   const handleWaitingOutbidSuccess = (data: TransactionReceipt) => {
     handleCloseModal()
 
-    toast({
-      title: 'Success',
-      status: 'success',
-      description: (
-        <Box as="a" href={`${process.env.NEXT_PUBLIC_ETHERSCAN_URL}/tx/${data.transactionHash}`} target="_blank" textDecoration="underline">
-          Click here to see transaction
-        </Box>
-      ),
-    })
+    window.location.reload()
   }
 
   const waitingOutbid = useWaitForTransaction({
@@ -102,10 +94,6 @@ const Actions = (props: ActionsProps) => {
     }
   }, [canStake, handleOutbid, isOutbidSubmitted])
 
-  const value = useMemo(() => {
-    return (allowance?.toNumber() || 0) > 0 ? allowance?.toNumber().toLocaleString() : amount.toLocaleString()
-  }, [allowance, amount])
-
   return (
     <>
       <Box>
@@ -115,7 +103,8 @@ const Actions = (props: ActionsProps) => {
           </Box>
           <Box flex={1}>
             <Box display="flex" alignItems="center">
-              <Text fontSize="xl">Please confirm the approval of {value} $PRINTS</Text>
+              {approveAmount > 0 && <Text fontSize="xl">Please confirm the approval of {approveAmount} $PRINTS</Text>}
+              {approveAmount < 1 && <Text fontSize="xl">{inputAmount} $PRINTS already approved to stake</Text>}
               {canStake && <Icon as={BsCheck2Circle} color="green.500" boxSize="7" ml={4} />}
             </Box>
             {!canStake && (
@@ -152,7 +141,7 @@ const Actions = (props: ActionsProps) => {
           </Box>
           <Box flex={1}>
             <Box display="flex" alignItems="center">
-              <Text fontSize="xl">Please confirm the stake of {value} $PRINTS</Text>
+              <Text fontSize="xl">Please confirm the stake of {inputAmount} $PRINTS</Text>
               {waitingOutbid.isSuccess && false && <Icon as={BsCheck2Circle} color="green.500" boxSize="7" ml={4} />}
             </Box>
             {canStake && (
