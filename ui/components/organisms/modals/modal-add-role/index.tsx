@@ -43,7 +43,7 @@ const ModalAddRole = ({ isOpen, onClose }: ModalProps) => {
   const toast = useToast()
   const [isLoading, setIsLoading] = useState(false)
   const { adminRole, editorRole, isAdmin, isEditor } = useTracesRead()
-  const { mutateAsync: addRole } = useTracesAddRole(isAdmin, isEditor, adminRole)
+  const { mutateAsync: addRole } = useTracesAddRole(isAdmin, isEditor, adminRole, onClose)
 
   const options = useMemo(() => {
     const roles = [{ value: editorRole, label: 'Editor' }]
@@ -68,23 +68,7 @@ const ModalAddRole = ({ isOpen, onClose }: ModalProps) => {
     try {
       setIsLoading(true)
 
-      const response = await addRole(data)
-
-      const wait = await response?.wait()
-
-      if (wait?.status === TransactionStatus.Success) {
-        toast({
-          title: 'Success',
-          status: 'success',
-          description: (
-            <Box as="a" href={`https://etherscan.io/tx/${wait?.transactionHash}`} target="_blank" textDecoration="underline">
-              Click here to see transaction
-            </Box>
-          ),
-        })
-
-        onClose()
-      }
+      await addRole(data)
     } catch (error) {
       console.log('submit', error)
 
