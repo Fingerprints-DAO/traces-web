@@ -61,7 +61,7 @@ const FeaturedCollections = () => {
         className="featured-collections"
         items={data?.collections.map((collection) => {
           return (
-            <CollectionCard key={collection.id} id={collection.ogTokenAddress} cardWidth={['100%']} image={{ height: '400px', marginBottom: 4 }} />
+            <CollectionCard key={collection.id} id={collection.ogTokenAddress} cardWidth={['100%']} image={{ height: '549px', marginBottom: 4 }} />
           )
         })}
       />
