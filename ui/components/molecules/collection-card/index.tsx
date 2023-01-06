@@ -52,7 +52,7 @@ const CollectionCard = ({ id, cardWidth = ['100%', 96], image, children }: Props
         </Skeleton>
       </Link>
       <Heading as="h6" size="md" marginBottom={2}>
-        <SkeletonText noOfLines={1} isLoaded={!!data?.name} h={'full'}>
+        <SkeletonText noOfLines={1} skeletonHeight="100%" isLoaded={!!data?.name}>
           {data?.name}
         </SkeletonText>
       </Heading>
