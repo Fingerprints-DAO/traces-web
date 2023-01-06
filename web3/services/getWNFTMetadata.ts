@@ -21,38 +21,50 @@ export const getWNFTMetadata = async (
   stakedAmount: number,
   stakedDate: number
 ): Promise<WNFTMetadata> => {
+  let stakedDateProperty
+
+  if (stakedDate) {
+    stakedDateProperty = {
+      display_type: 'date',
+      trait_type: 'Last Outbid',
+      value: stakedDate,
+    }
+  }
   // return random data if network is local
   if (process.env.NEXT_PUBLIC_WEB3_NETWORK === 'local') {
+    const attributes = [
+      {
+        trait_type: 'Collection Address',
+        value: ogTokenAddress,
+      },
+      {
+        trait_type: 'Collection Name',
+        value: 'ERC721 Mock',
+      },
+      {
+        trait_type: 'NFT ID',
+        value: ogTokenId,
+      },
+      {
+        display_type: 'number',
+        trait_type: 'Staked $PRINTS',
+        value: stakedAmount,
+      },
+      // {
+      //   display_type: 'date',
+      //   trait_type: 'Created',
+      //   value: 1667597019624, // timestamp
+      // },
+    ]
+
+    if (stakedDateProperty) {
+      attributes.push(stakedDateProperty)
+    }
+
     return {
       ...getRandomData(ogTokenAddress, ogTokenId),
       name: `Mock erc721 NFT #${ogTokenId}`,
-      attributes: [
-        {
-          trait_type: 'Collection Address',
-          value: ogTokenAddress,
-        },
-        {
-          trait_type: 'Collection Name',
-          value: 'ERC721 Mock',
-        },
-        {
-          trait_type: 'NFT ID',
-          value: ogTokenId,
-        },
-        {
-          trait_type: 'Staked $PRINTS',
-          value: stakedAmount,
-        },
-        // {
-        //   display_type: 'date',
-        //   trait_type: 'Created',
-        //   value: 1667597019624, // timestamp
-        // },
-        {
-          trait_type: 'Last Outbid',
-          value: dayjs.unix(stakedDate).toString(), // timestamp
-        },
-      ],
+      attributes,
     }
   }
   try {
@@ -65,6 +77,30 @@ export const getWNFTMetadata = async (
 
     // return tokens[0].token contract, id, name, description and image if it exists if not return random data
     if (tokens[0]?.token) {
+      const attributes = [
+        {
+          trait_type: 'Collection Address',
+          value: tokens[0].token.contract,
+        },
+        {
+          trait_type: 'Collection Name',
+          value: tokens[0].token.collection.name,
+        },
+        {
+          trait_type: 'NFT ID',
+          value: tokens[0].token.tokenId,
+        },
+        {
+          display_type: 'number',
+          trait_type: 'Staked $PRINTS',
+          value: stakedAmount,
+        },
+      ]
+
+      if (stakedDateProperty) {
+        attributes.push(stakedDateProperty)
+      }
+
       return {
         name: tokens[0].token.name,
         image: tokens[0].token.image,
@@ -72,35 +108,7 @@ export const getWNFTMetadata = async (
         externalUrl: `https://fingerprintsdao.xyz/traces/${tokens[0].token.contract}/${tokens[0].token.tokenId}`,
         ogOpenseaUrl: `https://testnets.opensea.io/assets/${tokens[0].token.contract}/${tokens[0].token.tokenId}`,
         openseaUrl: `https://testnets.opensea.io/assets/${process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS}/${tokenId}`,
-        attributes: [
-          {
-            trait_type: 'Collection Address',
-            value: tokens[0].token.contract,
-          },
-          {
-            trait_type: 'Collection Name',
-            value: tokens[0].token.collection.name,
-          },
-          {
-            trait_type: 'NFT ID',
-            value: tokens[0].token.tokenId,
-          },
-          {
-            display_type: 'number',
-            trait_type: 'Staked $PRINTS',
-            value: stakedAmount,
-          },
-          // {
-          //   display_type: 'date',
-          //   trait_type: 'Created',
-          //   value: 1667597019624, // timestamp
-          // },
-          {
-            trait_type: 'Stake Date',
-            display_type: 'date',
-            value: dayjs.unix(stakedDate).toString(), // timestamp
-          },
-        ],
+        attributes,
       }
     }
     return getRandomData(ogTokenAddress, ogTokenId)
