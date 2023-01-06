@@ -66,7 +66,7 @@ function formatTime(timeInSeconds: number) {
   return `${days} days`
 }
 
-const refreshIntervalTime = 1000 * 60 * 2
+const refreshIntervalTime = 1000 * 60 * 5
 
 const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
   const { showTxSentToast, showTxErrorToast } = useTxToast()
@@ -77,6 +77,20 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
   const { data: wnftMeta, error } = useSWR<HandledToken>(`/api/outbid/${item.id}`, fetcher, { refreshInterval: refreshIntervalTime })
   const [deleteParam, setDeleteParam] = useState<[BigNumber] | undefined>(undefined)
   const [unstakeParam, setUnstakeParam] = useState<[BigNumber] | undefined>(undefined)
+  const [imageHasError, setImageHasError] = useState(false)
+
+  const imageAttributes = useMemo(() => {
+    if (imageHasError) {
+      return {
+        width: '100%',
+        backgroundImage: wnftMeta?.image,
+        backgroundSize: 'cover',
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: 'center center',
+      }
+    }
+    return {}
+  }, [imageHasError, wnftMeta?.image])
 
   const isOwner = useMemo(() => {
     return item.currentOwner.toLowerCase() === address?.toLowerCase()
@@ -194,15 +208,23 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
             borderRadius={8}
             overflow={'hidden'}
             position={'relative'}
+            {...imageAttributes}
           >
-            {wnftMeta?.image && (
-              <Image src={wnftMeta?.image} alt={`Image of ${wnftMeta?.name}`} layout="fill" objectFit="cover" objectPosition="50% 50%" />
+            {!imageHasError && wnftMeta?.image && (
+              <Image
+                src={wnftMeta?.image}
+                onError={() => setImageHasError(true)}
+                alt={`Image of ${wnftMeta?.name}`}
+                layout="fill"
+                objectFit="cover"
+                objectPosition="50% 50%"
+              />
             )}
           </Skeleton>
         </a>
         <Heading as="h6" size="md" marginBottom={2} display={'flex'} justifyContent={'space-between'}>
-          <SkeletonText isLoaded={!!wnftMeta} noOfLines={1} skeletonHeight="100%">
-            {wnftMeta?.name}
+          <SkeletonText isLoaded={currentState !== WNFTState.loading} noOfLines={1} skeletonHeight="100%" w={'full'}>
+            {wnftMeta?.name ?? 'No name'}
           </SkeletonText>
           {(isEditor || isOwner) && (
             <Popover placement={'bottom-end'} colorScheme="primary">
@@ -237,6 +259,12 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
           )}
         </Heading>
         <Box marginTop={6} flex={1} display="flex" flexDirection="column">
+          {currentState === WNFTState.loading && (
+            <Box>
+              <SkeletonText noOfLines={6} spacing="2" skeletonHeight="4" marginBottom={4} />
+              <Skeleton width="full" height={'40px'} />
+            </Box>
+          )}
           {currentState === WNFTState.minting && (
             <>
               <SkeletonText isLoaded={!!wnftMeta} noOfLines={2} spacing="2" skeletonHeight="4" marginBottom={4}>
@@ -258,20 +286,20 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
               </Skeleton>
             </>
           )}
-          {wnftMeta! && currentState === WNFTState.holding && (
+          {currentState === WNFTState.holding && (
             <>
               <SkeletonText isLoaded={!!wnftMeta} noOfLines={2} spacing="2" skeletonHeight="4" marginBottom={4}>
                 <Text color="gray.200">Staked</Text>
                 <Flex alignItems="baseline">
                   <Text color="gray.100" fontWeight={600} marginRight={2}>
-                    {wnftMeta.stakedAmount} PRINTS
+                    {wnftMeta?.stakedAmount} PRINTS
                   </Text>
                 </Flex>
               </SkeletonText>
               <SkeletonText isLoaded={!!wnftMeta} noOfLines={2} spacing="2" skeletonHeight="4" marginBottom={4}>
                 <Text color="gray.200">Holding during</Text>
                 <Text color="gray.100" fontWeight={600}>
-                  {dayjs.unix(wnftMeta.lastOutbidTimestamp).fromNow(true)}
+                  {wnftMeta! && dayjs.unix(wnftMeta?.lastOutbidTimestamp).fromNow(true)}
                 </Text>
               </SkeletonText>
               <SkeletonText isLoaded={!!wnftMeta} noOfLines={2} spacing="2" skeletonHeight="4" marginBottom={6}>
@@ -282,42 +310,44 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
               </SkeletonText>
               <Skeleton isLoaded={!!wnftMeta} width="full" marginTop="auto">
                 <Button disabled={true} borderColor="gray.200" color="gray.200" colorScheme="primary" variant="outline" width="full">
-                  {dayjs.unix(wnftMeta.lastOutbidTimestamp).add(item.minHoldPeriod, 'seconds').fromNow(true)} to outbid
+                  {wnftMeta! && dayjs.unix(wnftMeta.lastOutbidTimestamp).add(item.minHoldPeriod, 'seconds').fromNow(true)} to outbid
                 </Button>
               </Skeleton>
             </>
           )}
-          {wnftMeta! && currentState === WNFTState.outbidding && (
+          {currentState === WNFTState.outbidding && (
             <>
               <SkeletonText isLoaded={!!wnftMeta} noOfLines={2} spacing="2" skeletonHeight="4" marginBottom={4}>
                 <Text color="gray.200">Value to outbid</Text>
                 <Flex alignItems="baseline">
                   <Text color="gray.100" fontWeight={600} marginRight={2}>
-                    {Math.round(wnftMeta.price ?? 0)} PRINTS
+                    {Math.round(wnftMeta?.price ?? 0)} PRINTS
                   </Text>
-                  <Tooltip
-                    label={`The value decreases constantly until reachs ${parseAmountToDisplay(item.firstStakePrice)} at ${dayjs
-                      .unix(wnftMeta.lastOutbidTimestamp)
-                      .add(wnftMeta.dutchAuctionDuration, 'seconds')
-                      .add(wnftMeta.minHoldPeriod, 'seconds')
-                      .format('L LT')}`}
-                    fontSize="sm"
-                    color="gray.50"
-                    textAlign="center"
-                    placement="top-start"
-                    hasArrow={true}
-                    arrowSize={8}
-                  >
-                    <span>
-                      <Icon as={BsArrowDownRightCircle} color="gray.300" boxSize={3} />
-                    </span>
-                  </Tooltip>
+                  {wnftMeta! && (
+                    <Tooltip
+                      label={`The value decreases constantly until reachs ${parseAmountToDisplay(item.firstStakePrice)} at ${dayjs
+                        .unix(wnftMeta.lastOutbidTimestamp)
+                        .add(wnftMeta.dutchAuctionDuration, 'seconds')
+                        .add(wnftMeta.minHoldPeriod, 'seconds')
+                        .format('L LT')}`}
+                      fontSize="sm"
+                      color="gray.50"
+                      textAlign="center"
+                      placement="top-start"
+                      hasArrow={true}
+                      arrowSize={8}
+                    >
+                      <span>
+                        <Icon as={BsArrowDownRightCircle} color="gray.300" boxSize={3} />
+                      </span>
+                    </Tooltip>
+                  )}
                 </Flex>
               </SkeletonText>
               <SkeletonText isLoaded={!!wnftMeta} noOfLines={2} spacing="2" skeletonHeight="4" marginBottom={4}>
                 <Text color="gray.200">Holding during</Text>
                 <Text color="gray.100" fontWeight={600}>
-                  {dayjs.unix(wnftMeta.lastOutbidTimestamp).fromNow(true)}
+                  {wnftMeta! && dayjs.unix(wnftMeta.lastOutbidTimestamp).fromNow(true)}
                 </Text>
               </SkeletonText>
               <SkeletonText isLoaded={!!wnftMeta} noOfLines={2} spacing="2" skeletonHeight="4" marginBottom={6}>

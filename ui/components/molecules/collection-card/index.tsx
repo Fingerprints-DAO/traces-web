@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, useMemo } from 'react'
+import React, { PropsWithChildren, useMemo, useState } from 'react'
 import useSWR from 'swr'
 import Image from 'next/image'
 
@@ -18,32 +18,46 @@ type CollectionCardProps = {
 }
 
 const CollectionCard = ({ id, cardWidth = ['100%', 96], image, children }: PropsWithChildren<CollectionCardProps>) => {
+  const [imageHasError, setImageHasError] = useState(false)
   // fetch http api on route `api/collection/${id}` and return the collection data, do not use react-query here
   const { data, error } = useSWR<CollectionMetadata>(`/api/collection/${id}`, fetcher)
+
+  const imageAttributes = useMemo(() => {
+    if (imageHasError) {
+      return {
+        width: '100%',
+        backgroundImage: data?.image,
+        backgroundSize: 'cover',
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: 'center center',
+      }
+    }
+    return {}
+  }, [imageHasError, data?.image])
 
   if (error) {
     return null
   }
 
-  console.log(data)
   return (
     <Box display="flex" flexDirection="column" height="full" width={cardWidth} color="gray.100" cursor={'pointer'}>
       <Link href={`collections/${id}`}>
         <Skeleton
           isLoaded={!!data}
           width="100%"
-          height={'549px'}
+          height={image?.height ?? '400px'}
           marginBottom={image?.marginBottom || 6}
           background="gray.500"
           borderRadius={8}
           overflow={'hidden'}
           position={'relative'}
+          {...imageAttributes}
         >
-          {data?.image! && (
+          {!imageHasError && data?.image! && (
             <Image
               src={data?.image}
-              height={image?.height || '549px'}
               alt={`Image of ${data?.name}`}
+              onError={() => setImageHasError(true)}
               layout="fill"
               objectFit="cover"
               objectPosition="50% 50%"
@@ -56,6 +70,7 @@ const CollectionCard = ({ id, cardWidth = ['100%', 96], image, children }: Props
           {data?.name}
         </SkeletonText>
       </Heading>
+
       {children || <Text fontSize="xs">{data?.description}</Text>}
     </Box>
   )
