@@ -7,7 +7,6 @@ import { Controller, useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Box, Button, FormControl, FormErrorMessage, Input, InputGroup, InputRightAddon, ModalFooter, Text } from '@chakra-ui/react'
 import { ModalContext, WNFTModalProps } from '@ui/contexts/Modal'
-import usePrintsRead from '@web3/contracts/prints/use-prints-read'
 
 type StakeProps = {
   onClose: () => void

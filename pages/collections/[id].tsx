@@ -26,16 +26,17 @@ const Collection = ({ id }: ServerSideProps) => {
     refetchOnWindowFocus: true,
     refetchInterval: refreshIntervalTime,
   })
-  const { data: collectionData } = useSWR<CollectionMetadata>(`/api/collection/${id}`, fetcher)
+  const { data: collectionData, isLoading } = useSWR<CollectionMetadata>(`/api/collection/${id}`, fetcher)
   const tokens = useMemo(() => data?.collections[0]?.tokens ?? [], [data?.collections])
 
   return (
     <Container maxWidth="7xl" paddingTop={14} paddingBottom={28}>
       <PageHeader
         containerProps={{ marginBottom: 16, maxW: 800 }}
-        title={collectionData?.name || 'No name'}
-        description={collectionData?.description || 'No description'}
+        title={collectionData?.name || 'Unnamed'}
+        description={collectionData?.description}
         withBackButton={true}
+        isLoading={isLoading}
       />
       <Grid templateColumns={['repeat(1, 1fr)', 'repeat(2, 1fr)', 'repeat(2, 1fr)', 'repeat(3, 1fr)', 'repeat(4, 1fr)']} gap={8} rowGap={12}>
         {tokens.map((item) => (

@@ -14,6 +14,8 @@ import {
   PopoverBody,
   PopoverContent,
   PopoverTrigger,
+  Skeleton,
+  SkeletonText,
   Text,
   Tooltip,
 } from '@chakra-ui/react'
@@ -21,6 +23,7 @@ import { BsArrowDownRightCircle } from 'react-icons/bs'
 import { useContractWrite, usePrepareContractWrite } from 'wagmi'
 import { BigNumber } from 'ethers'
 import dayjs from 'dayjs'
+import Image from 'next/image'
 
 import { WNFT } from '.graphclient'
 import { ModalContext, ModalElement } from '@ui/contexts/Modal'
@@ -64,6 +67,7 @@ function formatTime(timeInSeconds: number) {
 }
 
 const refreshIntervalTime = 1000 * 60 * 2
+
 const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
   const { showTxSentToast, showTxErrorToast } = useTxToast()
   const { handleOpenModal } = useContext(ModalContext)
@@ -169,31 +173,37 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
     [handleOpenModal, item.id, item.ogTokenAddress, item.ogTokenId, wnftMeta?.name, wnftMeta?.price]
   )
 
-  if (error || !wnftMeta) {
+  if (error) {
     return null
   }
-  // if (!data) {
-  //   return <div>loading...</div>
+  // console.log(item.id)
+  // if (!wnftMeta || item.id === '1000001') {
+  //   return <Loading />
   // }
 
   return (
     <GridItem w="100%" key={item.id}>
       <Box display="flex" flexDirection="column" height="full" width={'100%'} color="gray.100">
         <a href={wnftMeta?.openseaUrl} target={'_blank'} rel="noreferrer">
-          <Box
+          <Skeleton
+            isLoaded={!!wnftMeta?.image}
             width="100%"
             height={'400px'}
             marginBottom={4}
             background="gray.500"
-            backgroundImage={wnftMeta?.image}
-            backgroundSize="cover"
-            backgroundRepeat={'no-repeat'}
-            backgroundPosition={'center'}
             borderRadius={8}
-          />
+            overflow={'hidden'}
+            position={'relative'}
+          >
+            {wnftMeta?.image && (
+              <Image src={wnftMeta?.image} alt={`Image of ${wnftMeta?.name}`} layout="fill" objectFit="cover" objectPosition="50% 50%" />
+            )}
+          </Skeleton>
         </a>
         <Heading as="h6" size="md" marginBottom={2} display={'flex'} justifyContent={'space-between'}>
-          <span>{wnftMeta?.name}</span>
+          <SkeletonText isLoaded={!!wnftMeta} noOfLines={1} skeletonHeight="100%">
+            {wnftMeta?.name}
+          </SkeletonText>
           {(isEditor || isOwner) && (
             <Popover placement={'bottom-end'} colorScheme="primary">
               {({ onClose }) => (
@@ -229,53 +239,57 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
         <Box marginTop={6} flex={1} display="flex" flexDirection="column">
           {currentState === WNFTState.minting && (
             <>
-              <Box marginBottom={4}>
+              <SkeletonText isLoaded={!!wnftMeta} noOfLines={2} spacing="2" skeletonHeight="4" marginBottom={4}>
                 <Text color="gray.200">Minimum stake</Text>
                 <Text color="gray.100" fontWeight={600}>
                   {wnftMeta?.price} PRINTS
                 </Text>
-              </Box>
-              <Box marginBottom={6}>
+              </SkeletonText>
+              <SkeletonText isLoaded={!!wnftMeta} noOfLines={2} spacing="2" skeletonHeight="4" marginBottom={6}>
                 <Text color="gray.200">Guaranteed holding period</Text>
                 <Text color="gray.100" fontWeight={600}>
                   {formatTime(item.minHoldPeriod)}
                 </Text>
-              </Box>
-              <ButtonConnectWallet color="gray.900" colorScheme="primary" width="full" marginTop="auto" onClick={handleOpenMintNftModal}>
-                Mint WNFT
-              </ButtonConnectWallet>
+              </SkeletonText>
+              <Skeleton isLoaded={!!wnftMeta} width="full" marginTop="auto">
+                <ButtonConnectWallet color="gray.900" colorScheme="primary" width="full" onClick={handleOpenMintNftModal}>
+                  Mint WNFT
+                </ButtonConnectWallet>
+              </Skeleton>
             </>
           )}
-          {currentState === WNFTState.holding && (
+          {wnftMeta! && currentState === WNFTState.holding && (
             <>
-              <Box marginBottom={4}>
+              <SkeletonText isLoaded={!!wnftMeta} noOfLines={2} spacing="2" skeletonHeight="4" marginBottom={4}>
                 <Text color="gray.200">Staked</Text>
                 <Flex alignItems="baseline">
                   <Text color="gray.100" fontWeight={600} marginRight={2}>
                     {wnftMeta.stakedAmount} PRINTS
                   </Text>
                 </Flex>
-              </Box>
-              <Box marginBottom={4}>
+              </SkeletonText>
+              <SkeletonText isLoaded={!!wnftMeta} noOfLines={2} spacing="2" skeletonHeight="4" marginBottom={4}>
                 <Text color="gray.200">Holding during</Text>
                 <Text color="gray.100" fontWeight={600}>
                   {dayjs.unix(wnftMeta.lastOutbidTimestamp).fromNow(true)}
                 </Text>
-              </Box>
-              <Box marginBottom={6}>
+              </SkeletonText>
+              <SkeletonText isLoaded={!!wnftMeta} noOfLines={2} spacing="2" skeletonHeight="4" marginBottom={6}>
                 <Text color="gray.200">Current holder</Text>
                 <Text color="gray.100" fontWeight={600}>
                   {shortAddress(item.currentOwner)}
                 </Text>
-              </Box>
-              <Button disabled={true} borderColor="gray.200" color="gray.200" colorScheme="primary" variant="outline" width="full" marginTop="auto">
-                {dayjs.unix(wnftMeta.lastOutbidTimestamp).add(item.minHoldPeriod, 'seconds').fromNow(true)} to outbid
-              </Button>
+              </SkeletonText>
+              <Skeleton isLoaded={!!wnftMeta} width="full" marginTop="auto">
+                <Button disabled={true} borderColor="gray.200" color="gray.200" colorScheme="primary" variant="outline" width="full">
+                  {dayjs.unix(wnftMeta.lastOutbidTimestamp).add(item.minHoldPeriod, 'seconds').fromNow(true)} to outbid
+                </Button>
+              </Skeleton>
             </>
           )}
-          {currentState === WNFTState.outbidding && (
+          {wnftMeta! && currentState === WNFTState.outbidding && (
             <>
-              <Box marginBottom={4}>
+              <SkeletonText isLoaded={!!wnftMeta} noOfLines={2} spacing="2" skeletonHeight="4" marginBottom={4}>
                 <Text color="gray.200">Value to outbid</Text>
                 <Flex alignItems="baseline">
                   <Text color="gray.100" fontWeight={600} marginRight={2}>
@@ -299,23 +313,25 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
                     </span>
                   </Tooltip>
                 </Flex>
-              </Box>
-              <Box marginBottom={4}>
+              </SkeletonText>
+              <SkeletonText isLoaded={!!wnftMeta} noOfLines={2} spacing="2" skeletonHeight="4" marginBottom={4}>
                 <Text color="gray.200">Holding during</Text>
                 <Text color="gray.100" fontWeight={600}>
                   {dayjs.unix(wnftMeta.lastOutbidTimestamp).fromNow(true)}
                 </Text>
-              </Box>
-              <Box marginBottom={6}>
+              </SkeletonText>
+              <SkeletonText isLoaded={!!wnftMeta} noOfLines={2} spacing="2" skeletonHeight="4" marginBottom={6}>
                 <Text color="gray.200">Current holder</Text>
                 <Text color="gray.100" fontWeight={600}>
                   {shortAddress(item.currentOwner)}
                 </Text>
-              </Box>
+              </SkeletonText>
 
-              <ButtonConnectWallet color="gray.900" colorScheme="primary" width="full" marginTop="auto" onClick={handleOpenMintNftModal}>
-                Outbid WNFT
-              </ButtonConnectWallet>
+              <Skeleton isLoaded={!!wnftMeta} width="full" marginTop="auto">
+                <ButtonConnectWallet color="gray.900" colorScheme="primary" width="full" onClick={handleOpenMintNftModal}>
+                  Outbid WNFT
+                </ButtonConnectWallet>
+              </Skeleton>
             </>
           )}
         </Box>
