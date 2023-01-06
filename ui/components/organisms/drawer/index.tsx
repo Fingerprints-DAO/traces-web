@@ -39,9 +39,6 @@ const Drawer = ({ isOpen, onClose, onOpenModal }: DrawerProps) => {
   const router = useRouter()
   const { isAdmin, isEditor } = useTracesRead()
 
-  console.log('isAdmin', isAdmin)
-  console.log('isEditor', isEditor)
-
   const activeStyles = (path: string) => {
     if (router.pathname === path) {
       return {
