@@ -1,0 +1,11 @@
+query GetWNFTS($currentOwner: Bytes!) {
+  wnfts(where: { currentOwner: $currentOwner }) {
+    id
+    firstStakePrice
+    lastPrice
+    minHoldPeriod
+    ogTokenAddress
+    ogTokenId
+    tokenId
+  }
+}
