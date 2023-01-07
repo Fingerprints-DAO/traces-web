@@ -2,11 +2,9 @@ query GetAdministrators {
   admins {
     id
     role
-    sender
   }
   editors {
     id
     role
-    sender
   }
 }

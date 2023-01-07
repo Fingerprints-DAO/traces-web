@@ -1,18 +1,22 @@
 import React, { useMemo } from 'react'
-
-// Dependencies
-import { useQuery } from 'react-query'
 import { Box, Button, Heading, Modal, ModalBody, ModalContent, ModalOverlay, Table, TableContainer, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react'
-
-// Helpers
 import { ModalProps } from '@ui/contexts/Modal'
-import { getBuiltGraphSDK } from '.graphclient'
 import { shortenAddress } from '@ui/utils/string'
+import useTracesRead from '@web3/contracts/traces/use-traces-read'
+import useTracesGetAdministrators from '@web3/contracts/traces/use-traces-get-administrators'
+import { Address } from 'wagmi'
+import { Editor } from '.graphclient'
+import useTracesRevokeRole from '@web3/contracts/traces/use-traces-revoke-role'
+import AdminItem from './item'
 
-const sdk = getBuiltGraphSDK()
+export type DeleteRolePayload = {
+  role: Address
+  address: Address
+}
 
 const ModalAdministrators = ({ isOpen, onClose }: ModalProps) => {
-  const { data: administrators, isLoading, isError } = useQuery({ queryKey: 'GetAdministrators', queryFn: () => sdk.GetAdministrators() })
+  const { isAdmin } = useTracesRead()
+  const { data: administrators, isLoading: isGettingAdmins, isError } = useTracesGetAdministrators(isAdmin)
 
   const isEmpty = useMemo(() => !administrators?.admins.concat(administrators.editors).length, [administrators])
 
@@ -40,7 +44,7 @@ const ModalAdministrators = ({ isOpen, onClose }: ModalProps) => {
                 </Tr>
               </Thead>
               <Tbody>
-                {isLoading ? (
+                {isGettingAdmins ? (
                   <Tr>
                     <Td colSpan={3}>Loading...</Td>
                   </Tr>
@@ -50,40 +54,12 @@ const ModalAdministrators = ({ isOpen, onClose }: ModalProps) => {
                   </Tr>
                 ) : (
                   <>
-                    {administrators?.admins.map((item) => {
-                      return (
-                        <Tr key={item.id}>
-                          <Td color="gray.300" fontSize="sm" borderBottom={1} borderBottomStyle="solid" borderBottomColor="gray.700">
-                            Admin
-                          </Td>
-                          <Td color="gray.300" fontSize="sm" borderBottom={1} borderBottomStyle="solid" borderBottomColor="gray.700">
-                            {shortenAddress(item.id, 17, 20)}
-                          </Td>
-                          <Td isNumeric borderBottom={1} borderBottomStyle="solid" borderBottomColor="gray.700">
-                            <Button colorScheme="blue" variant="link">
-                              Delete
-                            </Button>
-                          </Td>
-                        </Tr>
-                      )
-                    })}
-                    {administrators?.editors.map((item) => {
-                      return (
-                        <Tr key={item.id}>
-                          <Td color="gray.300" fontSize="sm" borderBottom={1} borderBottomStyle="solid" borderBottomColor="gray.700">
-                            Editors
-                          </Td>
-                          <Td color="gray.300" fontSize="sm" borderBottom={1} borderBottomStyle="solid" borderBottomColor="gray.700">
-                            {shortenAddress(item.id, 17, 20)}
-                          </Td>
-                          <Td isNumeric borderBottom={1} borderBottomStyle="solid" borderBottomColor="gray.700">
-                            <Button colorScheme="blue" variant="link">
-                              Delete
-                            </Button>
-                          </Td>
-                        </Tr>
-                      )
-                    })}
+                    {administrators?.admins.map((item) => (
+                      <AdminItem key={item.id} {...item} isAdmin={isAdmin} type="Admin" />
+                    ))}
+                    {administrators?.editors.map((item) => (
+                      <AdminItem key={item.id} {...item} isAdmin={isAdmin} type="Editor" />
+                    ))}
                   </>
                 )}
               </Tbody>

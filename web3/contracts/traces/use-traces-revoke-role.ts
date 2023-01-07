@@ -1,28 +1,24 @@
 import { Address, useWaitForTransaction } from 'wagmi'
 import useTraces from './use-traces'
-import { useMutation } from 'react-query'
-import { AddRolePayload } from '@ui/components/organisms/modals/modal-add-role'
+import { useMutation, useQueryClient } from 'react-query'
 import { useState } from 'react'
 import useTxToast from '@ui/hooks/use-tx-toast'
+import { getTracesAdministratorsKey } from './keys'
+import { DeleteRolePayload } from '@ui/components/organisms/modals/modal-administrators'
 
-const useTracesAddRole = (isAdmin?: boolean, isEditor?: boolean, adminRole?: Address, onWaitSuccess?: () => void) => {
+const useTracesRevokeRole = (isAdmin?: boolean) => {
   const traces = useTraces()
   const { showTxErrorToast, showTxExecutedToast } = useTxToast()
+  const queryClient = useQueryClient()
 
   const [hash, setHash] = useState<Address | undefined>()
 
-  const request = async ({ account, role }: AddRolePayload) => {
-    if (!isAdmin || !isEditor) {
+  const request = async ({ address, role }: DeleteRolePayload) => {
+    if (!isAdmin) {
       throw new Error('User does not have permission')
     }
 
-    const payloadRoleIsAdmin = role === adminRole
-
-    if (payloadRoleIsAdmin && !isAdmin) {
-      throw new Error('User does not have permission')
-    }
-
-    return traces?.grantRole?.(role, account)
+    return traces?.revokeRole(role, address)
   }
 
   useWaitForTransaction({
@@ -34,12 +30,12 @@ const useTracesAddRole = (isAdmin?: boolean, isEditor?: boolean, adminRole?: Add
       }
 
       showTxExecutedToast({
-        title: 'Role granted',
+        title: 'Role revoked',
         txHash: hash,
-        id: 'grant-role-success',
+        id: 'revoke-role-success',
       })
 
-      onWaitSuccess?.()
+      queryClient.invalidateQueries(getTracesAdministratorsKey)
     },
   })
 
@@ -54,4 +50,4 @@ const useTracesAddRole = (isAdmin?: boolean, isEditor?: boolean, adminRole?: Add
   })
 }
 
-export default useTracesAddRole
+export default useTracesRevokeRole
