@@ -299,14 +299,14 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
                   {wnftMeta! && dayjs.unix(wnftMeta?.lastOutbidTimestamp).fromNow(true)}
                 </Text>
               </SkeletonText>
-              <SkeletonText isLoaded={!!wnftMeta} noOfLines={2} spacing="2" skeletonHeight="4" marginBottom={6}>
+              <SkeletonText isLoaded={!!wnftMeta} noOfLines={2} spacing="2" skeletonHeight="4" marginBottom={6} width="fit-content">
                 <Text color="gray.200">Current holder</Text>
                 <Tooltip
                   label={item.currentOwner}
                   fontSize="sm"
                   color="gray.50"
                   textAlign="center"
-                  placement="top-start"
+                  placement="right-end"
                   hasArrow={true}
                   arrowSize={8}
                 >
@@ -364,7 +364,7 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
                   fontSize="sm"
                   color="gray.50"
                   textAlign="center"
-                  placement="top-start"
+                  placement="right-end"
                   hasArrow={true}
                   arrowSize={8}
                 >
