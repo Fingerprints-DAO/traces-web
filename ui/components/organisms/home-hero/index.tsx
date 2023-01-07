@@ -1,17 +1,15 @@
 import React from 'react'
-
-// Dependencies
 import { useWeb3Modal } from '@web3modal/react'
 import { Box, Button, Container, Heading, Text, useMediaQuery } from '@chakra-ui/react'
-
-// Helpers
 import useWallet from '@web3/wallet/use-wallet'
 import { useIsBrowser } from '@ui/hooks/use-is-browser'
+import Image from 'next/image'
+import heroImage from 'public/images/hero.png'
 
 const HomeHero = () => {
   const { open } = useWeb3Modal()
   const { isConnected } = useWallet()
-  const [isMobile] = useMediaQuery('(max-width: 30em)')
+  const [isMobile, isTabletPortrait] = useMediaQuery(['(max-width: 30em)', '(max-width: calc(48em + 1px))'])
   const isBrowser = useIsBrowser()
 
   const handleOpenModal = () => open()
@@ -34,9 +32,11 @@ const HomeHero = () => {
             </Button>
           )}
         </Box>
-        <Box maxW={['100%', '300px', '350px', '488px']}>
-          <Box width={['100%', '300px', '350px', '488px']} height={['200px', '300px', '350px', '400px']} background="gray.500" />
-        </Box>
+        {!isMobile && !isTabletPortrait && (
+          <Box maxW={['100%', '300px', '350px', '488px']}>
+            <Image src={heroImage} alt="Hero image" width={488} height={400} />
+          </Box>
+        )}
       </Container>
     </Box>
   )
