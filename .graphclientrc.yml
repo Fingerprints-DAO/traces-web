@@ -11,3 +11,4 @@ sources:
 documents:
   - ./web3/graphql/collection.graphql
   - ./web3/graphql/collections.graphql
+  - ./web3/graphql/administrators.graphql

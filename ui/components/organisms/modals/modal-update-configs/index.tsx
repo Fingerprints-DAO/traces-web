@@ -1,14 +1,11 @@
 import React from 'react'
-
-// Dependencies
 import { object, string } from 'yup'
 import { Controller, useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Box, Button, Heading, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalOverlay, Text } from '@chakra-ui/react'
-
-// Helpers
 import { ModalProps } from '@ui/contexts/Modal'
 import useTracesUpdateConfigs from '@web3/contracts/traces/use-traces-update-configs'
+import useTracesRead from '@web3/contracts/traces/use-traces-read'
 
 export type UpdateConfigsPayload = {
   vaultAddress: `0x${string}`
@@ -19,6 +16,8 @@ const schema = object({
 })
 
 const ModalUpdateConfigs = ({ isOpen, onClose }: ModalProps) => {
+  const { vaultAddress: currentVaultAddress } = useTracesRead()
+
   const { control, formState, handleSubmit, watch } = useForm<UpdateConfigsPayload>({
     mode: 'onSubmit',
     resolver: yupResolver(schema),
@@ -45,13 +44,20 @@ const ModalUpdateConfigs = ({ isOpen, onClose }: ModalProps) => {
           </Box>
           <ModalBody padding={0}>
             <Box>
-              <Text color="gray.100" display="block" as="label" htmlFor="contract" fontWeight="semibold" marginBottom={2}>
+              <Text color="gray.100" display="block" as="label" htmlFor="contract" fontWeight="semibold" mb={1}>
                 FP Vault Address
               </Text>
+              {!!currentVaultAddress && (
+                <Text color="gray.400" display="block" fontStyle="italic" fontSize="xs" mb={2}>
+                  Current address: {currentVaultAddress}
+                </Text>
+              )}
               <Controller
                 name="vaultAddress"
                 control={control}
-                render={({ field }) => <Input {...field} size="lg" borderColor="gray.600" placeholder="Ex: 0xabcdefghijklmnopqrstuvwxyz1234567890abc1" />}
+                render={({ field }) => (
+                  <Input {...field} size="lg" borderColor="gray.600" placeholder="Ex: 0xabcdefghijklmnopqrstuvwxyz1234567890abc1" />
+                )}
               />
             </Box>
           </ModalBody>

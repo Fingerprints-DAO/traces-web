@@ -1,6 +1,4 @@
 import React, { useMemo, useState } from 'react'
-
-// Dependencies
 import { Address } from 'wagmi'
 import { object, string } from 'yup'
 import { useForm } from 'react-hook-form'
@@ -20,14 +18,10 @@ import {
   Select,
   FormErrorMessage,
   FormControl,
-  useToast,
 } from '@chakra-ui/react'
-
-// Helpers
 import { ModalProps } from '@ui/contexts/Modal'
 import useTracesRead from '@web3/contracts/traces/use-traces-read'
 import useTracesAddRole from '@web3/contracts/traces/use-traces-add-role'
-import { TransactionStatus } from 'types/transaction'
 
 export type AddRolePayload = {
   role: Address
@@ -40,10 +34,9 @@ const schema = object({
 })
 
 const ModalAddRole = ({ isOpen, onClose }: ModalProps) => {
-  const toast = useToast()
   const [isLoading, setIsLoading] = useState(false)
   const { adminRole, editorRole, isAdmin, isEditor } = useTracesRead()
-  const { mutateAsync: addRole } = useTracesAddRole(isAdmin, isEditor, adminRole)
+  const { mutateAsync: addRole } = useTracesAddRole(isAdmin, isEditor, adminRole, onClose)
 
   const options = useMemo(() => {
     const roles = [{ value: editorRole, label: 'Editor' }]
@@ -68,23 +61,7 @@ const ModalAddRole = ({ isOpen, onClose }: ModalProps) => {
     try {
       setIsLoading(true)
 
-      const response = await addRole(data)
-
-      const wait = await response?.wait()
-
-      if (wait?.status === TransactionStatus.Success) {
-        toast({
-          title: 'Success',
-          status: 'success',
-          description: (
-            <Box as="a" href={`https://etherscan.io/tx/${wait?.transactionHash}`} target="_blank" textDecoration="underline">
-              Click here to see transaction
-            </Box>
-          ),
-        })
-
-        onClose()
-      }
+      await addRole(data)
     } catch (error) {
       console.log('submit', error)
 
@@ -105,8 +82,8 @@ const ModalAddRole = ({ isOpen, onClose }: ModalProps) => {
             </Heading>
           </Box>
           <ModalBody padding={0}>
-            <Flex>
-              <FormControl flex={2} mr={6} isInvalid={Boolean(formState.errors.account?.message)}>
+            <Flex flexDirection={['column', 'row']}>
+              <FormControl flex={2} mb={[4, 0]} mr={[0, 6]} isInvalid={Boolean(formState.errors.account?.message)}>
                 <Text color="gray.100" display="block" as="label" htmlFor="contract" fontWeight="semibold" marginBottom={2}>
                   Wallet
                 </Text>
