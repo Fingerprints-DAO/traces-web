@@ -1,8 +1,5 @@
 import { UseToastOptions, useToast } from '@chakra-ui/react'
 import { TxMessage } from '@ui/components/atoms/tx-message'
-import { ethers } from 'ethers'
-
-const logger = new ethers.utils.Logger('useTxToast')
 
 export const useTxToast = () => {
   const toast = useToast()

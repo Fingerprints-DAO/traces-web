@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import useSWR from 'swr'
 
 // Dependencies
 import Link from 'next/link'
