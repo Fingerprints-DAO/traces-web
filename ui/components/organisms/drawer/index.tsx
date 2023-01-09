@@ -79,30 +79,20 @@ const Drawer = ({ isOpen, onClose, onOpenModal }: DrawerProps) => {
         </DrawerBody>
         <DrawerFooter alignItems="flex-start" flexDirection="column" p={8}>
           <Box as="nav" mb={[10, 20]}>
-            {isAdmin && (
+            {isEditor && (
               <Box
                 as="button"
                 display="block"
                 lineHeight={9}
                 fontSize={[18, 18, 18, 18, 24]}
                 mb={[4, 4, 4, 4, 10]}
-                onClick={handleOpenModal(ModalElement.AddRole)}
+                onClick={handleOpenModal(ModalElement.AddNFT)}
               >
-                Manage roles
+                Add NFT
               </Box>
             )}
-            {(isEditor || isAdmin) && (
+            {isAdmin && (
               <>
-                <Box
-                  as="button"
-                  display="block"
-                  lineHeight={9}
-                  fontSize={[18, 18, 18, 18, 24]}
-                  mb={[4, 4, 4, 4, 10]}
-                  onClick={handleOpenModal(ModalElement.AddNFT)}
-                >
-                  Add NFT
-                </Box>
                 <Box
                   as="button"
                   display="block"
@@ -118,9 +108,19 @@ const Drawer = ({ isOpen, onClose, onOpenModal }: DrawerProps) => {
                   display="block"
                   lineHeight={9}
                   fontSize={[18, 18, 18, 18, 24]}
+                  mb={[4, 4, 4, 4, 10]}
+                  onClick={handleOpenModal(ModalElement.AddRole)}
+                >
+                  Manage roles
+                </Box>
+                <Box
+                  as="button"
+                  display="block"
+                  lineHeight={9}
+                  fontSize={[18, 18, 18, 18, 24]}
                   onClick={handleOpenModal(ModalElement.Administrators)}
                 >
-                  Administrators
+                  Admins and editors
                 </Box>
               </>
             )}
