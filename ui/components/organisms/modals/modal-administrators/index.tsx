@@ -23,7 +23,7 @@ const ModalAdministrators = ({ isOpen, onClose }: ModalProps) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered={true}>
       <ModalOverlay />
-      <ModalContent background="gray.900" padding={[6, 12]} minW={['unset', 650]} maxW={['90%', '90%', '90%', 'md']}>
+      <ModalContent background="gray.900" padding={[6, 12]} maxW={['90%', '90%', '90%', '3xl']}>
         <Box display="flex" flexDirection={['column-reverse', 'row']} alignItems="start" justifyContent="space-between" marginBottom={10}>
           <Heading size="md" color="gray.100">
             Administrators

@@ -22,6 +22,8 @@ import {
 import { ModalProps } from '@ui/contexts/Modal'
 import useTracesRead from '@web3/contracts/traces/use-traces-read'
 import useTracesAddRole from '@web3/contracts/traces/use-traces-add-role'
+import useTxToast from '@ui/hooks/use-tx-toast'
+import { TransactionStatus } from 'types/transaction'
 
 export type AddRolePayload = {
   role: Address
@@ -35,6 +37,7 @@ const schema = object({
 
 const ModalAddRole = ({ isOpen, onClose }: ModalProps) => {
   const [isLoading, setIsLoading] = useState(false)
+  const { showTxErrorToast, showTxExecutedToast } = useTxToast()
   const { adminRole, editorRole, isAdmin, isEditor } = useTracesRead()
   const { mutateAsync: addRole } = useTracesAddRole(isAdmin, isEditor, adminRole, onClose)
 
@@ -61,11 +64,22 @@ const ModalAddRole = ({ isOpen, onClose }: ModalProps) => {
     try {
       setIsLoading(true)
 
-      await addRole(data)
-    } catch (error) {
-      console.log('submit', error)
+      const response = await addRole(data)
 
-      setIsLoading(false)
+      const wait = await response?.wait()
+
+      if (wait?.status === TransactionStatus.Success) {
+        showTxExecutedToast({
+          title: 'Role granted',
+          txHash: wait?.transactionHash,
+          id: 'grant-role-success',
+        })
+
+        onClose()
+      }
+    } catch (error: any) {
+      console.log('submit', error)
+      showTxErrorToast(error)
     } finally {
       setIsLoading(false)
     }
