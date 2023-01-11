@@ -187,6 +187,15 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
     [handleOpenModal, item.id, item.ogTokenAddress, item.ogTokenId, wnftMeta?.name, wnftMeta?.price]
   )
 
+  const ownerAddress = useMemo(() => {
+    // if item.currentOwner matches address, return 'You'
+    if (address?.toLowerCase() === item.currentOwner.toLowerCase()) {
+      return 'You'
+    }
+
+    return shortAddress(item.currentOwner)
+  }, [address, item.currentOwner])
+
   if (error) {
     return null
   }
@@ -297,7 +306,7 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
                 </Flex>
               </SkeletonText>
               <SkeletonText isLoaded={!!wnftMeta} noOfLines={2} spacing="2" skeletonHeight="4" marginBottom={4}>
-                <Text color="gray.200">Holding during</Text>
+                <Text color="gray.200">Duration</Text>
                 <Text color="gray.100" fontWeight={600}>
                   {wnftMeta! && dayjs.unix(wnftMeta?.lastOutbidTimestamp).fromNow(true)}
                 </Text>
@@ -305,7 +314,7 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
               <SkeletonText isLoaded={!!wnftMeta} noOfLines={2} spacing="2" skeletonHeight="4" marginBottom={6}>
                 <Text color="gray.200">Current holder</Text>
                 <Text color="gray.100" fontWeight={600}>
-                  {shortAddress(item.currentOwner)}
+                  {ownerAddress}
                 </Text>
               </SkeletonText>
               <Skeleton isLoaded={!!wnftMeta} width="full" marginTop="auto">
@@ -345,7 +354,7 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
                 </Flex>
               </SkeletonText>
               <SkeletonText isLoaded={!!wnftMeta} noOfLines={2} spacing="2" skeletonHeight="4" marginBottom={4}>
-                <Text color="gray.200">Holding during</Text>
+                <Text color="gray.200">Duration</Text>
                 <Text color="gray.100" fontWeight={600}>
                   {wnftMeta! && dayjs.unix(wnftMeta.lastOutbidTimestamp).fromNow(true)}
                 </Text>
@@ -353,7 +362,7 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
               <SkeletonText isLoaded={!!wnftMeta} noOfLines={2} spacing="2" skeletonHeight="4" marginBottom={6}>
                 <Text color="gray.200">Current holder</Text>
                 <Text color="gray.100" fontWeight={600}>
-                  {shortAddress(item.currentOwner)}
+                  {ownerAddress}
                 </Text>
               </SkeletonText>
 
