@@ -1,41 +1,66 @@
-import { useContext } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 
 // Dependencies
 import { useToast } from '@chakra-ui/react'
-import { useContractWrite, usePrepareContractWrite } from 'wagmi'
+import { Address, useContractWrite, usePrepareContractWrite, useWaitForTransaction } from 'wagmi'
 
 // Helpers
-import useTracesRead from './use-traces-read'
 import TracesContract from '@web3/contracts/traces/traces-abi'
 import { ModalContext } from '@ui/contexts/Modal'
+import useTxToast from '@ui/hooks/use-tx-toast'
+import { isAddress } from '@ethersproject/address'
 
-const useTracesUpdateConfigs = (isSubmitted: boolean, vaultAddress: `0x${string}`) => {
-  const toast = useToast()
-  const { isEditor } = useTracesRead()
+const useTracesUpdateConfigs = (isSubmitted: boolean) => {
+  const { showTxErrorToast, showTxSentToast, showTxExecutedToast } = useTxToast()
   const { handleCloseModal } = useContext(ModalContext)
+  const [formIsReady, setFormIsReady] = useState(false)
+  const [vaultAddress, setVaultAddress] = useState<[Address] | undefined>(undefined)
 
   const { config } = usePrepareContractWrite({
     address: process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS,
     abi: TracesContract,
     functionName: 'setVaultAddress',
-    args: [vaultAddress],
-    enabled: isSubmitted && !!isEditor && !!vaultAddress,
+    args: vaultAddress,
+    enabled: !!vaultAddress,
   })
 
-  const { write } = useContractWrite({
+  const { write, data, isIdle, isError } = useContractWrite({
     ...config,
-    onSettled: (_, error) => {
-      if (!error) {
-        toast({ title: 'Vault updated', status: 'success' })
-        handleCloseModal()
+    onSettled: (data, error) => {
+      if (error) {
+        setFormIsReady(false)
+        showTxErrorToast(error)
+        return
       }
-    },
-    onError: () => {
-      toast({ title: 'Someting went wrong on your transaction. Need better text', status: 'error' })
+
+      showTxSentToast(data?.hash)
+      handleCloseModal()
     },
   })
 
-  return write
+  useWaitForTransaction({
+    hash: data?.hash as Address,
+    onSuccess: () => {
+      showTxExecutedToast({
+        title: 'Vault updated',
+        txHash: data?.hash,
+        id: 'vault-updated',
+      })
+    },
+  })
+  const setValues = useCallback((address: Address) => {
+    if (!address) return
+    setVaultAddress([address])
+    setFormIsReady(true)
+  }, [])
+
+  useEffect(() => {
+    if ((isIdle || isError) && formIsReady && isAddress(vaultAddress?.[0] ?? '') && write) {
+      write()
+    }
+  }, [formIsReady, isError, isIdle, vaultAddress, write])
+
+  return setValues
 }
 
 export default useTracesUpdateConfigs
