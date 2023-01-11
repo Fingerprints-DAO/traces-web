@@ -37,10 +37,7 @@ import { WNFTState } from 'pages/api/helpers/_types'
 export type Modify<T, R> = Omit<T, keyof R> & R
 
 type WNFTProps = {
-  item: Modify<
-    Pick<WNFT, 'id' | 'ogTokenAddress' | 'ogTokenId' | 'tokenId' | 'lastPrice' | 'firstStakePrice' | 'minHoldPeriod'>,
-    { currentOwner?: any }
-  >
+  item: Pick<WNFT, 'id' | 'ogTokenAddress' | 'ogTokenId' | 'tokenId' | 'currentOwner' | 'lastPrice' | 'firstStakePrice' | 'minHoldPeriod'>
   withCurrentHolderAddress?: boolean
 }
 
