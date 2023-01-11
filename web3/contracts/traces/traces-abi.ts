@@ -620,7 +620,7 @@ const TracesContract = [
       },
       {
         internalType: 'uint256',
-        name: 'tokenCount',
+        name: 'totalMinted',
         type: 'uint256',
       },
     ],

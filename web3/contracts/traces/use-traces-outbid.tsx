@@ -1,8 +1,6 @@
-// Dependencies
 import { Address, useWaitForTransaction } from 'wagmi'
 import { BigNumber } from 'ethers'
 import { useMutation } from 'react-query'
-import { useToast } from '@chakra-ui/react'
 import useTraces from './use-traces'
 import { parseAmountToContract } from '@web3/helpers/handleAmount'
 import useTxToast from '@ui/hooks/use-tx-toast'

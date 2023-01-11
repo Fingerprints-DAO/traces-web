@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 
 // Dependencies
 import Link from 'next/link'
@@ -91,7 +91,7 @@ const Drawer = ({ isOpen, onClose, onOpenModal }: DrawerProps) => {
                 Manage roles
               </Box>
             )}
-            {isEditor && (
+            {(isEditor || isAdmin) && (
               <>
                 <Box
                   as="button"
