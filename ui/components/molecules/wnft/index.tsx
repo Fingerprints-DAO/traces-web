@@ -190,6 +190,15 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
     [handleOpenModal, item.id, item.ogTokenAddress, item.ogTokenId, wnftMeta?.name, wnftMeta?.price]
   )
 
+  const ownerAddress = useMemo(() => {
+    // if item.currentOwner matches address, return 'You'
+    if (address?.toLowerCase() === item.currentOwner.toLowerCase()) {
+      return 'You'
+    }
+
+    return shortAddress(item.currentOwner)
+  }, [address, item.currentOwner])
+
   if (error) {
     return null
   }
@@ -300,29 +309,19 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
                 </Flex>
               </SkeletonText>
               <SkeletonText isLoaded={!!wnftMeta} noOfLines={2} spacing="2" skeletonHeight="4" marginBottom={4}>
-                <Text color="gray.200">Holding during</Text>
+                <Text color="gray.200">Duration</Text>
                 <Text color="gray.100" fontWeight={600}>
                   {wnftMeta! && dayjs.unix(wnftMeta?.lastOutbidTimestamp).fromNow(true)}
                 </Text>
               </SkeletonText>
-              {!!item.currentOwner && (
-                <SkeletonText isLoaded={!!wnftMeta} noOfLines={2} spacing="2" skeletonHeight="4" marginBottom={6} width="fit-content">
-                  <Text color="gray.200">Current holder</Text>
-                  <Tooltip
-                    label={item.currentOwner}
-                    fontSize="sm"
-                    color="gray.50"
-                    textAlign="center"
-                    placement="right-end"
-                    hasArrow={true}
-                    arrowSize={8}
-                  >
-                    <Text color="gray.100" fontWeight={600}>
-                      {shortAddress(item.currentOwner)}
-                    </Text>
-                  </Tooltip>
-                </SkeletonText>
-              )}
+              <SkeletonText isLoaded={!!wnftMeta} noOfLines={2} spacing="2" skeletonHeight="4" marginBottom={6} width="fit-content">
+                <Text color="gray.200">Current holder</Text>
+                <Tooltip label={ownerAddress} fontSize="sm" color="gray.50" textAlign="center" placement="right-end" hasArrow={true} arrowSize={8}>
+                  <Text color="gray.100" fontWeight={600}>
+                    {ownerAddress}
+                  </Text>
+                </Tooltip>
+              </SkeletonText>
               <Skeleton isLoaded={!!wnftMeta} width="full" marginTop="auto">
                 <Button disabled={true} borderColor="gray.200" color="gray.200" colorScheme="primary" variant="outline" width="full">
                   {wnftMeta! && dayjs.unix(wnftMeta.lastOutbidTimestamp).add(item.minHoldPeriod, 'seconds').fromNow(true)} to outbid
@@ -360,29 +359,19 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
                 </Flex>
               </SkeletonText>
               <SkeletonText isLoaded={!!wnftMeta} noOfLines={2} spacing="2" skeletonHeight="4" marginBottom={4}>
-                <Text color="gray.200">Holding during</Text>
+                <Text color="gray.200">Duration</Text>
                 <Text color="gray.100" fontWeight={600}>
                   {wnftMeta! && dayjs.unix(wnftMeta.lastOutbidTimestamp).fromNow(true)}
                 </Text>
               </SkeletonText>
-              {!!item.currentOwner && (
-                <SkeletonText isLoaded={!!wnftMeta} noOfLines={2} spacing="2" skeletonHeight="4" marginBottom={6}>
-                  <Text color="gray.200">Current holder</Text>
-                  <Tooltip
-                    label={item.currentOwner}
-                    fontSize="sm"
-                    color="gray.50"
-                    textAlign="center"
-                    placement="right-end"
-                    hasArrow={true}
-                    arrowSize={8}
-                  >
-                    <Text color="gray.100" fontWeight={600}>
-                      {shortAddress(item.currentOwner)}
-                    </Text>
-                  </Tooltip>
-                </SkeletonText>
-              )}
+              <SkeletonText isLoaded={!!wnftMeta} noOfLines={2} spacing="2" skeletonHeight="4" marginBottom={6}>
+                <Text color="gray.200">Current holder</Text>
+                <Tooltip label={ownerAddress} fontSize="sm" color="gray.50" textAlign="center" placement="right-end" hasArrow={true} arrowSize={8}>
+                  <Text color="gray.100" fontWeight={600}>
+                    {ownerAddress}
+                  </Text>
+                </Tooltip>
+              </SkeletonText>
               <Skeleton isLoaded={!!wnftMeta} width="full" marginTop="auto">
                 <ButtonConnectWallet color="gray.900" colorScheme="primary" width="full" onClick={handleOpenMintNftModal}>
                   Outbid WNFT
