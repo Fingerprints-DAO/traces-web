@@ -7,6 +7,8 @@ import { ModalProps } from '@ui/contexts/Modal'
 import useTracesUpdateConfigs from '@web3/contracts/traces/use-traces-update-configs'
 import useTracesRead from '@web3/contracts/traces/use-traces-read'
 import { Address } from 'wagmi'
+import { isAddress } from 'ethers/lib/utils.js'
+import useTxToast from '@ui/hooks/use-tx-toast'
 
 export type UpdateConfigsPayload = {
   vaultAddress: `0x${string}`
@@ -17,6 +19,7 @@ const schema = object({
 })
 
 const ModalUpdateConfigs = ({ isOpen, onClose }: ModalProps) => {
+  const { showTxErrorToast } = useTxToast()
   const { vaultAddress: currentVaultAddress } = useTracesRead()
 
   const { control, formState, handleSubmit, watch } = useForm<UpdateConfigsPayload>({
@@ -31,6 +34,10 @@ const ModalUpdateConfigs = ({ isOpen, onClose }: ModalProps) => {
   const updateConfigs = useTracesUpdateConfigs(formState.isSubmitted)
 
   const submit = () => {
+    if (!isAddress(form.vaultAddress)) {
+      showTxErrorToast(new Error('Invalid address'))
+      return
+    }
     updateConfigs(form.vaultAddress as Address)
   }
 
