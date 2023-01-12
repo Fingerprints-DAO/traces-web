@@ -26,7 +26,7 @@ const ModalAdministrators = ({ isOpen, onClose }: ModalProps) => {
       <ModalContent background="gray.900" padding={[6, 12]} minW={['unset', 650]} maxW={['90%', '90%', '90%', 'md']}>
         <Box display="flex" flexDirection={['column-reverse', 'row']} alignItems="start" justifyContent="space-between" marginBottom={10}>
           <Heading size="md" color="gray.100">
-            Administrators
+            Administrators & Editors
           </Heading>
         </Box>
         <ModalBody padding={0}>
