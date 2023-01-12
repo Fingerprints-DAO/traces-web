@@ -3,7 +3,6 @@ import React, { useMemo } from 'react'
 // Dependencies
 import { Container, Grid } from '@chakra-ui/react'
 import { useQuery } from 'react-query'
-import useSWR from 'swr'
 
 // Components
 import PageHeader from '@ui/components/organisms/page-header'
@@ -67,20 +66,27 @@ type ServerSideProps = {
 // receive id from url using typescript
 export async function getServerSideProps(context: GetServerSidePropsContext<ServerSideProps>) {
   const { id } = context.params ?? {}
-  // call api/collection/[id] to get collection metadata
-  const collectionData = await fetcher<CollectionMetadata>(`${process.env.VERCEL_URL}/api/collection/${id}`)
+  try {
+    // call api/collection/[id] to get collection metadata
+    const collectionData = await fetcher<CollectionMetadata>(`${process.env.VERCEL_URL}/api/collection/${id}`)
+    console.log(collectionData)
+    const meta = {
+      title: collectionData?.name || 'Collection',
+      description: 'Hold and use NFTs from the Fingerprints collection',
+      navPage: 'collection',
+    }
 
-  const meta = {
-    title: collectionData?.name || 'Collection',
-    description: 'Hold and use NFTs from the Fingerprints collection',
-    navPage: 'collection',
-  }
-
-  return {
-    props: {
-      id,
-      meta,
-      collectionData,
-    },
+    return {
+      props: {
+        id,
+        meta,
+        collectionData,
+      },
+    }
+  } catch (error) {
+    console.log(error)
+    return {
+      notFound: true,
+    }
   }
 }
