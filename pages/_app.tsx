@@ -1,5 +1,5 @@
 // Dependencies
-import type { AppProps } from 'next/app'
+import type { AppContext, AppProps } from 'next/app'
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
 import { Web3Modal } from '@web3modal/react'
@@ -10,6 +10,7 @@ import duration from 'dayjs/plugin/duration'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import localizedFormat from 'dayjs/plugin/localizedFormat'
 import NProgress from 'nprogress'
+import App from 'next/app'
 import 'nprogress/nprogress.css'
 
 // Components
@@ -22,6 +23,7 @@ import theme from '@ui/base/theme'
 import ReactQueryProvider from '@ui/contexts/ReactQuery'
 import { web3Config, ethereumClient } from '@web3/config'
 import useScrollRestoration from '@ui/hooks/use-scroll-restoration'
+import MetaTags, { MetaTagsProps } from '@ui/components/molecules/metatags'
 
 // Assets
 import '../styles/globals.css'
@@ -34,13 +36,21 @@ import '@fontsource/inter/600.css'
 import '@fontsource/inter/700.css'
 import '@fontsource/inter/800.css'
 import '@fontsource/inter/900.css'
+import { getBaseURL } from './api/helpers/_getLink'
 
 dayjs.extend(duration)
 dayjs.extend(relativeTime)
 dayjs.extend(localizedFormat)
 NProgress.configure({ showSpinner: false })
 
-function Traces({ Component, pageProps }: AppProps) {
+type TracesProps = AppProps & {
+  pageProps: {
+    host: string
+    meta: MetaTagsProps
+  }
+}
+
+function Traces({ Component, pageProps }: TracesProps) {
   const router = useRouter()
   useScrollRestoration(router)
 
@@ -67,6 +77,7 @@ function Traces({ Component, pageProps }: AppProps) {
 
   return (
     <ReactQueryProvider>
+      <MetaTags {...pageProps.meta} host={pageProps.host} />
       <ChakraProvider theme={theme}>
         <Web3Provider client={web3Config}>
           <ModalProvider>
@@ -85,6 +96,17 @@ function Traces({ Component, pageProps }: AppProps) {
       </ChakraProvider>
     </ReactQueryProvider>
   )
+}
+
+Traces.getInitialProps = async (appContext: AppContext) => {
+  const appProps = await App.getInitialProps(appContext)
+
+  return {
+    pageProps: {
+      ...appProps.pageProps,
+      host: getBaseURL(),
+    },
+  }
 }
 
 export default Traces
