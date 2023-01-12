@@ -11,6 +11,7 @@ import { GetServerSidePropsContext } from 'next/types'
 import { CollectionMetadata } from 'pages/api/helpers/_types'
 import WNFT from '@ui/components/molecules/wnft'
 import { fetcher } from '@ui/utils/fetcher'
+import { getBaseURL } from 'pages/api/helpers/_getLink'
 
 const sdk = getBuiltGraphSDK()
 const refreshIntervalTime = 1000 * 60 * 5
@@ -67,9 +68,9 @@ type ServerSideProps = {
 export async function getServerSideProps(context: GetServerSidePropsContext<ServerSideProps>) {
   const { id } = context.params ?? {}
   try {
-    console.log(process.env.NEXT_PUBLIC_VERCEL_URL)
+    console.log(getBaseURL())
     // call api/collection/[id] to get collection metadata
-    const collectionData = await fetcher<CollectionMetadata>(`${process.env.NEXT_PUBLIC_VERCEL_URL}/api/collection/${id}`)
+    const collectionData = await fetcher<CollectionMetadata>(`${getBaseURL()}/api/collection/${id}`)
     console.log(collectionData)
     const meta = {
       title: collectionData?.name || 'Collection',

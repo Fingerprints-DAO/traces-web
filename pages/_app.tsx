@@ -36,6 +36,7 @@ import '@fontsource/inter/600.css'
 import '@fontsource/inter/700.css'
 import '@fontsource/inter/800.css'
 import '@fontsource/inter/900.css'
+import { getBaseURL } from './api/helpers/_getLink'
 
 dayjs.extend(duration)
 dayjs.extend(relativeTime)
@@ -103,7 +104,7 @@ Traces.getInitialProps = async (appContext: AppContext) => {
   return {
     pageProps: {
       ...appProps.pageProps,
-      host: `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`,
+      host: getBaseURL(),
     },
   }
 }
