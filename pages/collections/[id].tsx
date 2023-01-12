@@ -68,10 +68,9 @@ type ServerSideProps = {
 export async function getServerSideProps(context: GetServerSidePropsContext<ServerSideProps>) {
   const { id } = context.params ?? {}
   try {
-    console.log(getBaseURL())
     // call api/collection/[id] to get collection metadata
     const collectionData = await fetcher<CollectionMetadata>(`${getBaseURL()}/api/collection/${id}`)
-    console.log(collectionData)
+
     const meta = {
       title: collectionData?.name || 'Collection',
       description: 'Hold and use NFTs from the Fingerprints collection',
