@@ -184,6 +184,15 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
     [handleOpenModal, item.id, item.ogTokenAddress, item.ogTokenId, wnftMeta?.name, wnftMeta?.price]
   )
 
+  const ownerAddress = useMemo(() => {
+    // if item.currentOwner matches address, return 'You'
+    if (address?.toLowerCase() === item.currentOwner.toLowerCase()) {
+      return 'You'
+    }
+
+    return shortAddress(item.currentOwner)
+  }, [address, item.currentOwner])
+
   if (error) {
     return null
   }
@@ -294,24 +303,16 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
                 </Flex>
               </SkeletonText>
               <SkeletonText isLoaded={!!wnftMeta} noOfLines={2} spacing="2" skeletonHeight="4" marginBottom={4}>
-                <Text color="gray.200">Holding during</Text>
+                <Text color="gray.200">Duration</Text>
                 <Text color="gray.100" fontWeight={600}>
                   {wnftMeta! && dayjs.unix(wnftMeta?.lastOutbidTimestamp).fromNow(true)}
                 </Text>
               </SkeletonText>
               <SkeletonText isLoaded={!!wnftMeta} noOfLines={2} spacing="2" skeletonHeight="4" marginBottom={6} width="fit-content">
                 <Text color="gray.200">Current holder</Text>
-                <Tooltip
-                  label={item.currentOwner}
-                  fontSize="sm"
-                  color="gray.50"
-                  textAlign="center"
-                  placement="right-end"
-                  hasArrow={true}
-                  arrowSize={8}
-                >
+                <Tooltip label={ownerAddress} fontSize="sm" color="gray.50" textAlign="center" placement="right-end" hasArrow={true} arrowSize={8}>
                   <Text color="gray.100" fontWeight={600}>
-                    {shortAddress(item.currentOwner)}
+                    {ownerAddress}
                   </Text>
                 </Tooltip>
               </SkeletonText>
@@ -352,24 +353,16 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
                 </Flex>
               </SkeletonText>
               <SkeletonText isLoaded={!!wnftMeta} noOfLines={2} spacing="2" skeletonHeight="4" marginBottom={4}>
-                <Text color="gray.200">Holding during</Text>
+                <Text color="gray.200">Duration</Text>
                 <Text color="gray.100" fontWeight={600}>
                   {wnftMeta! && dayjs.unix(wnftMeta.lastOutbidTimestamp).fromNow(true)}
                 </Text>
               </SkeletonText>
-              <SkeletonText isLoaded={!!wnftMeta} noOfLines={2} spacing="2" skeletonHeight="4" marginBottom={6}>
+              <SkeletonText isLoaded={!!wnftMeta} noOfLines={2} spacing="2" skeletonHeight="4" marginBottom={6} width="fit-content">
                 <Text color="gray.200">Current holder</Text>
-                <Tooltip
-                  label={item.currentOwner}
-                  fontSize="sm"
-                  color="gray.50"
-                  textAlign="center"
-                  placement="right-end"
-                  hasArrow={true}
-                  arrowSize={8}
-                >
+                <Tooltip label={ownerAddress} fontSize="sm" color="gray.50" textAlign="center" placement="right-end" hasArrow={true} arrowSize={8}>
                   <Text color="gray.100" fontWeight={600}>
-                    {shortAddress(item.currentOwner)}
+                    {ownerAddress}
                   </Text>
                 </Tooltip>
               </SkeletonText>

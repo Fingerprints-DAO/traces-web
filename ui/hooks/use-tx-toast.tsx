@@ -1,8 +1,5 @@
 import { UseToastOptions, useToast } from '@chakra-ui/react'
 import { TxMessage } from '@ui/components/atoms/tx-message'
-import { ethers } from 'ethers'
-
-const logger = new ethers.utils.Logger('useTxToast')
 
 export const useTxToast = () => {
   const toast = useToast()
@@ -38,15 +35,22 @@ export const useTxToast = () => {
     const revertError = error as RevertError
 
     if (revertError.errorName) {
-      toast({ title: `An error occured`, description: `Error reverted ${revertError.errorName}`, status: 'error' })
+      const id = 'error-name'
+      if (toast.isActive(id)) return
+      toast({ title: `An error occured`, description: `Error reverted ${revertError.errorName}`, status: 'error', id })
       return
     }
     if (revertError.code === 'ACTION_REJECTED') {
-      toast({ title: `An error occured`, description: `User rejected metamask tx`, status: 'error' })
+      const id = 'user-rejected'
+      if (toast.isActive(id)) return
+      toast({ title: `An error occured`, description: `User rejected metamask tx`, status: 'error', id })
       return
     }
 
+    const id = 'error'
+    if (toast.isActive(id)) return
     toast({
+      id,
       title: `An error occured`,
       description: `Error message: ${revertError.reason ?? revertError.cause ?? revertError.message}`,
       status: 'error',
