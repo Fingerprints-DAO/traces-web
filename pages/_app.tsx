@@ -103,7 +103,7 @@ Traces.getInitialProps = async (appContext: AppContext) => {
   return {
     pageProps: {
       ...appProps.pageProps,
-      host: `https://${process.env.VERCEL_URL}`,
+      host: `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`,
     },
   }
 }

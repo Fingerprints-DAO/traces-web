@@ -67,8 +67,9 @@ type ServerSideProps = {
 export async function getServerSideProps(context: GetServerSidePropsContext<ServerSideProps>) {
   const { id } = context.params ?? {}
   try {
+    console.log(process.env.NEXT_PUBLIC_VERCEL_URL)
     // call api/collection/[id] to get collection metadata
-    const collectionData = await fetcher<CollectionMetadata>(`${process.env.VERCEL_URL}/api/collection/${id}`)
+    const collectionData = await fetcher<CollectionMetadata>(`${process.env.NEXT_PUBLIC_VERCEL_URL}/api/collection/${id}`)
     console.log(collectionData)
     const meta = {
       title: collectionData?.name || 'Collection',
