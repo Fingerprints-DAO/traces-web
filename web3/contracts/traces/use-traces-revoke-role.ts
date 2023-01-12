@@ -5,12 +5,12 @@ import { DeleteRolePayload } from '@ui/components/organisms/modals/modal-adminis
 const useTracesRevokeRole = (isAdmin?: boolean) => {
   const traces = useTraces()
 
-  const request = async ({ address, role }: DeleteRolePayload) => {
+  const request = async ({ id, role }: DeleteRolePayload) => {
     if (!isAdmin) {
       throw new Error('User does not have permission')
     }
 
-    return traces?.revokeRole(role, address)
+    return traces?.revokeRole(role, id)
   }
 
   return useMutation(request)
