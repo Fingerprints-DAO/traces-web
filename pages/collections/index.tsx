@@ -45,4 +45,14 @@ const CollectionsPage = () => {
   )
 }
 
+export async function getStaticProps() {
+  const meta = {
+    title: 'Collections',
+    description: 'Hold and use NFTs from the Fingerprints collection',
+    navPage: 'collection',
+  }
+
+  return { props: { meta } }
+}
+
 export default CollectionsPage

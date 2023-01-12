@@ -13,13 +13,15 @@ import { CollectionMetadata } from 'pages/api/helpers/_types'
 import WNFT from '@ui/components/molecules/wnft'
 import { fetcher } from '@ui/utils/fetcher'
 
-type ServerSideProps = {
-  id: string
-}
 const sdk = getBuiltGraphSDK()
 const refreshIntervalTime = 1000 * 60 * 5
 
-const Collection = ({ id }: ServerSideProps) => {
+type CollectionProps = {
+  id: string
+  collectionData: CollectionMetadata
+}
+
+const Collection = ({ id, collectionData }: CollectionProps) => {
   const {
     data,
     isLoading: isLoadingQuery,
@@ -31,9 +33,9 @@ const Collection = ({ id }: ServerSideProps) => {
     refetchOnWindowFocus: true,
     refetchInterval: refreshIntervalTime,
   })
-  const { data: collectionData, isLoading: isLoadingAPI } = useSWR<CollectionMetadata>(`/api/collection/${id}`, fetcher)
+
   const tokens = useMemo(() => data?.collections[0]?.tokens ?? [], [data?.collections])
-  const isLoading = (isFetching || isLoadingQuery || isLoadingAPI) && !isRefetching
+  const isLoading = (isFetching || isLoadingQuery) && !isRefetching
 
   return (
     <Container maxWidth="7xl" paddingTop={14} paddingBottom={28}>
@@ -58,13 +60,27 @@ const Collection = ({ id }: ServerSideProps) => {
 
 export default Collection
 
+type ServerSideProps = {
+  id: string
+}
+
 // receive id from url using typescript
 export async function getServerSideProps(context: GetServerSidePropsContext<ServerSideProps>) {
   const { id } = context.params ?? {}
+  // call api/collection/[id] to get collection metadata
+  const collectionData = await fetcher<CollectionMetadata>(`${process.env.VERCEL_URL}/api/collection/${id}`)
+
+  const meta = {
+    title: collectionData?.name || 'Collection',
+    description: 'Hold and use NFTs from the Fingerprints collection',
+    navPage: 'collection',
+  }
 
   return {
     props: {
       id,
+      meta,
+      collectionData,
     },
   }
 }
