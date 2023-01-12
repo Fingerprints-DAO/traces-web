@@ -1,7 +1,5 @@
 import React, { PropsWithChildren, useContext, useMemo, useState, useEffect } from 'react'
 import useSWR from 'swr'
-
-// Dependencies
 import {
   Box,
   Button,
@@ -30,7 +28,6 @@ import { ModalContext, ModalElement } from '@ui/contexts/Modal'
 import { fetcher } from '@ui/utils/fetcher'
 import TracesContract from '@web3/contracts/traces/traces-abi'
 import { HandledToken } from 'pages/api/helpers/_web3'
-import { parseAmountToDisplay } from '@web3/helpers/handleAmount'
 import useTxToast from '@ui/hooks/use-tx-toast'
 import ButtonConnectWallet from '../button-connect-wallet'
 import useWallet from '@web3/wallet/use-wallet'
@@ -302,11 +299,21 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
                   {wnftMeta! && dayjs.unix(wnftMeta?.lastOutbidTimestamp).fromNow(true)}
                 </Text>
               </SkeletonText>
-              <SkeletonText isLoaded={!!wnftMeta} noOfLines={2} spacing="2" skeletonHeight="4" marginBottom={6}>
+              <SkeletonText isLoaded={!!wnftMeta} noOfLines={2} spacing="2" skeletonHeight="4" marginBottom={6} width="fit-content">
                 <Text color="gray.200">Current holder</Text>
-                <Text color="gray.100" fontWeight={600}>
-                  {shortAddress(item.currentOwner)}
-                </Text>
+                <Tooltip
+                  label={item.currentOwner}
+                  fontSize="sm"
+                  color="gray.50"
+                  textAlign="center"
+                  placement="right-end"
+                  hasArrow={true}
+                  arrowSize={8}
+                >
+                  <Text color="gray.100" fontWeight={600}>
+                    {shortAddress(item.currentOwner)}
+                  </Text>
+                </Tooltip>
               </SkeletonText>
               <Skeleton isLoaded={!!wnftMeta} width="full" marginTop="auto">
                 <Button disabled={true} borderColor="gray.200" color="gray.200" colorScheme="primary" variant="outline" width="full">
@@ -352,11 +359,20 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
               </SkeletonText>
               <SkeletonText isLoaded={!!wnftMeta} noOfLines={2} spacing="2" skeletonHeight="4" marginBottom={6}>
                 <Text color="gray.200">Current holder</Text>
-                <Text color="gray.100" fontWeight={600}>
-                  {shortAddress(item.currentOwner)}
-                </Text>
+                <Tooltip
+                  label={item.currentOwner}
+                  fontSize="sm"
+                  color="gray.50"
+                  textAlign="center"
+                  placement="right-end"
+                  hasArrow={true}
+                  arrowSize={8}
+                >
+                  <Text color="gray.100" fontWeight={600}>
+                    {shortAddress(item.currentOwner)}
+                  </Text>
+                </Tooltip>
               </SkeletonText>
-
               <Skeleton isLoaded={!!wnftMeta} width="full" marginTop="auto">
                 <ButtonConnectWallet color="gray.900" colorScheme="primary" width="full" onClick={handleOpenMintNftModal}>
                   Outbid WNFT
