@@ -33,8 +33,6 @@ const CopyButton = ({ textToCopy }: CopyButtonProps) => {
         placement="right"
         hasArrow={true}
         arrowSize={8}
-        closeDelay={1000}
-        closeOnPointerDown={true}
         shouldWrapChildren={true}
       >
         {isCopied ? <FcCheckmark width={16} height={16} color="green" /> : <MdContentCopy width={16} height={16} />}
