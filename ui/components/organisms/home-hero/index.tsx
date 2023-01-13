@@ -1,18 +1,15 @@
 import React from 'react'
-import { useWeb3Modal } from '@web3modal/react'
-import { Box, Button, Container, Heading, Text, useMediaQuery } from '@chakra-ui/react'
+import { Box, Container, Heading, Text, useMediaQuery } from '@chakra-ui/react'
 import useWallet from '@web3/wallet/use-wallet'
 import { useIsBrowser } from '@ui/hooks/use-is-browser'
 import Image from 'next/image'
 import heroImage from 'public/images/hero.png'
+import ButtonConnectWallet from '@ui/components/molecules/button-connect-wallet'
 
 const HomeHero = () => {
-  const { open } = useWeb3Modal()
+  const isBrowser = useIsBrowser()
   const { isConnected } = useWallet()
   const [isMobile, isTabletPortrait] = useMediaQuery(['(max-width: 30em)', '(max-width: calc(48em + 1px))'])
-  const isBrowser = useIsBrowser()
-
-  const handleOpenModal = () => open()
 
   return (
     <Box as="section" pt={[10, 20]} pb={[20, '136px']}>
@@ -26,11 +23,7 @@ const HomeHero = () => {
             FP members can hold and enjoy usage permissions from {!isMobile && <br />}
             {"FP's"} NFTs through a staking system
           </Text>
-          {isBrowser && !isConnected && (
-            <Button color="gray.900" colorScheme="primary" size="lg" mt={8} onClick={handleOpenModal}>
-              {!isConnected ? 'Connect' : 'Disconnect'} wallet
-            </Button>
-          )}
+          {isBrowser && !isConnected && <ButtonConnectWallet width="unset" size="lg" mt={8} />}
         </Box>
         {!isMobile && !isTabletPortrait && (
           <Box maxW={['100%', '300px', '350px', '488px']}>
@@ -43,3 +36,5 @@ const HomeHero = () => {
 }
 
 export default HomeHero
+
+// color="gray.900" colorScheme="primary" size="lg" mt={8} onClick={handleOpenModal}

@@ -1,37 +1,41 @@
-import React, { PropsWithChildren, useCallback } from 'react'
+import React, { PropsWithChildren } from 'react'
 
 // Dependencies
-import { useWeb3Modal } from '@web3modal/react'
 import { Button, ButtonProps } from '@chakra-ui/react'
-import { useDisconnect } from 'wagmi'
 
 // Helpers
-import useWallet from '@web3/wallet/use-wallet'
+import { ConnectKitButton } from 'connectkit'
+import { useDisconnect } from 'wagmi'
 
 const ButtonConnectWallet = ({ children, ...buttonProps }: PropsWithChildren<ButtonProps>) => {
-  const { open } = useWeb3Modal()
   const { disconnect } = useDisconnect()
-  const { isConnected } = useWallet()
 
-  const handleConnectWallet = useCallback(() => (isConnected ? disconnect() : open()), [isConnected, disconnect, open])
+  const handleConnectWallet = (isConnected: boolean, show?: () => void) => () => isConnected ? disconnect() : show?.()
 
-  if (!isConnected) {
-    return (
-      <Button
-        borderColor="gray.200"
-        color={'gray.900'}
-        colorScheme="primary"
-        variant={'solid'}
-        size={['xs', 'md']}
-        w="100%"
-        {...buttonProps}
-        onClick={handleConnectWallet}
-      >
-        Connect wallet
-      </Button>
-    )
-  }
-  return <Button {...buttonProps}>{children}</Button>
+  return (
+    <ConnectKitButton.Custom>
+      {({ isConnected, show }) => {
+        if (isConnected) {
+          return <Button {...buttonProps}>{children}</Button>
+        }
+
+        return (
+          <Button
+            borderColor="gray.200"
+            color={'gray.900'}
+            colorScheme="primary"
+            variant={'solid'}
+            size={['xs', 'md']}
+            w="100%"
+            {...buttonProps}
+            onClick={handleConnectWallet(isConnected, show)}
+          >
+            Connect wallet
+          </Button>
+        )
+      }}
+    </ConnectKitButton.Custom>
+  )
 }
 
 export default ButtonConnectWallet
