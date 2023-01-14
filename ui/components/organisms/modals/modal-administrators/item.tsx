@@ -7,7 +7,6 @@ import useTxToast from '@ui/hooks/use-tx-toast'
 import { useQueryClient } from 'react-query'
 import { getTracesAdministratorsKey } from '@web3/contracts/traces/keys'
 import useTracesRead from '@web3/contracts/traces/use-traces-read'
-import isEqual from 'lodash/isEqual'
 
 type AdminItemProps = {
   isAdmin?: boolean
@@ -38,7 +37,7 @@ const AdminItem = ({ isAdmin, ...item }: AdminItemProps) => {
 
         const prevAdmins = queryClient.getQueryData<Pick<Editor, 'id' | 'role'>[]>(getTracesAdministratorsKey)
 
-        const newAdmins = (prevAdmins || [])?.filter((user) => !isEqual(user, item))
+        const newAdmins = (prevAdmins || [])?.filter((user) => JSON.stringify(user) !== JSON.stringify(item))
 
         queryClient.setQueryData<Pick<Editor, 'id' | 'role'>[]>(getTracesAdministratorsKey, newAdmins)
       }

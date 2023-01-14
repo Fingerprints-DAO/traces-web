@@ -1,7 +1,4 @@
-import React, { useContext, useMemo } from 'react'
-
-// Dependencies
-import get from 'lodash/get'
+import React, { useContext } from 'react'
 import { number, object } from 'yup'
 import { Controller, useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -16,9 +13,8 @@ type StakeProps = {
 
 const Stake = ({ userPrints = 0, onClose, onSubmit }: StakeProps) => {
   const { payload } = useContext(ModalContext) as { payload: WNFTModalProps }
-  // const { allowance } = usePrintsRead()
-  // const minPrints = (Number(payload.minAmount) ?? 0) - (allowance?.toNumber() ?? 0)
   const minPrints = payload.minAmount ?? 0
+
   const schema = object({
     amount: number()
       .min(minPrints, `Minimum amount allowed is ${minPrints.toLocaleString()} $PRINTS`)
@@ -34,8 +30,6 @@ const Stake = ({ userPrints = 0, onClose, onSubmit }: StakeProps) => {
     },
   })
 
-  const formError = useMemo(() => get(formState.errors, 'amount'), [formState.errors])
-
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Box>
@@ -46,14 +40,14 @@ const Stake = ({ userPrints = 0, onClose, onSubmit }: StakeProps) => {
           name="amount"
           control={control}
           render={({ field }) => (
-            <FormControl isInvalid={Boolean(formError?.message)}>
+            <FormControl isInvalid={Boolean(formState.errors.amount?.message)}>
               <InputGroup size="lg" marginBottom={2}>
                 <Input {...field} type="number" placeholder="Amount to stake" size="lg" />
                 <InputRightAddon background="gray.800" borderLeft={1} borderLeftColor="gray.600" color="gray.400">
                   $PRINTS
                 </InputRightAddon>
               </InputGroup>
-              {Boolean(formError?.message) && <FormErrorMessage mb={4}>{formError?.message}</FormErrorMessage>}
+              {Boolean(formState.errors.amount?.message) && <FormErrorMessage mb={4}>{formState.errors.amount?.message}</FormErrorMessage>}
             </FormControl>
           )}
         />
