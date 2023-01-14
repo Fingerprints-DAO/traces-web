@@ -1,13 +1,10 @@
-import React, { useMemo } from 'react'
-import { Box, Button, Heading, Modal, ModalBody, ModalContent, ModalOverlay, Table, TableContainer, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react'
+import React, { useContext, useMemo } from 'react'
+import { Box, Heading, Modal, ModalBody, ModalContent, ModalOverlay, Table, TableContainer, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react'
 import { ModalProps } from '@ui/contexts/Modal'
-import { shortenAddress } from '@ui/utils/string'
-import useTracesRead from '@web3/contracts/traces/use-traces-read'
 import useTracesGetAdministrators from '@web3/contracts/traces/use-traces-get-administrators'
 import { Address } from 'wagmi'
-import { Editor } from '.graphclient'
-import useTracesRevokeRole from '@web3/contracts/traces/use-traces-revoke-role'
 import AdminItem from './item'
+import { TracesContext } from '@ui/contexts/Traces'
 
 export type DeleteRolePayload = {
   role: Address
@@ -15,7 +12,7 @@ export type DeleteRolePayload = {
 }
 
 const ModalAdministrators = ({ isOpen, onClose }: ModalProps) => {
-  const { isAdmin } = useTracesRead()
+  const { isAdmin } = useContext(TracesContext)
   const { data: administrators, isLoading: isGettingAdmins, isError } = useTracesGetAdministrators(isAdmin)
 
   const isEmpty = useMemo(() => !administrators?.admins.concat(administrators.editors).length, [administrators])

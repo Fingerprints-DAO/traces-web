@@ -1,6 +1,4 @@
-import React, { useMemo } from 'react'
-
-// Dependencies
+import React, { useContext } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import {
@@ -13,15 +11,10 @@ import {
   DrawerCloseButton,
   Heading,
   Box,
-  Text,
 } from '@chakra-ui/react'
-
-// Components
 import Wallet from '@ui/components/molecules/wallet'
-
-// Helpers
-import useTracesRead from '@web3/contracts/traces/use-traces-read'
 import { ModalElement } from '@ui/contexts/Modal'
+import { TracesContext } from '@ui/contexts/Traces'
 
 type DrawerProps = {
   isOpen: boolean
@@ -37,7 +30,7 @@ const links = [
 
 const Drawer = ({ isOpen, onClose, onOpenModal }: DrawerProps) => {
   const router = useRouter()
-  const { isAdmin, isEditor } = useTracesRead()
+  const { isAdmin, isEditor } = useContext(TracesContext)
 
   const activeStyles = (path: string) => {
     if (router.pathname === path) {

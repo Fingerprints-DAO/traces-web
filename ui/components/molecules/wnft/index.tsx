@@ -30,9 +30,9 @@ import { HandledToken } from 'pages/api/helpers/_web3'
 import useTxToast from '@ui/hooks/use-tx-toast'
 import ButtonConnectWallet from '../button-connect-wallet'
 import useWallet from '@web3/wallet/use-wallet'
-import useTracesRead from '@web3/contracts/traces/use-traces-read'
 import { WNFTState } from 'pages/api/helpers/_types'
 import CopyButton from '@ui/components/atoms/copy-button'
+import { TracesContext } from '@ui/contexts/Traces'
 
 type WNFTProps = {
   item: Pick<WNFT, 'id' | 'ogTokenAddress' | 'ogTokenId' | 'tokenId' | 'currentOwner' | 'lastPrice' | 'firstStakePrice' | 'minHoldPeriod'>
@@ -66,16 +66,15 @@ function formatTime(timeInSeconds: number) {
 const refreshIntervalTime = 1000 * 60 * 5
 
 const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
-  const [urlCopied, setUrlCopied] = useState(false)
   const { showTxSentToast, showTxErrorToast } = useTxToast()
   const { handleOpenModal } = useContext(ModalContext)
   const { address } = useWallet()
-  const { isEditor } = useTracesRead()
   const [currentState, setCurrentState] = useState<WNFTState>(WNFTState.loading)
   const { data: wnftMeta, error } = useSWR<HandledToken>(`/api/outbid/${item.id}`, fetcher, { refreshInterval: refreshIntervalTime })
   const [deleteParam, setDeleteParam] = useState<[BigNumber] | undefined>(undefined)
   const [unstakeParam, setUnstakeParam] = useState<[BigNumber] | undefined>(undefined)
   const [imageHasError, setImageHasError] = useState(false)
+  const { isEditor, tracesContractAddress } = useContext(TracesContext)
 
   const imageAttributes = useMemo(() => {
     if (imageHasError) {
@@ -95,7 +94,7 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
   }, [item.currentOwner, address])
 
   const { config } = usePrepareContractWrite({
-    address: process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS,
+    address: tracesContractAddress,
     abi: TracesContract,
     functionName: 'deleteToken',
     args: deleteParam,
@@ -132,7 +131,7 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
   }
 
   const { config: unstakeConfig } = usePrepareContractWrite({
-    address: process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS,
+    address: tracesContractAddress,
     abi: TracesContract,
     functionName: 'unstake',
     args: unstakeParam,

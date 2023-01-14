@@ -9,15 +9,17 @@ import TracesContract from '@web3/contracts/traces/traces-abi'
 import { ModalContext } from '@ui/contexts/Modal'
 import useTxToast from '@ui/hooks/use-tx-toast'
 import { isAddress } from '@ethersproject/address'
+import { TracesContext } from '@ui/contexts/Traces'
 
 const useTracesUpdateConfigs = (isSubmitted: boolean) => {
   const { showTxErrorToast, showTxSentToast, showTxExecutedToast } = useTxToast()
   const { handleCloseModal } = useContext(ModalContext)
+  const { tracesContractAddress } = useContext(TracesContext)
   const [formIsReady, setFormIsReady] = useState(false)
   const [vaultAddress, setVaultAddress] = useState<[Address] | undefined>(undefined)
 
   const { config } = usePrepareContractWrite({
-    address: process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS,
+    address: tracesContractAddress,
     abi: TracesContract,
     functionName: 'setVaultAddress',
     args: vaultAddress,

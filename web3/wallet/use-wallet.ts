@@ -1,9 +1,10 @@
+import { TracesContext } from '@ui/contexts/Traces'
+import { useContext } from 'react'
 import { Address, useAccount, useBalance } from 'wagmi'
-
-const printContractAddress = process.env.NEXT_PUBLIC_PRINTS_CONTRACT_ADDRESS || ''
 
 const useWallet = () => {
   const { address, isConnected } = useAccount()
+  const { printContractAddress } = useContext(TracesContext)
 
   const { data: printsBalance } = useBalance({
     address,

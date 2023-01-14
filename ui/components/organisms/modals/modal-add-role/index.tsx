@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useContext, useMemo, useState } from 'react'
 import { Address } from 'wagmi'
 import { object, string } from 'yup'
 import { useForm } from 'react-hook-form'
@@ -20,8 +20,8 @@ import {
   FormControl,
 } from '@chakra-ui/react'
 import { ModalProps } from '@ui/contexts/Modal'
-import useTracesRead from '@web3/contracts/traces/use-traces-read'
 import useTracesAddRole from '@web3/contracts/traces/use-traces-add-role'
+import { TracesContext } from '@ui/contexts/Traces'
 
 export type AddRolePayload = {
   role: Address
@@ -35,7 +35,7 @@ const schema = object({
 
 const ModalAddRole = ({ isOpen, onClose }: ModalProps) => {
   const [isLoading, setIsLoading] = useState(false)
-  const { adminRole, editorRole, isAdmin, isEditor } = useTracesRead()
+  const { adminRole, editorRole, isAdmin, isEditor } = useContext(TracesContext)
   const { mutateAsync: addRole } = useTracesAddRole(isAdmin, isEditor, adminRole, onClose)
 
   const options = useMemo(() => {
