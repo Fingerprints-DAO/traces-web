@@ -69,7 +69,6 @@ function formatTime(timeInSeconds: number) {
 const refreshIntervalTime = 1000 * 60 * 5
 
 const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
-  const [urlCopied, setUrlCopied] = useState(false)
   const { showTxSentToast, showTxErrorToast } = useTxToast()
   const { handleOpenModal } = useContext(ModalContext)
   const { address } = useWallet()
@@ -232,7 +231,7 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
           <SkeletonText isLoaded={currentState !== WNFTState.loading} noOfLines={1} skeletonHeight="100%" w={'full'}>
             {wnftMeta?.name ?? 'No name'}
           </SkeletonText>
-          {(isEditor || isOwner) && (
+          {(isEditor || isOwner) && !!wnftMeta && (
             <Popover placement={'bottom-end'} colorScheme="primary">
               {({ onClose }) => (
                 <>
