@@ -4,10 +4,10 @@ import { getTracesAdministratorsKey } from './keys'
 
 const sdk = getBuiltGraphSDK()
 
-const useTracesGetAdministrators = (isAdmin?: boolean) => {
+const useTracesGetAdministrators = () => {
   const request = async () => sdk.GetAdministrators().then(({ admins, editors }) => [...(admins || []), ...(editors || [])])
 
-  return useQuery(getTracesAdministratorsKey, request, { enabled: isAdmin })
+  return useQuery(getTracesAdministratorsKey, request)
 }
 
 export default useTracesGetAdministrators

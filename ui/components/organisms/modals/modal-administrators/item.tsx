@@ -60,9 +60,11 @@ const AdminItem = ({ isAdmin, ...item }: AdminItemProps) => {
         {item.id}
       </Td>
       <Td isNumeric borderBottom={1} borderBottomStyle="solid" borderBottomColor="gray.700">
-        <Button disabled={isLoading} colorScheme="blue" variant="link" onClick={handleDelete(item)}>
-          {isLoading ? 'Deleting...' : 'Delete'}
-        </Button>
+        {isAdmin && (
+          <Button disabled={isLoading} colorScheme="blue" variant="link" onClick={handleDelete(item)}>
+            {isLoading ? 'Deleting...' : 'Delete'}
+          </Button>
+        )}
       </Td>
     </Tr>
   )

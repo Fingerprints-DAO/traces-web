@@ -13,7 +13,7 @@ export type DeleteRolePayload = {
 
 const ModalAdministrators = ({ isOpen, onClose }: ModalProps) => {
   const { isAdmin } = useTracesRead()
-  const { data: administrators, isLoading: isGettingAdmins, isError } = useTracesGetAdministrators(isAdmin)
+  const { data: administrators, isLoading: isGettingAdmins, isError } = useTracesGetAdministrators()
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered={true}>
