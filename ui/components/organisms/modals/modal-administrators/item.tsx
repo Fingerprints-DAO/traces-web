@@ -1,28 +1,30 @@
 import React, { useState } from 'react'
 import { Button, Td, Tr } from '@chakra-ui/react'
-import { Editor, GetAdministratorsQuery } from '.graphclient'
+import { Editor } from '.graphclient'
 import useTracesRevokeRole from '@web3/contracts/traces/use-traces-revoke-role'
 import { TransactionStatus } from 'types/transaction'
 import useTxToast from '@ui/hooks/use-tx-toast'
 import { useQueryClient } from 'react-query'
 import { getTracesAdministratorsKey } from '@web3/contracts/traces/keys'
+import useTracesRead from '@web3/contracts/traces/use-traces-read'
 
 type AdminItemProps = {
-  type: string
   isAdmin?: boolean
 } & Pick<Editor, 'id' | 'role'>
 
-const AdminItem = ({ isAdmin, type, ...item }: AdminItemProps) => {
+const AdminItem = ({ isAdmin, ...item }: AdminItemProps) => {
   const queryClient = useQueryClient()
   const [isLoading, setIsLoading] = useState(false)
   const { showTxErrorToast, showTxExecutedToast } = useTxToast()
+
+  const { adminRole, editorRole } = useTracesRead()
   const { mutateAsync: deleteRole } = useTracesRevokeRole(isAdmin)
 
   const handleDelete = (item: Pick<Editor, 'id' | 'role'>) => async () => {
     try {
       setIsLoading(true)
 
-      const response = await deleteRole({ role: item.role, address: item.id })
+      const response = await deleteRole(item)
 
       const wait = await response?.wait()
 
@@ -33,12 +35,11 @@ const AdminItem = ({ isAdmin, type, ...item }: AdminItemProps) => {
           id: 'revoke-role-success',
         })
 
-        const prevAdmins = queryClient.getQueryData<GetAdministratorsQuery>(getTracesAdministratorsKey)
+        const prevAdmins = queryClient.getQueryData<Pick<Editor, 'id' | 'role'>[]>(getTracesAdministratorsKey)
 
-        queryClient.setQueryData<GetAdministratorsQuery>(getTracesAdministratorsKey, {
-          admins: type === 'Admin' ? prevAdmins?.admins?.filter((admin) => admin.id !== item.id) || [] : prevAdmins?.admins || [],
-          editors: type === 'Editor' ? prevAdmins?.admins.filter((admin) => admin.id !== item.id) || [] : prevAdmins?.editors || [],
-        })
+        const newAdmins = (prevAdmins || [])?.filter((user) => JSON.stringify(user) !== JSON.stringify(item))
+
+        queryClient.setQueryData<Pick<Editor, 'id' | 'role'>[]>(getTracesAdministratorsKey, newAdmins)
       }
     } catch (error: any) {
       console.log('handleDelete', error)
@@ -52,7 +53,8 @@ const AdminItem = ({ isAdmin, type, ...item }: AdminItemProps) => {
   return (
     <Tr>
       <Td color="gray.300" fontSize="sm" borderBottom={1} borderBottomStyle="solid" borderBottomColor="gray.700">
-        {type}
+        {item.role === adminRole && 'Admin'}
+        {item.role === editorRole && 'Editor'}
       </Td>
       <Td color="gray.300" fontSize="sm" borderBottom={1} borderBottomStyle="solid" borderBottomColor="gray.700">
         {item.id}
