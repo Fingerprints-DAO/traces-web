@@ -22,7 +22,6 @@ import { useContractWrite, usePrepareContractWrite } from 'wagmi'
 import { BigNumber } from 'ethers'
 import dayjs from 'dayjs'
 import Image from 'next/image'
-
 import { WNFT } from '.graphclient'
 import { ModalContext, ModalElement } from '@ui/contexts/Modal'
 import { fetcher } from '@ui/utils/fetcher'
@@ -33,6 +32,7 @@ import ButtonConnectWallet from '../button-connect-wallet'
 import useWallet from '@web3/wallet/use-wallet'
 import useTracesRead from '@web3/contracts/traces/use-traces-read'
 import { WNFTState } from 'pages/api/helpers/_types'
+import CopyButton from '@ui/components/atoms/copy-button'
 
 type WNFTProps = {
   item: Pick<WNFT, 'id' | 'ogTokenAddress' | 'ogTokenId' | 'tokenId' | 'currentOwner' | 'lastPrice' | 'firstStakePrice' | 'minHoldPeriod'>
@@ -66,6 +66,7 @@ function formatTime(timeInSeconds: number) {
 const refreshIntervalTime = 1000 * 60 * 5
 
 const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
+  const [urlCopied, setUrlCopied] = useState(false)
   const { showTxSentToast, showTxErrorToast } = useTxToast()
   const { handleOpenModal } = useContext(ModalContext)
   const { address } = useWallet()
@@ -184,13 +185,18 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
     [handleOpenModal, item.id, item.ogTokenAddress, item.ogTokenId, wnftMeta?.name, wnftMeta?.price]
   )
 
+  const ownerAddress = useMemo(() => {
+    // if item.currentOwner matches address, return 'You'
+    if (address?.toLowerCase() === item.currentOwner.toLowerCase()) {
+      return 'You'
+    }
+
+    return shortAddress(item.currentOwner)
+  }, [address, item.currentOwner])
+
   if (error) {
     return null
   }
-  // console.log(item.id)
-  // if (!wnftMeta || item.id === '1000001') {
-  //   return <Loading />
-  // }
 
   return (
     <GridItem w="100%" key={item.id}>
@@ -294,26 +300,19 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
                 </Flex>
               </SkeletonText>
               <SkeletonText isLoaded={!!wnftMeta} noOfLines={2} spacing="2" skeletonHeight="4" marginBottom={4}>
-                <Text color="gray.200">Holding during</Text>
+                <Text color="gray.200">Duration</Text>
                 <Text color="gray.100" fontWeight={600}>
                   {wnftMeta! && dayjs.unix(wnftMeta?.lastOutbidTimestamp).fromNow(true)}
                 </Text>
               </SkeletonText>
-              <SkeletonText isLoaded={!!wnftMeta} noOfLines={2} spacing="2" skeletonHeight="4" marginBottom={6} width="fit-content">
+              <SkeletonText isLoaded={!!wnftMeta} noOfLines={2} spacing="2" skeletonHeight="4" marginBottom={6}>
                 <Text color="gray.200">Current holder</Text>
-                <Tooltip
-                  label={item.currentOwner}
-                  fontSize="sm"
-                  color="gray.50"
-                  textAlign="center"
-                  placement="right-end"
-                  hasArrow={true}
-                  arrowSize={8}
-                >
+                <Flex alignItems="center">
                   <Text color="gray.100" fontWeight={600}>
-                    {shortAddress(item.currentOwner)}
+                    {ownerAddress}
                   </Text>
-                </Tooltip>
+                  <CopyButton textToCopy={item.currentOwner} />
+                </Flex>
               </SkeletonText>
               <Skeleton isLoaded={!!wnftMeta} width="full" marginTop="auto">
                 <Button disabled={true} borderColor="gray.200" color="gray.200" colorScheme="primary" variant="outline" width="full">
@@ -352,26 +351,19 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
                 </Flex>
               </SkeletonText>
               <SkeletonText isLoaded={!!wnftMeta} noOfLines={2} spacing="2" skeletonHeight="4" marginBottom={4}>
-                <Text color="gray.200">Holding during</Text>
+                <Text color="gray.200">Duration</Text>
                 <Text color="gray.100" fontWeight={600}>
                   {wnftMeta! && dayjs.unix(wnftMeta.lastOutbidTimestamp).fromNow(true)}
                 </Text>
               </SkeletonText>
               <SkeletonText isLoaded={!!wnftMeta} noOfLines={2} spacing="2" skeletonHeight="4" marginBottom={6}>
                 <Text color="gray.200">Current holder</Text>
-                <Tooltip
-                  label={item.currentOwner}
-                  fontSize="sm"
-                  color="gray.50"
-                  textAlign="center"
-                  placement="right-end"
-                  hasArrow={true}
-                  arrowSize={8}
-                >
+                <Flex alignItems="center">
                   <Text color="gray.100" fontWeight={600}>
-                    {shortAddress(item.currentOwner)}
+                    {ownerAddress}
                   </Text>
-                </Tooltip>
+                  <CopyButton textToCopy={item.currentOwner} />
+                </Flex>
               </SkeletonText>
               <Skeleton isLoaded={!!wnftMeta} width="full" marginTop="auto">
                 <ButtonConnectWallet color="gray.900" colorScheme="primary" width="full" onClick={handleOpenMintNftModal}>

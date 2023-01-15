@@ -16,4 +16,14 @@ const Home: NextPage = () => {
   )
 }
 
+export async function getStaticProps() {
+  const meta = {
+    title: 'Home',
+    description: 'Hold and use NFTs from the Fingerprints collection',
+    navPage: 'home',
+  }
+
+  return { props: { meta } }
+}
+
 export default Home

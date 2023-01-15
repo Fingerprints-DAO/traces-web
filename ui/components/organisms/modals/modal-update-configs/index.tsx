@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import { object, string } from 'yup'
 import { Controller, useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -6,6 +6,9 @@ import { Box, Button, Heading, Input, Modal, ModalBody, ModalContent, ModalFoote
 import { ModalProps } from '@ui/contexts/Modal'
 import useTracesUpdateConfigs from '@web3/contracts/traces/use-traces-update-configs'
 import useTracesRead from '@web3/contracts/traces/use-traces-read'
+import { Address } from 'wagmi'
+import { isAddress } from 'ethers/lib/utils.js'
+import useTxToast from '@ui/hooks/use-tx-toast'
 
 export type UpdateConfigsPayload = {
   vaultAddress: `0x${string}`
@@ -16,6 +19,7 @@ const schema = object({
 })
 
 const ModalUpdateConfigs = ({ isOpen, onClose }: ModalProps) => {
+  const { showTxErrorToast } = useTxToast()
   const { vaultAddress: currentVaultAddress } = useTracesRead()
 
   const { control, formState, handleSubmit, watch } = useForm<UpdateConfigsPayload>({
@@ -26,11 +30,16 @@ const ModalUpdateConfigs = ({ isOpen, onClose }: ModalProps) => {
     },
   })
 
-  const vaultAddress = watch('vaultAddress')
+  const form = watch()
+  const updateConfigs = useTracesUpdateConfigs(formState.isSubmitted)
 
-  const updateConfigs = useTracesUpdateConfigs(formState.isSubmitted, vaultAddress)
-
-  const submit = () => updateConfigs && updateConfigs()
+  const submit = () => {
+    if (!isAddress(form.vaultAddress)) {
+      showTxErrorToast(new Error('Invalid address'))
+      return
+    }
+    updateConfigs(form.vaultAddress as Address)
+  }
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered={true}>
