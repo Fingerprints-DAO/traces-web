@@ -21,7 +21,7 @@ const useTracesAddNft = (isSubmitted: boolean) => {
   const [params, setParams] = useState<[`0x${string}`, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] | undefined>(undefined)
 
   const { config } = usePrepareContractWrite({
-    address: process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS,
+    address: process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS as Address,
     abi: TracesContract,
     functionName: 'addToken',
     args: params,

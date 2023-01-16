@@ -7,6 +7,7 @@ import TracesContract from '@web3/contracts/traces/traces-abi'
 import { BigNumber } from 'ethers/lib/ethers'
 import { getChainId } from '@web3/helpers/chain'
 import { formatUnits } from 'ethers/lib/utils.js'
+import { Address } from 'wagmi'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<HandledToken | { error: string }>) {
   let wnftState = WNFTState.outbidding
@@ -14,7 +15,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
   const token = handleToken(
     (await readContract({
-      address: process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS ?? '',
+      address: (process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS ?? '0x0000') as Address,
       abi: TracesContract,
       functionName: 'getToken',
       chainId: getChainId(),
@@ -27,7 +28,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   } else {
     try {
       const wnftPrice = await readContract({
-        address: process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS ?? '',
+        address: (process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS ?? '0x0000') as Address,
         abi: TracesContract,
         functionName: 'getWNFTPrice',
         chainId: getChainId(),

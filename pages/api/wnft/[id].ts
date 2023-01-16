@@ -2,8 +2,9 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { getWNFTMetadata } from '@web3/services/getWNFTMetadata'
 import { BigNumber } from 'ethers/lib/ethers'
 import { readContract } from '@wagmi/core'
+import { Address } from 'wagmi'
 import { handleToken } from '../helpers/_web3'
-import { Token, WNFTMetadata, WNFTState } from '../helpers/_types'
+import { Token, WNFTMetadata } from '../helpers/_types'
 import TracesContract from '@web3/contracts/traces/traces-abi'
 
 // bitchcoin
@@ -14,7 +15,7 @@ import TracesContract from '@web3/contracts/traces/traces-abi'
 export default async function handler(req: NextApiRequest, res: NextApiResponse<WNFTMetadata | { error: string }>) {
   const token = handleToken(
     (await readContract({
-      address: process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS ?? '',
+      address: (process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS ?? '0x0000') as Address,
       abi: TracesContract,
       functionName: 'getToken',
       args: [BigNumber.from(req.query.id)],

@@ -9,7 +9,7 @@ const usePrintsRead = () => {
   const { address } = useWallet()
 
   const { data: allowance, refetch: refetchAllowance } = useContractRead({
-    address: process.env.NEXT_PUBLIC_PRINTS_CONTRACT_ADDRESS,
+    address: process.env.NEXT_PUBLIC_PRINTS_CONTRACT_ADDRESS as Address,
     abi: PrintsContract,
     functionName: 'allowance',
     enabled: !!address,
