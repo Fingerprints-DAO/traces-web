@@ -1,21 +1,21 @@
-import React, { useCallback, useEffect, useMemo } from 'react'
+import React, { useMemo } from 'react'
 import { Box, Button, Container, Grid, Text } from '@chakra-ui/react'
+import { useBalance, useEnsName, useDisconnect } from 'wagmi'
+import { ConnectKitButton } from 'connectkit'
+
 import PageHeader from '@ui/components/organisms/page-header'
 import WNFT from '@ui/components/molecules/wnft'
 import useWallet from '@web3/wallet/use-wallet'
-import { useBalance, useEnsName } from 'wagmi'
 import useTracesGetWNFTs from '@web3/contracts/traces/use-traces-get-wnfts'
 import { useIsBrowser } from '@ui/hooks/use-is-browser'
-import { useWeb3Modal } from '@web3modal/react'
-import useTracesGetOutbidsByOwner from '@web3/contracts/traces/use-traces-get-outbids-by-owner'
 import { parseAmountToDisplay } from '@web3/helpers/handleAmount'
 
 const printContractAddress = process.env.NEXT_PUBLIC_PRINTS_CONTRACT_ADDRESS || ('' as any)
 
 const ProfilePage = () => {
-  const { open } = useWeb3Modal()
   const isBrowser = useIsBrowser()
   const { address, isConnected } = useWallet()
+  const { disconnect } = useDisconnect()
 
   const { data: ensName } = useEnsName({ address, enabled: Boolean(address) })
 
@@ -31,7 +31,7 @@ const ProfilePage = () => {
     return wnfts.reduce((acc, item) => acc + parseAmountToDisplay(item.lastPrice), 0)
   }, [wnfts])
 
-  const handleOpenModal = () => open()
+  const handleConnectWallet = (isConnected: boolean, show?: () => void) => () => isConnected ? disconnect() : show?.()
 
   return (
     <Container maxWidth="7xl" paddingTop={14} paddingBottom={28}>
@@ -81,9 +81,13 @@ const ProfilePage = () => {
               </Box>
             </>
           ) : (
-            <Button color="gray.900" colorScheme="primary" size="lg" mt={8} onClick={handleOpenModal}>
-              {!isConnected ? 'Connect' : 'Disconnect'} wallet
-            </Button>
+            <ConnectKitButton.Custom>
+              {({ isConnected, show }) => (
+                <Button color="gray.900" colorScheme="primary" size="lg" mt={8} onClick={handleConnectWallet(isConnected, show)}>
+                  {!isConnected ? 'Connect' : 'Disconnect'} wallet
+                </Button>
+              )}
+            </ConnectKitButton.Custom>
           )}
         </>
       )}
