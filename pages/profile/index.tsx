@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react'
+import React, { useCallback, useEffect, useMemo } from 'react'
 import { Box, Button, Container, Grid, Text } from '@chakra-ui/react'
 import PageHeader from '@ui/components/organisms/page-header'
 import WNFT from '@ui/components/molecules/wnft'
@@ -8,6 +8,7 @@ import useTracesGetWNFTs from '@web3/contracts/traces/use-traces-get-wnfts'
 import { useIsBrowser } from '@ui/hooks/use-is-browser'
 import { useWeb3Modal } from '@web3modal/react'
 import useTracesGetOutbidsByOwner from '@web3/contracts/traces/use-traces-get-outbids-by-owner'
+import { parseAmountToDisplay } from '@web3/helpers/handleAmount'
 
 const printContractAddress = process.env.NEXT_PUBLIC_PRINTS_CONTRACT_ADDRESS || ('' as any)
 
@@ -25,7 +26,10 @@ const ProfilePage = () => {
   })
 
   const { data: wnfts, isLoading: isLoadingWNFTs } = useTracesGetWNFTs(address)
-  const { data: stakedAmount, isLoading: isLoadingPrices } = useTracesGetOutbidsByOwner(address)
+  const stakedAmount = useMemo(() => {
+    if (!wnfts) return 0
+    return wnfts.reduce((acc, item) => acc + parseAmountToDisplay(item.lastPrice), 0)
+  }, [wnfts])
 
   const handleOpenModal = () => open()
 
@@ -45,7 +49,7 @@ const ProfilePage = () => {
                 </Text>
                 <Text mb={6} color="gray.200" fontSize="xl">
                   Staked balance{' '}
-                  {!isLoadingPrices && (
+                  {!isLoadingWNFTs && (
                     <Text ml={[0, 6]} as="strong" display={['block', 'unset']}>
                       {stakedAmount?.toLocaleString() || 0} PRINTS
                     </Text>
