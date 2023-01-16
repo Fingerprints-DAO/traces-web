@@ -34,8 +34,11 @@ import useTracesRead from '@web3/contracts/traces/use-traces-read'
 import { WNFTState } from 'pages/api/helpers/_types'
 import CopyButton from '@ui/components/atoms/copy-button'
 
+export type Modify<T, R> = Omit<T, keyof R> & R
+
 type WNFTProps = {
   item: Pick<WNFT, 'id' | 'ogTokenAddress' | 'ogTokenId' | 'tokenId' | 'currentOwner' | 'lastPrice' | 'firstStakePrice' | 'minHoldPeriod'>
+  withCurrentHolderAddress?: boolean
 }
 
 const shortAddress = (address: string) => `${address.slice(0, 6)}...${address.slice(-4)}`
@@ -66,7 +69,6 @@ function formatTime(timeInSeconds: number) {
 const refreshIntervalTime = 1000 * 60 * 5
 
 const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
-  const [urlCopied, setUrlCopied] = useState(false)
   const { showTxSentToast, showTxErrorToast } = useTxToast()
   const { handleOpenModal } = useContext(ModalContext)
   const { address } = useWallet()
@@ -91,7 +93,7 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
   }, [imageHasError, wnftMeta?.image])
 
   const isOwner = useMemo(() => {
-    return item.currentOwner.toLowerCase() === address?.toLowerCase()
+    return item.currentOwner?.toLowerCase() === address?.toLowerCase()
   }, [item.currentOwner, address])
 
   const { config } = usePrepareContractWrite({
@@ -229,7 +231,7 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
           <SkeletonText isLoaded={currentState !== WNFTState.loading} noOfLines={1} skeletonHeight="100%" w={'full'}>
             {wnftMeta?.name ?? 'No name'}
           </SkeletonText>
-          {(isEditor || isOwner) && (
+          {(isEditor || isOwner) && !!wnftMeta && (
             <Popover placement={'bottom-end'} colorScheme="primary">
               {({ onClose }) => (
                 <>
@@ -292,7 +294,7 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
           {currentState === WNFTState.holding && (
             <>
               <SkeletonText isLoaded={!!wnftMeta} noOfLines={2} spacing="2" skeletonHeight="4" marginBottom={4}>
-                <Text color="gray.200">Staked</Text>
+                <Text color="gray.200">Value staked</Text>
                 <Flex alignItems="baseline">
                   <Text color="gray.100" fontWeight={600} marginRight={2}>
                     {wnftMeta?.stakedAmount} PRINTS
@@ -305,7 +307,7 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
                   {wnftMeta! && dayjs.unix(wnftMeta?.lastOutbidTimestamp).fromNow(true)}
                 </Text>
               </SkeletonText>
-              <SkeletonText isLoaded={!!wnftMeta} noOfLines={2} spacing="2" skeletonHeight="4" marginBottom={6}>
+              <SkeletonText isLoaded={!!wnftMeta} noOfLines={2} spacing="2" skeletonHeight="4" marginBottom={6} width="fit-content">
                 <Text color="gray.200">Current holder</Text>
                 <Flex alignItems="center">
                   <Text color="gray.100" fontWeight={600}>

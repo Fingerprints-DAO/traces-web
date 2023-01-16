@@ -1,6 +1,4 @@
 import React, { useMemo } from 'react'
-
-// Dependencies
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import {
@@ -13,15 +11,11 @@ import {
   DrawerCloseButton,
   Heading,
   Box,
-  Text,
 } from '@chakra-ui/react'
-
-// Components
 import Wallet from '@ui/components/molecules/wallet'
-
-// Helpers
 import useTracesRead from '@web3/contracts/traces/use-traces-read'
 import { ModalElement } from '@ui/contexts/Modal'
+import useWallet from '@web3/wallet/use-wallet'
 
 type DrawerProps = {
   isOpen: boolean
@@ -29,14 +23,9 @@ type DrawerProps = {
   onOpenModal: (element: ModalElement) => void
 }
 
-const links = [
-  { path: '/', label: 'Homepage' },
-  { path: '/profile', label: 'Profile' },
-  { path: '/collections', label: 'Collections' },
-]
-
 const Drawer = ({ isOpen, onClose, onOpenModal }: DrawerProps) => {
   const router = useRouter()
+  const { isConnected } = useWallet()
   const { isAdmin, isEditor } = useTracesRead()
 
   const activeStyles = (path: string) => {
@@ -54,6 +43,19 @@ const Drawer = ({ isOpen, onClose, onOpenModal }: DrawerProps) => {
 
   const handleOpenModal = (element: ModalElement) => () => onOpenModal(element)
 
+  const items = useMemo(() => {
+    const arr = [
+      { path: '/', label: 'Homepage' },
+      { path: '/collections', label: 'Collections' },
+    ]
+
+    if (isConnected) {
+      arr.push({ path: '/profile', label: 'Profile' })
+    }
+
+    return arr
+  }, [isConnected])
+
   return (
     <ChakraDrawer isOpen={isOpen} placement="left" onClose={onClose}>
       <DrawerOverlay />
@@ -66,7 +68,7 @@ const Drawer = ({ isOpen, onClose, onOpenModal }: DrawerProps) => {
         </DrawerHeader>
         <DrawerBody px={8}>
           <Box as="nav">
-            {links.map((item) => {
+            {items.map((item) => {
               return (
                 <Link key={item.path} href={item.path} legacyBehavior={true}>
                   <Box as="a" href={item.path} display="block" lineHeight={9} {...activeStyles(item.path)} mb={[4, 4, 4, 4, 10]}>
@@ -97,9 +99,9 @@ const Drawer = ({ isOpen, onClose, onOpenModal }: DrawerProps) => {
                   lineHeight={9}
                   fontSize={[18, 18, 18, 18, 24]}
                   mb={[4, 4, 4, 4, 10]}
-                  onClick={handleOpenModal(ModalElement.UpdateConfigs)}
+                  onClick={handleOpenModal(ModalElement.AddRole)}
                 >
-                  Update configs
+                  Manage roles
                 </Box>
               </>
             )}

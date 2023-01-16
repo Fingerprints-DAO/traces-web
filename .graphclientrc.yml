@@ -11,4 +11,6 @@ sources:
 documents:
   - ./web3/graphql/collection.graphql
   - ./web3/graphql/collections.graphql
+  - ./web3/graphql/wnfts.graphql
   - ./web3/graphql/administrators.graphql
+  - ./web3/graphql/outbids.graphql
