@@ -3,7 +3,7 @@ import useTraces from './use-traces'
 import { useMutation } from 'react-query'
 import { AddRolePayload } from '@ui/components/organisms/modals/modal-add-role'
 
-const useTracesAddRole = (isAdmin?: boolean, adminRole?: Address) => {
+const useTracesAddRole = (isAdmin?: boolean) => {
   const traces = useTraces()
 
   const request = async ({ account, role }: AddRolePayload) => {

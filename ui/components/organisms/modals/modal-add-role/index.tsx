@@ -38,8 +38,8 @@ const schema = object({
 const ModalAddRole = ({ isOpen, onClose }: ModalProps) => {
   const [isLoading, setIsLoading] = useState(false)
   const { showTxErrorToast, showTxExecutedToast } = useTxToast()
-  const { adminRole, editorRole, isAdmin, isEditor } = useTracesRead()
-  const { mutateAsync: addRole } = useTracesAddRole(isAdmin, isEditor, adminRole, onClose)
+  const { adminRole, editorRole, isAdmin } = useTracesRead()
+  const { mutateAsync: addRole } = useTracesAddRole(isAdmin)
 
   const options = useMemo(
     () => [
