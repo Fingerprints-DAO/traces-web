@@ -41,15 +41,13 @@ const ModalAddRole = ({ isOpen, onClose }: ModalProps) => {
   const { adminRole, editorRole, isAdmin, isEditor } = useTracesRead()
   const { mutateAsync: addRole } = useTracesAddRole(isAdmin, isEditor, adminRole, onClose)
 
-  const options = useMemo(() => {
-    const roles = [{ value: editorRole, label: 'Editor' }]
-
-    if (isAdmin) {
-      roles.unshift({ value: adminRole, label: 'Admin' })
-    }
-
-    return roles
-  }, [editorRole, adminRole, isAdmin])
+  const options = useMemo(
+    () => [
+      { value: adminRole, label: 'Admin' },
+      { value: editorRole, label: 'Editor' },
+    ],
+    [editorRole, adminRole]
+  )
 
   const { formState, handleSubmit, register } = useForm<AddRolePayload>({
     mode: 'onSubmit',
