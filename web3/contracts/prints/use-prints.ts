@@ -1,5 +1,5 @@
 // Dependencies
-import { useContract, useSigner } from 'wagmi'
+import { Address, useContract, useSigner } from 'wagmi'
 
 // Helpers
 import PrintsContract from './prints-abi'
@@ -9,7 +9,7 @@ const usePrints = () => {
 
   const prints = useContract({
     abi: PrintsContract,
-    address: process.env.NEXT_PUBLIC_PRINTS_CONTRACT_ADDRESS || '',
+    address: process.env.NEXT_PUBLIC_PRINTS_CONTRACT_ADDRESS as Address,
     signerOrProvider: data,
   })
 

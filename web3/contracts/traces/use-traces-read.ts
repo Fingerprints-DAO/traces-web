@@ -1,5 +1,5 @@
 // Dependencies
-import { useContractRead } from 'wagmi'
+import { useContractRead, Address } from 'wagmi'
 
 // Helpers
 import useWallet from '@web3/wallet/use-wallet'
@@ -9,21 +9,21 @@ const useTracesRead = () => {
   const { address, isConnected } = useWallet()
 
   const { data: editorRole } = useContractRead({
-    address: process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS,
+    address: process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS as Address,
     abi: TracesContract,
     functionName: 'EDITOR_ROLE',
     enabled: isConnected,
   })
 
   const { data: adminRole } = useContractRead({
-    address: process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS,
+    address: process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS as Address,
     abi: TracesContract,
     functionName: 'DEFAULT_ADMIN_ROLE',
     enabled: isConnected,
   })
 
   const { data: isEditor } = useContractRead({
-    address: process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS,
+    address: process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS as Address,
     abi: TracesContract,
     functionName: 'hasRole',
     enabled: !!editorRole && !!address,
@@ -31,7 +31,7 @@ const useTracesRead = () => {
   })
 
   const { data: isAdmin } = useContractRead({
-    address: process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS,
+    address: process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS as Address,
     abi: TracesContract,
     functionName: 'hasRole',
     enabled: !!adminRole && !!address,
@@ -39,7 +39,7 @@ const useTracesRead = () => {
   })
 
   const { data: vaultAddress } = useContractRead({
-    address: process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS,
+    address: process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS as Address,
     abi: TracesContract,
     functionName: 'vaultAddress',
   })

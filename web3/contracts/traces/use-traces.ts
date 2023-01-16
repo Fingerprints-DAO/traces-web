@@ -1,5 +1,5 @@
 // Dependencies
-import { useContract, useSigner } from 'wagmi'
+import { Address, useContract, useSigner } from 'wagmi'
 
 // Helpers
 import TracesContract from './traces-abi'
@@ -9,7 +9,7 @@ const useTraces = () => {
 
   const traces = useContract({
     abi: TracesContract,
-    address: process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS || '',
+    address: process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS as Address,
     signerOrProvider: data,
   })
 

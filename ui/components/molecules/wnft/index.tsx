@@ -18,7 +18,7 @@ import {
   Tooltip,
 } from '@chakra-ui/react'
 import { BsArrowDownRightCircle } from 'react-icons/bs'
-import { useContractWrite, usePrepareContractWrite } from 'wagmi'
+import { Address, useContractWrite, usePrepareContractWrite } from 'wagmi'
 import { BigNumber } from 'ethers'
 import dayjs from 'dayjs'
 import Image from 'next/image'
@@ -97,7 +97,7 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
   }, [item.currentOwner, address])
 
   const { config } = usePrepareContractWrite({
-    address: process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS,
+    address: process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS as Address,
     abi: TracesContract,
     functionName: 'deleteToken',
     args: deleteParam,
@@ -134,7 +134,7 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
   }
 
   const { config: unstakeConfig } = usePrepareContractWrite({
-    address: process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS,
+    address: process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS as Address,
     abi: TracesContract,
     functionName: 'unstake',
     args: unstakeParam,

@@ -17,7 +17,7 @@ const useTracesUpdateConfigs = (isSubmitted: boolean) => {
   const [vaultAddress, setVaultAddress] = useState<[Address] | undefined>(undefined)
 
   const { config } = usePrepareContractWrite({
-    address: process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS,
+    address: process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS as Address,
     abi: TracesContract,
     functionName: 'setVaultAddress',
     args: vaultAddress,
