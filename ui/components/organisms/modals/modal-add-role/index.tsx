@@ -90,7 +90,7 @@ const ModalAddRole = ({ isOpen, onClose }: ModalProps) => {
         <form onSubmit={handleSubmit(submit)}>
           <Box display="flex" flexDirection={['column-reverse', 'row']} alignItems="start" justifyContent="space-between" marginBottom={10}>
             <Heading size="md" color="gray.100" marginBottom={2}>
-              Add Role
+              Grant role
             </Heading>
           </Box>
           <ModalBody padding={0}>

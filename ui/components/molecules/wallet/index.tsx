@@ -1,9 +1,10 @@
 import React from 'react'
 import { Box, Button, Text } from '@chakra-ui/react'
+import { Avatar, ConnectKitButton } from 'connectkit'
 import { useBalance, useDisconnect } from 'wagmi'
 import useWallet from '@web3/wallet/use-wallet'
 import { shortenAddress } from '@ui/utils/string'
-import { Avatar, ConnectKitButton } from 'connectkit'
+import useMediaQuery from '@ui/hooks/use-media-query'
 
 type WalletProps = {
   variant: 'header' | 'drawer'
@@ -14,6 +15,7 @@ const printContractAddress = process.env.NEXT_PUBLIC_PRINTS_CONTRACT_ADDRESS || 
 const Wallet = ({ variant }: WalletProps) => {
   const { address } = useWallet()
   const { disconnect } = useDisconnect()
+  const isMobile = useMediaQuery('(max-width: 479px)')
 
   const { data: balance } = useBalance({
     address,
@@ -43,15 +45,15 @@ const Wallet = ({ variant }: WalletProps) => {
                 mr={isDrawer ? 0 : [3, 6]}
                 mb={isDrawer ? 6 : 0}
               >
-                <Box textAlign={isDrawer ? 'left' : 'right'} mr={2}>
+                <Box textAlign={isDrawer ? 'left' : 'right'} mx={2}>
                   <Text as="strong" color="gray.200" display="block" fontSize={['xs', 'sm']} fontWeight={600} mb="-2px">
                     {parseFloat(balance?.formatted || '0').toLocaleString()} PRINTS
                   </Text>
                   <Text as="span" color="gray.400" fontSize={['xs', 'sm']} display="block">
-                    {ensName || shortenAddress(address)}
+                    {ensName || shortenAddress(address, 5)}
                   </Text>
                 </Box>
-                <Avatar size={40} name={ensName || address} />
+                <Avatar size={isMobile ? 30 : 40} name={ensName || address} address={address} />
               </Box>
             )}
             <Button

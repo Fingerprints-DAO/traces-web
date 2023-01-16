@@ -28,19 +28,6 @@ const Drawer = ({ isOpen, onClose, onOpenModal }: DrawerProps) => {
   const { isConnected } = useWallet()
   const { isAdmin, isEditor } = useTracesRead()
 
-  const activeStyles = (path: string) => {
-    if (router.pathname === path) {
-      return {
-        fontSize: 24,
-        fontWeight: 700,
-      }
-    }
-
-    return {
-      fontSize: 18,
-    }
-  }
-
   const handleOpenModal = (element: ModalElement) => () => onOpenModal(element)
 
   const items = useMemo(() => {
@@ -68,11 +55,19 @@ const Drawer = ({ isOpen, onClose, onOpenModal }: DrawerProps) => {
         </DrawerHeader>
         <DrawerBody px={8}>
           <Box as="nav">
-            {items.map((item) => {
+            {items.map(({ path, label }) => {
               return (
-                <Link key={item.path} href={item.path} legacyBehavior={true}>
-                  <Box as="a" href={item.path} display="block" lineHeight={9} {...activeStyles(item.path)} mb={[4, 4, 4, 4, 10]}>
-                    {item.label}
+                <Link key={path} href={path} legacyBehavior={true}>
+                  <Box
+                    as="a"
+                    href={path}
+                    display="block"
+                    lineHeight={9}
+                    fontSize={24}
+                    fontWeight={router.pathname === path ? 700 : 400}
+                    mb={[4, 4, 4, 4, 10]}
+                  >
+                    {label}
                   </Box>
                 </Link>
               )
@@ -83,43 +78,29 @@ const Drawer = ({ isOpen, onClose, onOpenModal }: DrawerProps) => {
           <Box as="nav" mb={[10, 20]}>
             {isAdmin && (
               <>
-                <Box
-                  as="button"
-                  display="block"
-                  lineHeight={9}
-                  fontSize={[18, 18, 18, 18, 24]}
-                  mb={[4, 4, 4, 4, 10]}
-                  onClick={handleOpenModal(ModalElement.AddRole)}
-                >
-                  Manage roles
+                <Box as="button" display="block" lineHeight={9} fontSize={24} mb={[4, 4, 4, 4, 10]} onClick={handleOpenModal(ModalElement.AddRole)}>
+                  Grant roles
                 </Box>
                 <Box
                   as="button"
                   display="block"
                   lineHeight={9}
-                  fontSize={[18, 18, 18, 18, 24]}
+                  fontSize={24}
                   mb={[4, 4, 4, 4, 10]}
-                  onClick={handleOpenModal(ModalElement.AddRole)}
+                  onClick={handleOpenModal(ModalElement.UpdateConfigs)}
                 >
-                  Manage roles
+                  Update configs
                 </Box>
               </>
             )}
             {isEditor && (
-              <Box
-                as="button"
-                display="block"
-                lineHeight={9}
-                fontSize={[18, 18, 18, 18, 24]}
-                mb={[4, 4, 4, 4, 10]}
-                onClick={handleOpenModal(ModalElement.AddNFT)}
-              >
+              <Box as="button" display="block" lineHeight={9} fontSize={24} mb={[4, 4, 4, 4, 10]} onClick={handleOpenModal(ModalElement.AddNFT)}>
                 Add NFT
               </Box>
             )}
             {(isEditor || isAdmin) && (
-              <Box as="button" display="block" lineHeight={9} fontSize={[18, 18, 18, 18, 24]} onClick={handleOpenModal(ModalElement.Administrators)}>
-                Administrators
+              <Box as="button" display="block" lineHeight={9} fontSize={24} onClick={handleOpenModal(ModalElement.Administrators)}>
+                Administrators & Editors
               </Box>
             )}
           </Box>
