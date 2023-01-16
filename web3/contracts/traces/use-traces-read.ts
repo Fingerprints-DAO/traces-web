@@ -27,7 +27,7 @@ const useTracesRead = () => {
     abi: TracesContract,
     functionName: 'hasRole',
     enabled: !!editorRole && !!address,
-    args: [editorRole!, address!],
+    args: editorRole && address ? [editorRole, address] : undefined,
   })
 
   const { data: isAdmin } = useContractRead({
@@ -35,14 +35,13 @@ const useTracesRead = () => {
     abi: TracesContract,
     functionName: 'hasRole',
     enabled: !!adminRole && !!address,
-    args: [adminRole!, address!],
+    args: adminRole && address ? [adminRole, address] : undefined,
   })
 
   const { data: vaultAddress } = useContractRead({
     address: process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS,
     abi: TracesContract,
     functionName: 'vaultAddress',
-    enabled: isAdmin,
   })
 
   return {

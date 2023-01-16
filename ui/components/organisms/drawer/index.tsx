@@ -81,30 +81,8 @@ const Drawer = ({ isOpen, onClose, onOpenModal }: DrawerProps) => {
         </DrawerBody>
         <DrawerFooter alignItems="flex-start" flexDirection="column" p={8}>
           <Box as="nav" mb={[10, 20]}>
-            {isEditor && (
-              <Box
-                as="button"
-                display="block"
-                lineHeight={9}
-                fontSize={[18, 18, 18, 18, 24]}
-                mb={[4, 4, 4, 4, 10]}
-                onClick={handleOpenModal(ModalElement.AddNFT)}
-              >
-                Add NFT
-              </Box>
-            )}
             {isAdmin && (
               <>
-                <Box
-                  as="button"
-                  display="block"
-                  lineHeight={9}
-                  fontSize={[18, 18, 18, 18, 24]}
-                  mb={[4, 4, 4, 4, 10]}
-                  onClick={handleOpenModal(ModalElement.UpdateConfigs)}
-                >
-                  Update configs
-                </Box>
                 <Box
                   as="button"
                   display="block"
@@ -120,11 +98,29 @@ const Drawer = ({ isOpen, onClose, onOpenModal }: DrawerProps) => {
                   display="block"
                   lineHeight={9}
                   fontSize={[18, 18, 18, 18, 24]}
-                  onClick={handleOpenModal(ModalElement.Administrators)}
+                  mb={[4, 4, 4, 4, 10]}
+                  onClick={handleOpenModal(ModalElement.AddRole)}
                 >
-                  Admins and editors
+                  Manage roles
                 </Box>
               </>
+            )}
+            {isEditor && (
+              <Box
+                as="button"
+                display="block"
+                lineHeight={9}
+                fontSize={[18, 18, 18, 18, 24]}
+                mb={[4, 4, 4, 4, 10]}
+                onClick={handleOpenModal(ModalElement.AddNFT)}
+              >
+                Add NFT
+              </Box>
+            )}
+            {(isEditor || isAdmin) && (
+              <Box as="button" display="block" lineHeight={9} fontSize={[18, 18, 18, 18, 24]} onClick={handleOpenModal(ModalElement.Administrators)}>
+                Administrators
+              </Box>
             )}
           </Box>
           <Wallet variant="drawer" />
