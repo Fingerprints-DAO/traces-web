@@ -72,10 +72,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         state: wnftState,
         price,
       })
+      return
     }
   } catch (error) {
     console.log('outbid error', req.query.id, error)
     res.status(500).json({ error: 'Error getting WNFT Metadata' })
+    return
   }
 
   res.status(400).json({ error: 'Token does not exist' })
