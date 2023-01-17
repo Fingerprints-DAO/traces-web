@@ -53,7 +53,7 @@ const Wallet = ({ variant }: WalletProps) => {
                     {ensName || shortenAddress(address, 5)}
                   </Text>
                 </Box>
-                <Avatar size={isMobile ? 30 : 40} name={ensName || address} address={address} />
+                <Avatar size={isMobile ? 30 : 40} name={ensName} address={address} />
               </Box>
             )}
             <Button
