@@ -85,7 +85,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext<Serv
       },
     }
   } catch (error) {
-    console.log(error)
+    console.error(error, 'error getting collection data')
     return {
       notFound: true,
     }
