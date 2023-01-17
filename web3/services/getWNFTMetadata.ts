@@ -1,5 +1,21 @@
+import cacheData from 'memory-cache'
 import reservoirAPI from 'pages/api/helpers/_api'
 import { WNFTMetadata } from 'pages/api/helpers/_types'
+
+async function fetchGetTokens(tokens: string) {
+  const value = cacheData.get(tokens)
+  if (value) {
+    return value
+  } else {
+    const hours = 24
+    const res = await reservoirAPI.getTokensV5({
+      tokens,
+    })
+    const data = await res.json()
+    cacheData.put(tokens, data, hours * 1000 * 60 * 60)
+    return data
+  }
+}
 
 const getRandomData = (address: string, tokenId: string) => {
   return {
@@ -49,11 +65,6 @@ export const getWNFTMetadata = async (
         trait_type: 'Staked $PRINTS',
         value: stakedAmount,
       },
-      // {
-      //   display_type: 'date',
-      //   trait_type: 'Created',
-      //   value: 1667597019624, // timestamp
-      // },
     ]
 
     if (stakedDateProperty) {
@@ -69,9 +80,7 @@ export const getWNFTMetadata = async (
   try {
     const {
       data: { tokens },
-    } = await reservoirAPI.getTokensV5({
-      tokens: `${ogTokenAddress}%3A${ogTokenId}`,
-    })
+    } = await fetchGetTokens(`${ogTokenAddress}%3A${ogTokenId}`)
     // cache tokens[0].token for 24 hours and returns the cached version or fetch a new version
 
     // return tokens[0].token contract, id, name, description and image if it exists if not return random data
