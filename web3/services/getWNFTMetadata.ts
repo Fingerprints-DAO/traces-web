@@ -112,7 +112,7 @@ export const getWNFTMetadata = async (
     }
     return getRandomData(ogTokenAddress, ogTokenId)
   } catch (error) {
-    console.error(error)
+    console.error(error, 'error getting token metadata from reservoir')
     // return random data if there is an error
     return getRandomData(ogTokenAddress, ogTokenId)
   }

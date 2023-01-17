@@ -47,22 +47,26 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     price = token.firstStakePrice
   }
 
-  // check if token has ogTokenAddress and ogTokenId
-  if (token && token.tokenId) {
-    const metadata = await getWNFTMetadata(
-      token.ogTokenAddress,
-      token.ogTokenId.toString(),
-      req.query.id as string,
-      token.stakedAmount,
-      token.lastOutbidTimestamp
-    )
-    res.status(200).json({
-      ...metadata,
-      ...token,
-      state: wnftState,
-      price,
-    })
-    return
+  try {
+    // check if token has ogTokenAddress and ogTokenId
+    if (token && token.tokenId) {
+      const metadata = await getWNFTMetadata(
+        token.ogTokenAddress,
+        token.ogTokenId.toString(),
+        req.query.id as string,
+        token.stakedAmount,
+        token.lastOutbidTimestamp
+      )
+      res.status(200).json({
+        ...metadata,
+        ...token,
+        state: wnftState,
+        price,
+      })
+    }
+  } catch (error) {
+    console.error(error, 'outbid error')
+    res.status(500).json({ error: 'Error getting WNFT Metadata' })
   }
 
   res.status(400).json({ error: 'Token does not exist' })
