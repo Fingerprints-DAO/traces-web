@@ -17,7 +17,7 @@ import {
   Tooltip,
 } from '@chakra-ui/react'
 import { BsArrowDownRightCircle } from 'react-icons/bs'
-import { Address, useContractWrite, usePrepareContractWrite } from 'wagmi'
+import { Address, useContractWrite, useEnsName, usePrepareContractWrite } from 'wagmi'
 import { BigNumber } from 'ethers'
 import dayjs from 'dayjs'
 import Image from 'next/image'
@@ -74,6 +74,8 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
   const [deleteParam, setDeleteParam] = useState<[BigNumber] | undefined>(undefined)
   const [unstakeParam, setUnstakeParam] = useState<[BigNumber] | undefined>(undefined)
   const [imageHasError, setImageHasError] = useState(false)
+
+  const { data: ensName } = useEnsName({ address: item.currentOwner, enabled: Boolean(item.currentOwner) })
 
   const imageAttributes = useMemo(() => {
     if (imageHasError) {
@@ -189,8 +191,12 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
       return 'You'
     }
 
+    if (!!ensName) {
+      return ensName
+    }
+
     return shortAddress(item.currentOwner)
-  }, [address, item.currentOwner])
+  }, [address, item.currentOwner, ensName])
 
   if (error && !wnftMeta) {
     return null
