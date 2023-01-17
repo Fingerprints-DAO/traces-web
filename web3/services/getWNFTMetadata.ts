@@ -1,4 +1,3 @@
-import dayjs from 'dayjs'
 import reservoirAPI from 'pages/api/helpers/_api'
 import { WNFTMetadata } from 'pages/api/helpers/_types'
 
