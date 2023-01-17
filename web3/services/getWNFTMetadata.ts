@@ -1,22 +1,6 @@
-import cacheData from 'memory-cache'
 import reservoirAPI from 'pages/api/helpers/_api'
 import { WNFTMetadata } from 'pages/api/helpers/_types'
-
-async function fetchGetTokens(tokens: string) {
-  const value = cacheData.get(tokens)
-  if (value) {
-    console.log('cache hit')
-    return value
-  } else {
-    console.log('cache miss')
-    const hours = 24
-    const res = await reservoirAPI.getTokensV5({
-      tokens,
-    })
-    cacheData.put(tokens, res, hours * 1000 * 60 * 60)
-    return res
-  }
-}
+import { fetchWithCache } from './getWithCache'
 
 const getRandomData = (address: string, tokenId: string) => {
   return {
@@ -79,9 +63,14 @@ export const getWNFTMetadata = async (
     }
   }
   try {
+    const query = `${ogTokenAddress}%3A${ogTokenId}`
     const {
       data: { tokens },
-    } = await fetchGetTokens(`${ogTokenAddress}%3A${ogTokenId}`)
+    } = await fetchWithCache(query, () =>
+      reservoirAPI.getTokensV5({
+        tokens: query,
+      })
+    )
     // cache tokens[0].token for 24 hours and returns the cached version or fetch a new version
 
     // return tokens[0].token contract, id, name, description and image if it exists if not return random data
