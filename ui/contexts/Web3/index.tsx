@@ -18,7 +18,7 @@ const { chains } = configureChains(selectedChain, [
 
 const config = createClient(
   getDefaultClient({
-    appName: 'ConnectKit Next.js demo',
+    appName: 'Traces by Fingerprints DAO',
     infuraId: process.env.NEXT_PUBLIC_PROVIDER_KEY,
     chains,
   })

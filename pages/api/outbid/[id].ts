@@ -8,6 +8,7 @@ import { BigNumber } from 'ethers/lib/ethers'
 import { getChainId } from '@web3/helpers/chain'
 import { formatUnits } from 'ethers/lib/utils.js'
 import { Address } from 'wagmi'
+import '../helpers/_wagmi-client'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<HandledToken | { error: string }>) {
   let wnftState = WNFTState.outbidding
