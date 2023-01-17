@@ -12,16 +12,24 @@ import { Address } from 'wagmi'
 export default async function handler(req: NextApiRequest, res: NextApiResponse<HandledToken | { error: string }>) {
   let wnftState = WNFTState.outbidding
   let price = 0
+  let token
   console.log('outbid - requesting getToken', req.query.id)
-  const token = handleToken(
-    (await readContract({
-      address: (process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS ?? '0x0000') as Address,
-      abi: TracesContract,
-      functionName: 'getToken',
-      chainId: getChainId(),
-      args: [BigNumber.from(req.query.id)],
-    })) as Token
-  )
+  try {
+    token = handleToken(
+      (await readContract({
+        address: (process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS ?? '0x0000') as Address,
+        abi: TracesContract,
+        functionName: 'getToken',
+        chainId: getChainId(),
+        args: [BigNumber.from(req.query.id)],
+      })) as Token
+    )
+  } catch (error) {
+    console.log('handle token error', req.query.id, error)
+    res.status(500).json({ error: 'Error getting token from contract' })
+    return
+  }
+
   console.log('outbid - token returned', token)
 
   if (token.lastOutbidTimestamp === 0) {

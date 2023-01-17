@@ -5,8 +5,10 @@ import { WNFTMetadata } from 'pages/api/helpers/_types'
 async function fetchGetTokens(tokens: string) {
   const value = cacheData.get(tokens)
   if (value) {
+    console.log('cache hit')
     return value
   } else {
+    console.log('cache miss')
     const hours = 24
     const res = await reservoirAPI.getTokensV5({
       tokens,
