@@ -11,9 +11,8 @@ async function fetchGetTokens(tokens: string) {
     const res = await reservoirAPI.getTokensV5({
       tokens,
     })
-    const data = await res.json()
-    cacheData.put(tokens, data, hours * 1000 * 60 * 60)
-    return data
+    cacheData.put(tokens, res, hours * 1000 * 60 * 60)
+    return res
   }
 }
 
