@@ -12,7 +12,7 @@ import { Address } from 'wagmi'
 export default async function handler(req: NextApiRequest, res: NextApiResponse<HandledToken | { error: string }>) {
   let wnftState = WNFTState.outbidding
   let price = 0
-
+  console.log('outbid - requesting getToken', req.query.id)
   const token = handleToken(
     (await readContract({
       address: (process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS ?? '0x0000') as Address,
@@ -22,10 +22,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       args: [BigNumber.from(req.query.id)],
     })) as Token
   )
+  console.log('outbid - token returned', token)
 
   if (token.lastOutbidTimestamp === 0) {
+    console.log('outbid - token is on minting state', token.tokenId.toString())
     wnftState = WNFTState.minting
   } else {
+    console.log('outbid - trying to get wnftPrice', req.query.id)
     try {
       const wnftPrice = await readContract({
         address: (process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS ?? '0x0000') as Address,
@@ -35,9 +38,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         args: [BigNumber.from(req.query.id)],
       })
       price = Number(formatUnits(wnftPrice.toString() ?? '', 18))
+      console.log('outbid - is on outbid state', req.query.id, price)
     } catch (error) {
+      console.log('outbid - returned error', req.query.id, error)
       const revertError = error as RevertError
       if (revertError.errorName === 'HoldPeriod') {
+        console.log('outbid - token is on holding period', req.query.id)
         wnftState = WNFTState.holding
       }
     }
@@ -45,10 +51,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
   if (price === 0) {
     price = token.firstStakePrice
+    console.log('outbid - price is 0, setting to firstStakePrice', req.query.id)
   }
 
   try {
     // check if token has ogTokenAddress and ogTokenId
+    console.log('outbid - checking if token has ogTokenAddress and ogTokenId and getting metadata', req.query.id)
     if (token && token.tokenId) {
       const metadata = await getWNFTMetadata(
         token.ogTokenAddress,
@@ -57,6 +65,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         token.stakedAmount,
         token.lastOutbidTimestamp
       )
+      console.log('outbid - metadata returned', req.query.id, metadata)
       res.status(200).json({
         ...metadata,
         ...token,
@@ -65,7 +74,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       })
     }
   } catch (error) {
-    console.error(error, 'outbid error')
+    console.log('outbid error', req.query.id, error)
     res.status(500).json({ error: 'Error getting WNFT Metadata' })
   }
 
