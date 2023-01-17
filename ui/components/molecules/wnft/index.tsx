@@ -66,7 +66,7 @@ function formatTime(timeInSeconds: number) {
   return `${days} days`
 }
 
-const refreshIntervalTime = 1000 * 60 * 5
+const refreshIntervalTime = dayjs.duration(5, 'minute').asMilliseconds()
 
 const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
   const { showTxSentToast, showTxErrorToast } = useTxToast()
@@ -196,7 +196,7 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
     return shortAddress(item.currentOwner)
   }, [address, item.currentOwner])
 
-  if (error) {
+  if (error && !wnftMeta) {
     return null
   }
 
