@@ -48,7 +48,7 @@ function Traces({ Component, pageProps }: TracesProps) {
 
   useEffect(() => {
     const handleStart = (url: string) => {
-      console.log(`Loading: ${url}`)
+      //   console.log(`Loading: ${url}`)
       NProgress.start()
     }
 
