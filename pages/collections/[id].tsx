@@ -1,20 +1,12 @@
 import React, { useMemo } from 'react'
-
-// Dependencies
 import { Container, Grid } from '@chakra-ui/react'
-import { useQuery } from 'react-query'
-
-// Components
 import PageHeader from '@ui/components/organisms/page-header'
-import { getBuiltGraphSDK } from '../../.graphclient'
 import { GetServerSidePropsContext } from 'next/types'
 import { CollectionMetadata } from 'pages/api/helpers/_types'
 import WNFT from '@ui/components/molecules/wnft'
 import { fetcher } from '@ui/utils/fetcher'
 import { getBaseURL } from 'pages/api/helpers/_getLink'
-
-const sdk = getBuiltGraphSDK()
-const refreshIntervalTime = 1000 * 60 * 5
+import useTracesGetCollection from '@web3/contracts/traces/use-traces-get-collection'
 
 type CollectionProps = {
   id: string
@@ -22,17 +14,7 @@ type CollectionProps = {
 }
 
 const Collection = ({ id, collectionData }: CollectionProps) => {
-  const {
-    data,
-    isLoading: isLoadingQuery,
-    isFetching,
-    isRefetching,
-  } = useQuery({
-    queryKey: 'GetCollection',
-    queryFn: () => sdk.GetCollection({ ogTokenAddress: id }),
-    refetchOnWindowFocus: true,
-    refetchInterval: refreshIntervalTime,
-  })
+  const { data, isLoading: isLoadingQuery, isFetching, isRefetching } = useTracesGetCollection(id)
 
   const tokens = useMemo(() => data?.collections[0]?.tokens ?? [], [data?.collections])
   const isLoading = (isFetching || isLoadingQuery) && !isRefetching

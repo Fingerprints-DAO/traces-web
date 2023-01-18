@@ -1,15 +1,13 @@
 import React, { PropsWithChildren, useMemo, useState } from 'react'
-import useSWR from 'swr'
 import Image from 'next/image'
 
 // Dependencies
 import Link from 'next/link'
 import { Box, Heading, Skeleton, SkeletonText, Text } from '@chakra-ui/react'
-import { CollectionMetadata, WNFTMetadata } from 'pages/api/helpers/_types'
-import { fetcher } from '@ui/utils/fetcher'
+import useTracesGetCollectionMetadata from '@web3/contracts/traces/use-traces-get-collection-metadata'
 
 type CollectionCardProps = {
-  id: String
+  id: string
   cardWidth?: Array<string | number>
   image?: Partial<{
     height: string
@@ -19,8 +17,7 @@ type CollectionCardProps = {
 
 const CollectionCard = ({ id, cardWidth = ['100%', 96], image, children }: PropsWithChildren<CollectionCardProps>) => {
   const [imageHasError, setImageHasError] = useState(false)
-  // fetch http api on route `api/collection/${id}` and return the collection data, do not use react-query here
-  const { data, error } = useSWR<CollectionMetadata>(`/api/collection/${id}`, fetcher)
+  const { data, error } = useTracesGetCollectionMetadata(id)
 
   const imageAttributes = useMemo(() => {
     if (imageHasError) {
@@ -35,7 +32,7 @@ const CollectionCard = ({ id, cardWidth = ['100%', 96], image, children }: Props
     return {}
   }, [imageHasError, data?.image])
 
-  if (error) {
+  if (error && !data) {
     return null
   }
 
@@ -70,7 +67,6 @@ const CollectionCard = ({ id, cardWidth = ['100%', 96], image, children }: Props
           {data?.name}
         </SkeletonText>
       </Heading>
-
       {children || <Text fontSize="xs">{data?.description}</Text>}
     </Box>
   )

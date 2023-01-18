@@ -1,5 +1,4 @@
 import React, { PropsWithChildren, useContext, useMemo, useState, useEffect } from 'react'
-import useSWR from 'swr'
 import {
   Box,
   Button,
@@ -18,21 +17,20 @@ import {
   Tooltip,
 } from '@chakra-ui/react'
 import { BsArrowDownRightCircle } from 'react-icons/bs'
-import { Address, useContractWrite, usePrepareContractWrite } from 'wagmi'
+import { Address, useContractWrite, useEnsName, usePrepareContractWrite } from 'wagmi'
 import { BigNumber } from 'ethers'
 import dayjs from 'dayjs'
 import Image from 'next/image'
 import { WNFT } from '.graphclient'
 import { ModalContext, ModalElement } from '@ui/contexts/Modal'
-import { fetcher } from '@ui/utils/fetcher'
 import TracesContract from '@web3/contracts/traces/traces-abi'
-import { HandledToken } from 'pages/api/helpers/_web3'
 import useTxToast from '@ui/hooks/use-tx-toast'
 import ButtonConnectWallet from '../button-connect-wallet'
 import useWallet from '@web3/wallet/use-wallet'
 import useTracesRead from '@web3/contracts/traces/use-traces-read'
 import { WNFTState } from 'pages/api/helpers/_types'
 import CopyButton from '@ui/components/atoms/copy-button'
+import useTracesGetOutbid from '@web3/contracts/traces/use-traces-get-outbid'
 
 export type Modify<T, R> = Omit<T, keyof R> & R
 
@@ -66,18 +64,18 @@ function formatTime(timeInSeconds: number) {
   return `${days} days`
 }
 
-const refreshIntervalTime = dayjs.duration(5, 'minute').asMilliseconds()
-
 const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
   const { showTxSentToast, showTxErrorToast } = useTxToast()
   const { handleOpenModal } = useContext(ModalContext)
   const { address } = useWallet()
   const { isEditor } = useTracesRead()
   const [currentState, setCurrentState] = useState<WNFTState>(WNFTState.loading)
-  const { data: wnftMeta, error } = useSWR<HandledToken>(`/api/outbid/${item.id}`, fetcher, { refreshInterval: refreshIntervalTime })
+  const { data: wnftMeta, error } = useTracesGetOutbid(item.id)
   const [deleteParam, setDeleteParam] = useState<[BigNumber] | undefined>(undefined)
   const [unstakeParam, setUnstakeParam] = useState<[BigNumber] | undefined>(undefined)
   const [imageHasError, setImageHasError] = useState(false)
+
+  const { data: ensName } = useEnsName({ address: item.currentOwner, enabled: Boolean(item.currentOwner) })
 
   const imageAttributes = useMemo(() => {
     if (imageHasError) {
@@ -193,8 +191,12 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
       return 'You'
     }
 
+    if (!!ensName) {
+      return ensName
+    }
+
     return shortAddress(item.currentOwner)
-  }, [address, item.currentOwner])
+  }, [address, item.currentOwner, ensName])
 
   if (error && !wnftMeta) {
     return null
