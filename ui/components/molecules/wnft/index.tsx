@@ -155,6 +155,7 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
     enabled: !!unstakeParam,
     onError(error) {
       showTxErrorToast(error)
+      setUnstakeParam(undefined)
     },
   })
 
@@ -163,10 +164,12 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
     onSettled: (data, error) => {
       if (error) {
         showTxErrorToast(error)
+        setUnstakeParam(undefined)
         return
       }
 
       showTxSentToast(data?.hash)
+      setUnstakeParam(undefined)
 
       // TODO: Add a listener to wait for the transaction to be mined and display toast
     },
@@ -213,6 +216,12 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
 
     return shortAddress(item.currentOwner)
   }, [address, item.currentOwner, ensName])
+
+  const showWNFTNav = useMemo(() => {
+    if (!wnftMeta) return false
+    if (isEditor) return true
+    if (isOwner && currentState === WNFTState.outbidding && wnftMeta.price === wnftMeta.stakedAmount) return true
+  }, [currentState, isEditor, isOwner, wnftMeta])
 
   if (error && !wnftMeta) {
     return null
@@ -279,7 +288,7 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
               </Tooltip>
             )}
           </SkeletonText>
-          {!!wnftMeta && (isEditor || isOwner) && (
+          {showWNFTNav && (
             <Popover placement={'bottom-end'} colorScheme="primary">
               {({ onClose }) => (
                 <>
