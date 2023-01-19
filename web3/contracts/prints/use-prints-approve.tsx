@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react'
+import { useState } from 'react'
 
 // Dependencies
 import { Address, useWaitForTransaction } from 'wagmi'
@@ -8,14 +8,12 @@ import useTxToast from '@ui/hooks/use-tx-toast'
 
 // Helpers
 import usePrints from './use-prints'
-import { TracesContext } from '@ui/contexts/Traces'
 
 const usePrintsApprove = () => {
   const { showTxErrorToast, showTxExecutedToast } = useTxToast()
   const prints = usePrints()
   const [isApproved, setIsApproved] = useState(false)
   const [hash, setHash] = useState<Address | undefined>()
-  const { tracesContractAddress } = useContext(TracesContext)
 
   useWaitForTransaction({
     hash,
@@ -35,7 +33,7 @@ const usePrintsApprove = () => {
   })
 
   const request = async ({ amount, isIncrease }: { amount: BigNumber; isIncrease?: boolean }) => {
-    return prints?.[isIncrease ? 'increaseAllowance' : 'approve'](tracesContractAddress, amount)
+    return prints?.[isIncrease ? 'increaseAllowance' : 'approve'](process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS as Address, amount)
   }
 
   const approveRequest = useMutation(request, {

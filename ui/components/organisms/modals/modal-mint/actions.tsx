@@ -14,7 +14,6 @@ import usePrints from '@web3/contracts/prints/use-prints'
 import useWallet from '@web3/wallet/use-wallet'
 import useTracesOutbid from '@web3/contracts/traces/use-traces-outbid'
 import { parseAmountToContract, parseAmountToDisplay } from '@web3/helpers/handleAmount'
-import { TracesContext } from '@ui/contexts/Traces'
 
 type ActionsProps = {
   minPrints: number
@@ -26,7 +25,6 @@ type ActionsProps = {
 
 const Actions = (props: ActionsProps) => {
   const { onClose, approveAmount, inputAmount, minPrints, isLoading, waitIsApproved: isSuccessApprove, mutateAsync: approvePrints } = props
-  const { tracesContractAddress } = useContext(TracesContext)
   const { payload } = useContext(ModalContext) as { payload: WNFTModalProps }
   const prints = usePrints()
   const { address } = useWallet()
@@ -38,7 +36,7 @@ const Actions = (props: ActionsProps) => {
 
   const getAllowance = useCallback(async () => {
     try {
-      const allowance = await prints?.allowance(address as Address, tracesContractAddress)
+      const allowance = await prints?.allowance(address as Address, process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS as Address)
 
       setAllowance(BigNumber.from(parseAmountToDisplay(allowance?.toString() ?? '0')))
     } catch (error) {

@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 
 // Dependencies
 import { Address } from 'wagmi'
@@ -15,7 +15,6 @@ import usePrints from '@web3/contracts/prints/use-prints'
 import usePrintsApprove from '@web3/contracts/prints/use-prints-approve'
 import { ModalContext, WNFTModalProps } from '@ui/contexts/Modal'
 import { parseAmountToContract, parseAmountToDisplay } from '@web3/helpers/handleAmount'
-import { TracesContext } from '@ui/contexts/Traces'
 
 type ModalMintProps = {
   isOpen: boolean
@@ -27,7 +26,6 @@ const ModalMint = ({ isOpen, onClose }: ModalMintProps) => {
   const prints = usePrints()
   const { address, printsBalance } = useWallet()
   const { approveRequest: printsApprove, isApproved } = usePrintsApprove()
-  const { tracesContractAddress } = useContext(TracesContext)
 
   const [formIsFilled, setFormIsFilled] = useState(false)
   const [approveAmount, setApproveAmount] = useState<number>(0)
@@ -39,7 +37,7 @@ const ModalMint = ({ isOpen, onClose }: ModalMintProps) => {
   const getAllowance = useCallback(async () => {
     try {
       if (prints) {
-        const newAllowance = await prints.allowance(address as Address, tracesContractAddress)
+        const newAllowance = await prints.allowance(address as Address, process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS as Address)
 
         setAllowance(parseAmountToDisplay(newAllowance?.toString() ?? ''))
       }
@@ -57,7 +55,7 @@ const ModalMint = ({ isOpen, onClose }: ModalMintProps) => {
       setFormIsFilled(true)
       setInputAmount(amount)
 
-      const currentAllowance = await prints?.allowance(address as Address, tracesContractAddress)
+      const currentAllowance = await prints?.allowance(address as Address, process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS as Address)
       const balanceToApprove = parseAmountToContract(amount).sub(currentAllowance ?? 0)
 
       // if the amount to approve is less than 0, it means that the user already approved the amount

@@ -1,6 +1,6 @@
 import TracesContract from '@web3/contracts/traces/traces-abi'
 import useWallet from '@web3/wallet/use-wallet'
-import React, { createContext, PropsWithChildren, useEffect, useMemo, useState } from 'react'
+import React, { createContext, PropsWithChildren, useMemo } from 'react'
 import { Address, useContractRead, useContractReads } from 'wagmi'
 
 type TracesContextState = {
@@ -11,14 +11,8 @@ type TracesContextState = {
   adminRole?: Address
   editorRole?: Address
   vaultAddress?: Address
-  printContractAddress: Address
-  tracesContractAddress: Address
   address?: Address
-  web3Network: string
-  vercelUrl: string
-  openseaUrl: string
-  etherscanUrl: string
-  discordUrl: string
+  printsBalance?: any
 }
 
 const DEFAULT_CONTEXT = {
@@ -28,28 +22,15 @@ const DEFAULT_CONTEXT = {
   isConnected: false,
 } as TracesContextState
 
-const envHelpers = {
-  printContractAddress: (process.env.NEXT_PUBLIC_PRINTS_CONTRACT_ADDRESS || '') as Address,
-  tracesContractAddress: (process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS || '') as Address,
-  web3Network: process.env.NEXT_PUBLIC_WEB3_NETWORK || '',
-  vercelUrl: process.env.NEXT_PUBLIC_VERCEL_URL || '',
-  openseaUrl: process.env.NEXT_PUBLIC_OPENSEA_URL || '',
-  etherscanUrl: process.env.NEXT_PUBLIC_ETHERSCAN_URL || '',
-  discordUrl: process.env.NEXT_PUBLIC_DISCORD_URL || '',
-}
-
 const TracesContext = createContext(DEFAULT_CONTEXT)
 
 const tracesConfig = {
-  address: envHelpers.tracesContractAddress,
+  address: (process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS || '') as Address,
   abi: TracesContract,
 }
 
 const TracesProvider = ({ children }: PropsWithChildren) => {
-  const [isEditor, setIsEditor] = useState<boolean>()
-  const [isAdmin, setIsAdmin] = useState<boolean>()
-
-  const { address, isConnected } = useWallet()
+  const { address, isConnected, printsBalance } = useWallet()
 
   const { data: roles } = useContractReads({
     contracts: [
@@ -61,27 +42,19 @@ const TracesProvider = ({ children }: PropsWithChildren) => {
 
   const [editorRole, adminRole] = roles || []
 
-  const { data: hasRoleEditor = false } = useContractRead({
+  const { data: isEditor = false } = useContractRead({
     ...tracesConfig,
     functionName: 'hasRole',
-    enabled: !!editorRole && !!address && typeof isEditor === 'undefined',
+    enabled: !!editorRole && !!address,
     args: [editorRole!, address!],
   })
 
-  useEffect(() => {
-    setIsEditor(hasRoleEditor)
-  }, [hasRoleEditor])
-
-  const { data: hasRoleAdmin = false } = useContractRead({
+  const { data: isAdmin = false } = useContractRead({
     ...tracesConfig,
     functionName: 'hasRole',
-    enabled: !!adminRole && !!address && typeof isEditor === 'undefined',
+    enabled: !!adminRole && !!address,
     args: [adminRole!, address!],
   })
-
-  useEffect(() => {
-    setIsAdmin(hasRoleAdmin)
-  }, [hasRoleAdmin])
 
   const { data: vaultAddress } = useContractRead({
     ...tracesConfig,
@@ -99,9 +72,9 @@ const TracesProvider = ({ children }: PropsWithChildren) => {
       vaultAddress,
       address,
       isConnected,
-      ...envHelpers,
+      printsBalance,
     }),
-    [adminRole, editorRole, isAdmin, isEditor, vaultAddress, address, isConnected]
+    [adminRole, editorRole, isAdmin, isEditor, vaultAddress, address, isConnected, printsBalance]
   )
 
   return <TracesContext.Provider value={value}>{children}</TracesContext.Provider>

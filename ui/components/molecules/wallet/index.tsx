@@ -10,9 +10,11 @@ type WalletProps = {
   variant: 'header' | 'drawer'
 }
 
+const printContractAddress = process.env.NEXT_PUBLIC_PRINTS_CONTRACT_ADDRESS || ('' as any)
+
 const Wallet = ({ variant }: WalletProps) => {
   const { disconnect } = useDisconnect()
-  const { printContractAddress, address } = useContext(TracesContext)
+  const { address } = useContext(TracesContext)
   const isMobile = useMediaQuery('(max-width: 479px)')
 
   const { data: balance } = useBalance({
