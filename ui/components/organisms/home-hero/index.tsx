@@ -16,12 +16,10 @@ const HomeHero = () => {
       <Container maxWidth="7xl" display={['block', 'flex']} justifyContent="space-between" alignItems="center">
         <Box marginRight={8} flex={1} marginBottom={[8, 0]}>
           <Heading as="h1" color="gray.50" size="3xl" marginBottom={4}>
-            Hold and use NFTs {!isMobile && <br />}
-            from the Fingerprints collection
+            Borrow NFTs from Fingerprints
           </Heading>
           <Text color="gray.100" fontSize="lg">
-            FP members can hold and enjoy usage permissions from {!isMobile && <br />}
-            {"FP's"} NFTs through a staking system
+            Fingerprints members can wrap, hold, and use NFTs from{!isMobile && <br />} The Fingerprints Collection by staking their PRINTS.
           </Text>
           {isBrowser && !isConnected && <ButtonConnectWallet width="unset" size="lg" mt={8} />}
         </Box>
