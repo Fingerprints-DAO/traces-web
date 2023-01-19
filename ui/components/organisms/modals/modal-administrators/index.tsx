@@ -1,4 +1,4 @@
-import React, { useContext, useMemo } from 'react'
+import React, { useContext } from 'react'
 import { Box, Heading, Modal, ModalBody, ModalContent, ModalOverlay, Table, TableContainer, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react'
 import { ModalProps } from '@ui/contexts/Modal'
 import useTracesGetAdministrators from '@web3/contracts/traces/use-traces-get-administrators'
@@ -8,22 +8,20 @@ import { TracesContext } from '@ui/contexts/Traces'
 
 export type DeleteRolePayload = {
   role: Address
-  address: Address
+  id: Address
 }
 
 const ModalAdministrators = ({ isOpen, onClose }: ModalProps) => {
   const { isAdmin } = useContext(TracesContext)
-  const { data: administrators, isLoading: isGettingAdmins, isError } = useTracesGetAdministrators(isAdmin)
-
-  const isEmpty = useMemo(() => !administrators?.admins.concat(administrators.editors).length, [administrators])
+  const { data: administrators, isLoading: isGettingAdmins, isError } = useTracesGetAdministrators()
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered={true}>
       <ModalOverlay />
-      <ModalContent background="gray.900" padding={[6, 12]} minW={['unset', 650]} maxW={['90%', '90%', '90%', 'md']}>
+      <ModalContent background="gray.900" padding={[6, 12]} minW={['unset', 680]} maxW={['90%', '90%', '90%', 'lg']}>
         <Box display="flex" flexDirection={['column-reverse', 'row']} alignItems="start" justifyContent="space-between" marginBottom={10}>
           <Heading size="md" color="gray.100">
-            Administrators
+            Administrators & Editors
           </Heading>
         </Box>
         <ModalBody padding={0}>
@@ -45,19 +43,12 @@ const ModalAdministrators = ({ isOpen, onClose }: ModalProps) => {
                   <Tr>
                     <Td colSpan={3}>Loading...</Td>
                   </Tr>
-                ) : isError || isEmpty ? (
+                ) : isError || !administrators?.length ? (
                   <Tr>
                     <Td colSpan={3}>No administrators found</Td>
                   </Tr>
                 ) : (
-                  <>
-                    {administrators?.admins.map((item) => (
-                      <AdminItem key={item.id} {...item} isAdmin={isAdmin} type="Admin" />
-                    ))}
-                    {administrators?.editors.map((item) => (
-                      <AdminItem key={item.id} {...item} isAdmin={isAdmin} type="Editor" />
-                    ))}
-                  </>
+                  administrators?.map((item) => <AdminItem key={`${item.id}_${item.role}`} {...item} isAdmin={isAdmin} />)
                 )}
               </Tbody>
             </Table>

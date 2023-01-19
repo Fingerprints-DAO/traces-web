@@ -1,15 +1,16 @@
-import { chain } from 'wagmi'
+import { goerli, mainnet, hardhat } from '@wagmi/core/chains'
 
 // return chain id based on NEXT_PUBLIC_WEB3_NETWORK
 export const getChainId = () => {
-  if (process.env.NEXT_PUBLIC_WEB3_NETWORK === 'goerli') return chain.goerli.id
-  if (process.env.NEXT_PUBLIC_WEB3_NETWORK === 'local') return chain.hardhat.id
-  return chain.mainnet.id
+  if (process.env.NEXT_PUBLIC_WEB3_NETWORK === 'goerli') return goerli.id
+  if (process.env.NEXT_PUBLIC_WEB3_NETWORK === 'local') return hardhat.id
+  return mainnet.id
 }
 
 // return chain based on NEXT_PUBLIC_WEB3_NETWORK
 export const getChain = () => {
-  if (process.env.NEXT_PUBLIC_WEB3_NETWORK === 'goerli') return chain.goerli
-  if (process.env.NEXT_PUBLIC_WEB3_NETWORK === 'local') return chain.hardhat
-  return chain.mainnet
+  if (process.env.NEXT_PUBLIC_WEB3_NETWORK === 'goerli') return goerli
+  if (process.env.NEXT_PUBLIC_WEB3_NETWORK === 'local') return hardhat
+
+  return mainnet
 }

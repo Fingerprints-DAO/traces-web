@@ -1,6 +1,7 @@
 import reservoirAPI from 'pages/api/helpers/_api'
 import { getExternalOpenseaUrl, getCollectionWebsiteUrl } from 'pages/api/helpers/_getLink'
 import { CollectionMetadata } from 'pages/api/helpers/_types'
+import { fetchWithCache } from './getWithCache'
 
 const getRandomData = (address: string) => {
   return {
@@ -26,14 +27,16 @@ export const getCollectionInfo = async (address: string): Promise<CollectionMeta
   try {
     const {
       data: { collections },
-    } = await reservoirAPI.getCollectionsV5({
-      id: address,
-      includeTopBid: 'false',
-      normalizeRoyalties: 'false',
-      sortBy: 'allTimeVolume',
-      limit: '20',
-      accept: '*/*',
-    })
+    } = await fetchWithCache(address, () =>
+      reservoirAPI.getCollectionsV5({
+        id: address,
+        includeTopBid: 'false',
+        normalizeRoyalties: 'false',
+        sortBy: 'allTimeVolume',
+        limit: '20',
+        accept: '*/*',
+      })
+    )
 
     const { id, name, description, image, externalUrl, sampleImages } = collections[0]
     return {

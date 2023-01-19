@@ -1,0 +1,5 @@
+query GetOutbidsPrices($currentOwner: Bytes!) {
+  outbids(where: { owner: $currentOwner }) {
+    price
+  }
+}

@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useMemo } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import {
@@ -13,8 +13,8 @@ import {
   Box,
 } from '@chakra-ui/react'
 import Wallet from '@ui/components/molecules/wallet'
-import { ModalElement } from '@ui/contexts/Modal'
 import { TracesContext } from '@ui/contexts/Traces'
+import { ModalElement } from '@ui/contexts/Modal'
 
 type DrawerProps = {
   isOpen: boolean
@@ -22,30 +22,24 @@ type DrawerProps = {
   onOpenModal: (element: ModalElement) => void
 }
 
-const links = [
-  { path: '/', label: 'Homepage' },
-  { path: '/profile', label: 'Profile' },
-  { path: '/collections', label: 'Collections' },
-]
-
 const Drawer = ({ isOpen, onClose, onOpenModal }: DrawerProps) => {
   const router = useRouter()
-  const { isAdmin, isEditor } = useContext(TracesContext)
-
-  const activeStyles = (path: string) => {
-    if (router.pathname === path) {
-      return {
-        fontSize: 24,
-        fontWeight: 700,
-      }
-    }
-
-    return {
-      fontSize: 18,
-    }
-  }
+  const { isAdmin, isEditor, isConnected } = useContext(TracesContext)
 
   const handleOpenModal = (element: ModalElement) => () => onOpenModal(element)
+
+  const items = useMemo(() => {
+    const arr = [
+      { path: '/', label: 'Homepage' },
+      { path: '/collections', label: 'Collections' },
+    ]
+
+    if (isConnected) {
+      arr.push({ path: '/profile', label: 'Profile' })
+    }
+
+    return arr
+  }, [isConnected])
 
   return (
     <ChakraDrawer isOpen={isOpen} placement="left" onClose={onClose}>
@@ -59,11 +53,19 @@ const Drawer = ({ isOpen, onClose, onOpenModal }: DrawerProps) => {
         </DrawerHeader>
         <DrawerBody px={8}>
           <Box as="nav">
-            {links.map((item) => {
+            {items.map(({ path, label }) => {
               return (
-                <Link key={item.path} href={item.path} legacyBehavior={true}>
-                  <Box as="a" href={item.path} display="block" lineHeight={9} {...activeStyles(item.path)} mb={[4, 4, 4, 4, 10]}>
-                    {item.label}
+                <Link key={path} href={path} legacyBehavior={true}>
+                  <Box
+                    as="a"
+                    href={path}
+                    display="block"
+                    lineHeight={9}
+                    fontSize={24}
+                    fontWeight={router.pathname === path ? 700 : 400}
+                    mb={[4, 4, 4, 4, 10]}
+                  >
+                    {label}
                   </Box>
                 </Link>
               )
@@ -73,49 +75,31 @@ const Drawer = ({ isOpen, onClose, onOpenModal }: DrawerProps) => {
         <DrawerFooter alignItems="flex-start" flexDirection="column" p={8}>
           <Box as="nav" mb={[10, 20]}>
             {isAdmin && (
-              <Box
-                as="button"
-                display="block"
-                lineHeight={9}
-                fontSize={[18, 18, 18, 18, 24]}
-                mb={[4, 4, 4, 4, 10]}
-                onClick={handleOpenModal(ModalElement.AddRole)}
-              >
-                Manage roles
-              </Box>
-            )}
-            {(isEditor || isAdmin) && (
               <>
-                <Box
-                  as="button"
-                  display="block"
-                  lineHeight={9}
-                  fontSize={[18, 18, 18, 18, 24]}
-                  mb={[4, 4, 4, 4, 10]}
-                  onClick={handleOpenModal(ModalElement.AddNFT)}
-                >
-                  Add NFT
+                <Box as="button" display="block" lineHeight={9} fontSize={24} mb={[4, 4, 4, 4, 10]} onClick={handleOpenModal(ModalElement.AddRole)}>
+                  Grant roles
                 </Box>
                 <Box
                   as="button"
                   display="block"
                   lineHeight={9}
-                  fontSize={[18, 18, 18, 18, 24]}
+                  fontSize={24}
                   mb={[4, 4, 4, 4, 10]}
                   onClick={handleOpenModal(ModalElement.UpdateConfigs)}
                 >
                   Update configs
                 </Box>
-                <Box
-                  as="button"
-                  display="block"
-                  lineHeight={9}
-                  fontSize={[18, 18, 18, 18, 24]}
-                  onClick={handleOpenModal(ModalElement.Administrators)}
-                >
-                  Administrators
-                </Box>
               </>
+            )}
+            {isEditor && (
+              <Box as="button" display="block" lineHeight={9} fontSize={24} mb={[4, 4, 4, 4, 10]} onClick={handleOpenModal(ModalElement.AddNFT)}>
+                Add NFT
+              </Box>
+            )}
+            {(isEditor || isAdmin) && (
+              <Box as="button" display="block" lineHeight={9} fontSize={24} onClick={handleOpenModal(ModalElement.Administrators)}>
+                Administrators & Editors
+              </Box>
             )}
           </Box>
           <Wallet variant="drawer" />

@@ -1,6 +1,6 @@
-import dayjs from 'dayjs'
 import reservoirAPI from 'pages/api/helpers/_api'
 import { WNFTMetadata } from 'pages/api/helpers/_types'
+import { fetchWithCache } from './getWithCache'
 
 const getRandomData = (address: string, tokenId: string) => {
   return {
@@ -50,11 +50,6 @@ export const getWNFTMetadata = async (
         trait_type: 'Staked $PRINTS',
         value: stakedAmount,
       },
-      // {
-      //   display_type: 'date',
-      //   trait_type: 'Created',
-      //   value: 1667597019624, // timestamp
-      // },
     ]
 
     if (stakedDateProperty) {
@@ -68,11 +63,14 @@ export const getWNFTMetadata = async (
     }
   }
   try {
+    const query = `${ogTokenAddress}%3A${ogTokenId}`
     const {
       data: { tokens },
-    } = await reservoirAPI.getTokensV5({
-      tokens: `${ogTokenAddress}%3A${ogTokenId}`,
-    })
+    } = await fetchWithCache(query, () =>
+      reservoirAPI.getTokensV5({
+        tokens: query,
+      })
+    )
     // cache tokens[0].token for 24 hours and returns the cached version or fetch a new version
 
     // return tokens[0].token contract, id, name, description and image if it exists if not return random data
@@ -113,7 +111,7 @@ export const getWNFTMetadata = async (
     }
     return getRandomData(ogTokenAddress, ogTokenId)
   } catch (error) {
-    console.error(error)
+    console.error(error, 'error getting token metadata from reservoir')
     // return random data if there is an error
     return getRandomData(ogTokenAddress, ogTokenId)
   }

@@ -22,6 +22,8 @@ import {
 import { ModalProps } from '@ui/contexts/Modal'
 import useTracesAddRole from '@web3/contracts/traces/use-traces-add-role'
 import { TracesContext } from '@ui/contexts/Traces'
+import useTxToast from '@ui/hooks/use-tx-toast'
+import { TransactionStatus } from 'types/transaction'
 
 export type AddRolePayload = {
   role: Address
@@ -35,18 +37,17 @@ const schema = object({
 
 const ModalAddRole = ({ isOpen, onClose }: ModalProps) => {
   const [isLoading, setIsLoading] = useState(false)
-  const { adminRole, editorRole, isAdmin, isEditor } = useContext(TracesContext)
-  const { mutateAsync: addRole } = useTracesAddRole(isAdmin, isEditor, adminRole, onClose)
+  const { adminRole, editorRole, isAdmin } = useContext(TracesContext)
+  const { showTxErrorToast, showTxExecutedToast } = useTxToast()
+  const { mutateAsync: addRole } = useTracesAddRole(isAdmin)
 
-  const options = useMemo(() => {
-    const roles = [{ value: editorRole, label: 'Editor' }]
-
-    if (isAdmin) {
-      roles.unshift({ value: adminRole, label: 'Admin' })
-    }
-
-    return roles
-  }, [editorRole, adminRole, isAdmin])
+  const options = useMemo(
+    () => [
+      { value: adminRole, label: 'Admin' },
+      { value: editorRole, label: 'Editor' },
+    ],
+    [editorRole, adminRole]
+  )
 
   const { formState, handleSubmit, register } = useForm<AddRolePayload>({
     mode: 'onSubmit',
@@ -61,11 +62,22 @@ const ModalAddRole = ({ isOpen, onClose }: ModalProps) => {
     try {
       setIsLoading(true)
 
-      await addRole(data)
-    } catch (error) {
-      console.log('submit', error)
+      const response = await addRole(data)
 
-      setIsLoading(false)
+      const wait = await response?.wait()
+
+      if (wait?.status === TransactionStatus.Success) {
+        showTxExecutedToast({
+          title: 'Role granted',
+          txHash: wait?.transactionHash,
+          id: 'grant-role-success',
+        })
+
+        onClose()
+      }
+    } catch (error: any) {
+      console.log('submit', error)
+      showTxErrorToast(error)
     } finally {
       setIsLoading(false)
     }
@@ -78,7 +90,7 @@ const ModalAddRole = ({ isOpen, onClose }: ModalProps) => {
         <form onSubmit={handleSubmit(submit)}>
           <Box display="flex" flexDirection={['column-reverse', 'row']} alignItems="start" justifyContent="space-between" marginBottom={10}>
             <Heading size="md" color="gray.100" marginBottom={2}>
-              Add Role
+              Grant role
             </Heading>
           </Box>
           <ModalBody padding={0}>

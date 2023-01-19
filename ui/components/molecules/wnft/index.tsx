@@ -1,5 +1,4 @@
 import React, { PropsWithChildren, useContext, useMemo, useState, useEffect } from 'react'
-import useSWR from 'swr'
 import {
   Box,
   Button,
@@ -17,64 +16,82 @@ import {
   Text,
   Tooltip,
 } from '@chakra-ui/react'
-import { BsArrowDownRightCircle } from 'react-icons/bs'
-import { useContractWrite, usePrepareContractWrite } from 'wagmi'
+import { BsArrowDownRightCircle, BsInfoCircle } from 'react-icons/bs'
+import { Address, useContractWrite, useEnsName, usePrepareContractWrite } from 'wagmi'
 import { BigNumber } from 'ethers'
 import dayjs from 'dayjs'
 import Image from 'next/image'
 import { WNFT } from '.graphclient'
 import { ModalContext, ModalElement } from '@ui/contexts/Modal'
-import { fetcher } from '@ui/utils/fetcher'
 import TracesContract from '@web3/contracts/traces/traces-abi'
-import { HandledToken } from 'pages/api/helpers/_web3'
 import useTxToast from '@ui/hooks/use-tx-toast'
 import ButtonConnectWallet from '../button-connect-wallet'
 import useWallet from '@web3/wallet/use-wallet'
 import { WNFTState } from 'pages/api/helpers/_types'
 import CopyButton from '@ui/components/atoms/copy-button'
 import { TracesContext } from '@ui/contexts/Traces'
+import useTracesGetOutbid from '@web3/contracts/traces/use-traces-get-outbid'
+
+export type Modify<T, R> = Omit<T, keyof R> & R
 
 type WNFTProps = {
   item: Pick<WNFT, 'id' | 'ogTokenAddress' | 'ogTokenId' | 'tokenId' | 'currentOwner' | 'lastPrice' | 'firstStakePrice' | 'minHoldPeriod'>
+  withCurrentHolderAddress?: boolean
 }
 
 const shortAddress = (address: string) => `${address.slice(0, 6)}...${address.slice(-4)}`
 
+function handleMultiplesAnd(text: string) {
+  const array = text.split('and').map((item) => item.trim())
+  if (array.length === 1) return array[0]
+  if (array.length === 2) return `${array[0]} and ${array[1]}`
+  return `${array.slice(0, -1).join(', ')}, and ${array.slice(-1)}`
+}
+
 function formatTime(timeInSeconds: number) {
+  let time = ''
   // If time is less than an hour, display in second
   if (timeInSeconds < 60) {
-    return `${timeInSeconds} seconds`
+    return `${timeInSeconds} second${timeInSeconds > 1 ? 's' : ''}`
   }
 
   // If time is less than an hour, display in minutes
   if (timeInSeconds < 3600) {
     const minutes = dayjs.duration(timeInSeconds, 'seconds').minutes()
-    return `${minutes} minutes`
+    return `${minutes} minute${minutes > 1 ? 's' : ''}`
   }
 
   // If time is less than a day, display in hours
   if (timeInSeconds < 86400) {
     const hours = dayjs.duration(timeInSeconds, 'seconds').hours()
-    return `${hours} hours`
+    time = `${hours} hour${hours > 1 ? 's' : ''}`
+    if (timeInSeconds % 3600) {
+      time += ` and ${formatTime(timeInSeconds % 3600)}`
+    }
+    return handleMultiplesAnd(time)
   }
 
   // If time is more than a day, display in days
   const days = dayjs.duration(timeInSeconds, 'seconds').days()
-  return `${days} days`
+  time = `${days} day${days > 1 ? 's' : ''}`
+  if (timeInSeconds % 86400) {
+    time += ` and ${formatTime(timeInSeconds % 86400)}`
+  }
+  return handleMultiplesAnd(time)
 }
-
-const refreshIntervalTime = 1000 * 60 * 5
 
 const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
   const { showTxSentToast, showTxErrorToast } = useTxToast()
   const { handleOpenModal } = useContext(ModalContext)
   const { address } = useWallet()
   const [currentState, setCurrentState] = useState<WNFTState>(WNFTState.loading)
-  const { data: wnftMeta, error } = useSWR<HandledToken>(`/api/outbid/${item.id}`, fetcher, { refreshInterval: refreshIntervalTime })
+  const { data: wnftMeta, error } = useTracesGetOutbid(item.id)
   const [deleteParam, setDeleteParam] = useState<[BigNumber] | undefined>(undefined)
   const [unstakeParam, setUnstakeParam] = useState<[BigNumber] | undefined>(undefined)
   const [imageHasError, setImageHasError] = useState(false)
-  const { isEditor, tracesContractAddress } = useContext(TracesContext)
+  const { isEditor } = useContext(TracesContext)
+
+  const { data: ensName } = useEnsName({ address: item.currentOwner, enabled: Boolean(item.currentOwner) })
 
   const imageAttributes = useMemo(() => {
     if (imageHasError) {
@@ -90,11 +107,11 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
   }, [imageHasError, wnftMeta?.image])
 
   const isOwner = useMemo(() => {
-    return item.currentOwner.toLowerCase() === address?.toLowerCase()
+    return item.currentOwner?.toLowerCase() === address?.toLowerCase()
   }, [item.currentOwner, address])
 
   const { config } = usePrepareContractWrite({
-    address: tracesContractAddress,
+    address: process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS as Address,
     abi: TracesContract,
     functionName: 'deleteToken',
     args: deleteParam,
@@ -131,13 +148,14 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
   }
 
   const { config: unstakeConfig } = usePrepareContractWrite({
-    address: tracesContractAddress,
+    address: process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS as Address,
     abi: TracesContract,
     functionName: 'unstake',
     args: unstakeParam,
     enabled: !!unstakeParam,
     onError(error) {
       showTxErrorToast(error)
+      setUnstakeParam(undefined)
     },
   })
 
@@ -146,10 +164,12 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
     onSettled: (data, error) => {
       if (error) {
         showTxErrorToast(error)
+        setUnstakeParam(undefined)
         return
       }
 
       showTxSentToast(data?.hash)
+      setUnstakeParam(undefined)
 
       // TODO: Add a listener to wait for the transaction to be mined and display toast
     },
@@ -190,10 +210,20 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
       return 'You'
     }
 
-    return shortAddress(item.currentOwner)
-  }, [address, item.currentOwner])
+    if (!!ensName) {
+      return ensName
+    }
 
-  if (error) {
+    return shortAddress(item.currentOwner)
+  }, [address, item.currentOwner, ensName])
+
+  const showWNFTNav = useMemo(() => {
+    if (!wnftMeta) return false
+    if (isEditor) return true
+    if (isOwner && currentState === WNFTState.outbidding && wnftMeta.price === wnftMeta.stakedAmount) return true
+  }, [currentState, isEditor, isOwner, wnftMeta])
+
+  if (error && !wnftMeta) {
     return null
   }
 
@@ -227,8 +257,38 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
         <Heading as="h6" size="md" marginBottom={2} display={'flex'} justifyContent={'space-between'}>
           <SkeletonText isLoaded={currentState !== WNFTState.loading} noOfLines={1} skeletonHeight="100%" w={'full'}>
             {wnftMeta?.name ?? 'No name'}
+            {wnftMeta! && (
+              <Tooltip
+                label={
+                  <Box px={2} py={2}>
+                    <Text>
+                      Dutch duration: <b>{formatTime(wnftMeta.dutchAuctionDuration)}</b>
+                    </Text>
+                    <Text>
+                      Dutch multiplier: <b>{wnftMeta.dutchMultiplier}x</b>
+                    </Text>
+                    <Text>
+                      Guaranteed hold period: <b>{formatTime(wnftMeta.minHoldPeriod)}</b>
+                    </Text>
+                    <Text>
+                      Stake lock duration: <b>{formatTime(wnftMeta.minHoldPeriod + wnftMeta.dutchAuctionDuration)}</b>
+                    </Text>
+                  </Box>
+                }
+                fontSize="md"
+                color="gray.50"
+                textAlign="left"
+                placement="bottom"
+                hasArrow={true}
+                arrowSize={8}
+              >
+                <span>
+                  <Icon as={BsInfoCircle} color="gray.300" boxSize={3} ml={2} />
+                </span>
+              </Tooltip>
+            )}
           </SkeletonText>
-          {(isEditor || isOwner) && (
+          {showWNFTNav && (
             <Popover placement={'bottom-end'} colorScheme="primary">
               {({ onClose }) => (
                 <>
@@ -261,12 +321,14 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
           )}
         </Heading>
         <Box marginTop={6} flex={1} display="flex" flexDirection="column">
+          {/* Loading state */}
           {currentState === WNFTState.loading && (
             <Box>
               <SkeletonText noOfLines={6} spacing="2" skeletonHeight="4" marginBottom={4} />
               <Skeleton width="full" height={'40px'} />
             </Box>
           )}
+          {/* Minting state */}
           {currentState === WNFTState.minting && (
             <>
               <SkeletonText isLoaded={!!wnftMeta} noOfLines={2} spacing="2" skeletonHeight="4" marginBottom={4}>
@@ -288,10 +350,11 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
               </Skeleton>
             </>
           )}
+          {/* Holding state */}
           {currentState === WNFTState.holding && (
             <>
               <SkeletonText isLoaded={!!wnftMeta} noOfLines={2} spacing="2" skeletonHeight="4" marginBottom={4}>
-                <Text color="gray.200">Staked</Text>
+                <Text color="gray.200">Value staked</Text>
                 <Flex alignItems="baseline">
                   <Text color="gray.100" fontWeight={600} marginRight={2}>
                     {wnftMeta?.stakedAmount} PRINTS
@@ -304,7 +367,7 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
                   {wnftMeta! && dayjs.unix(wnftMeta?.lastOutbidTimestamp).fromNow(true)}
                 </Text>
               </SkeletonText>
-              <SkeletonText isLoaded={!!wnftMeta} noOfLines={2} spacing="2" skeletonHeight="4" marginBottom={6}>
+              <SkeletonText isLoaded={!!wnftMeta} noOfLines={2} spacing="2" skeletonHeight="4" marginBottom={6} width="fit-content">
                 <Text color="gray.200">Current holder</Text>
                 <Flex alignItems="center">
                   <Text color="gray.100" fontWeight={600}>
@@ -320,6 +383,7 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
               </Skeleton>
             </>
           )}
+          {/* Outbidding/Dutch auction state */}
           {currentState === WNFTState.outbidding && (
             <>
               <SkeletonText isLoaded={!!wnftMeta} noOfLines={2} spacing="2" skeletonHeight="4" marginBottom={4}>

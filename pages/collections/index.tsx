@@ -1,11 +1,7 @@
-import React, { useState } from 'react'
-
-// Dependencies
+import React from 'react'
 import { Container, Grid, GridItem } from '@chakra-ui/react'
 import { getBuiltGraphSDK } from '../../.graphclient'
 import { useQuery } from 'react-query'
-
-// Components
 import PageHeader from '@ui/components/organisms/page-header'
 import CollectionCard from '@ui/components/molecules/collection-card'
 
@@ -16,7 +12,6 @@ const CollectionsPage = () => {
 
   return (
     <Container maxWidth="7xl" paddingTop={14} paddingBottom={28}>
-      <p>{isLoading && 'Loading...'}</p>
       {/* <>
         {error && (
           <form>
@@ -34,6 +29,7 @@ const CollectionsPage = () => {
         )}
       </> */}
       <PageHeader containerProps={{ marginBottom: 12 }} title="All collections" withBackButton={true} />
+      <p>{isLoading && 'Loading...'}</p>
       <Grid templateColumns={['repeat(1, 1fr)', 'repeat(2, 1fr)', 'repeat(2, 1fr)', 'repeat(3, 1fr)', 'repeat(4, 1fr)']} gap={8} rowGap={12}>
         {data?.collections.map((collection) => (
           <GridItem w="100%" key={collection.id}>

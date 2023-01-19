@@ -11,13 +11,13 @@ import { TracesContext } from '@ui/contexts/Traces'
 
 const useTracesAddNft = (isSubmitted: boolean) => {
   const { showTxSentToast, showTxErrorToast, showTxExecutedToast } = useTxToast()
-  const { isEditor, tracesContractAddress } = useContext(TracesContext)
+  const { isEditor } = useContext(TracesContext)
   const { handleCloseModal } = useContext(ModalContext)
   const [formIsReady, setFormIsReady] = useState(false)
   const [params, setParams] = useState<[`0x${string}`, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] | undefined>(undefined)
 
   const { config } = usePrepareContractWrite({
-    address: tracesContractAddress,
+    address: process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS as Address,
     abi: TracesContract,
     functionName: 'addToken',
     args: params,
