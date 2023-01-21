@@ -65,9 +65,9 @@ const TracesProvider = ({ children }: PropsWithChildren) => {
     () => ({
       adminRole,
       editorRole,
-      isAdmin: !!isAdmin,
-      isEditor: !!isEditor,
-      isAdminOrEditor: !!isAdmin || !!isEditor,
+      isAdmin,
+      isEditor,
+      isAdminOrEditor: isAdmin || isEditor,
       vaultAddress,
       address,
       isConnected,
