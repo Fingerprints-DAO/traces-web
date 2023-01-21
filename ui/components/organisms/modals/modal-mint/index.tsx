@@ -10,11 +10,12 @@ import Actions from './actions'
 import ModalMintHeader from './header'
 
 // Helpers
-import useWallet from '@web3/wallet/use-wallet'
 import usePrints from '@web3/contracts/prints/use-prints'
 import usePrintsApprove from '@web3/contracts/prints/use-prints-approve'
 import { ModalContext, WNFTModalProps } from '@ui/contexts/Modal'
 import { parseAmountToContract, parseAmountToDisplay } from '@web3/helpers/handleAmount'
+import { TracesContext } from '@ui/contexts/Traces'
+import useWallet from '@web3/wallet/use-wallet'
 
 type ModalMintProps = {
   isOpen: boolean
@@ -24,7 +25,8 @@ type ModalMintProps = {
 const ModalMint = ({ isOpen, onClose }: ModalMintProps) => {
   const { payload } = useContext(ModalContext) as { payload: WNFTModalProps }
   const prints = usePrints()
-  const { address, printsBalance } = useWallet()
+  const { printsBalance } = useWallet()
+  const { address } = useContext(TracesContext)
   const { approveRequest: printsApprove, isApproved } = usePrintsApprove()
 
   const [formIsFilled, setFormIsFilled] = useState(false)

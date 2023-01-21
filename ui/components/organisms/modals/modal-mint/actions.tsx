@@ -5,15 +5,15 @@ import { UseMutationResult } from 'react-query'
 import { BsCheck2Circle } from 'react-icons/bs'
 import { BigNumber, ContractTransaction } from 'ethers'
 import { TransactionReceipt } from '@ethersproject/providers'
-import { Box, Button, Icon, ModalFooter, Spinner, Text, useToast } from '@chakra-ui/react'
+import { Box, Button, Icon, ModalFooter, Spinner, Text } from '@chakra-ui/react'
 
 // Helpers
 import { ModalContext, WNFTModalProps } from '@ui/contexts/Modal'
 import { Address, useWaitForTransaction } from 'wagmi'
 import usePrints from '@web3/contracts/prints/use-prints'
-import useWallet from '@web3/wallet/use-wallet'
 import useTracesOutbid from '@web3/contracts/traces/use-traces-outbid'
 import { parseAmountToContract, parseAmountToDisplay } from '@web3/helpers/handleAmount'
+import { TracesContext } from '@ui/contexts/Traces'
 
 type ActionsProps = {
   minPrints: number
@@ -27,7 +27,7 @@ const Actions = (props: ActionsProps) => {
   const { onClose, approveAmount, inputAmount, minPrints, isLoading, waitIsApproved: isSuccessApprove, mutateAsync: approvePrints } = props
   const { payload } = useContext(ModalContext) as { payload: WNFTModalProps }
   const prints = usePrints()
-  const { address } = useWallet()
+  const { address } = useContext(TracesContext)
 
   const [allowance, setAllowance] = useState<BigNumber>()
   const [isOutbidSubmitted, setIsOutbidSubmitted] = useState(false)
@@ -61,8 +61,6 @@ const Actions = (props: ActionsProps) => {
       console.log('handleWaitingApproveSuccess', error)
     }
   }, [inputAmount, outbid, payload.ogTokenAddress, payload.ogTokenId])
-
-  // const waitingApprove = useWaitForTransaction({ hash: approve?.hash as Address })
 
   const handleApprove = async () => {
     try {

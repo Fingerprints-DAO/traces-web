@@ -12,7 +12,6 @@ type TracesContextState = {
   editorRole?: Address
   vaultAddress?: Address
   address?: Address
-  printsBalance?: any
 }
 
 const DEFAULT_CONTEXT = {
@@ -30,7 +29,7 @@ const tracesConfig = {
 }
 
 const TracesProvider = ({ children }: PropsWithChildren) => {
-  const { address, isConnected, printsBalance } = useWallet()
+  const { address, isConnected } = useWallet()
 
   const { data: roles } = useContractReads({
     contracts: [
@@ -72,9 +71,8 @@ const TracesProvider = ({ children }: PropsWithChildren) => {
       vaultAddress,
       address,
       isConnected,
-      printsBalance,
     }),
-    [adminRole, editorRole, isAdmin, isEditor, vaultAddress, address, isConnected, printsBalance]
+    [adminRole, editorRole, isAdmin, isEditor, vaultAddress, address, isConnected]
   )
 
   return <TracesContext.Provider value={value}>{children}</TracesContext.Provider>

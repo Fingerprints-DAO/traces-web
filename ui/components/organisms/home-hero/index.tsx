@@ -1,14 +1,14 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Box, Container, Heading, Text, useMediaQuery } from '@chakra-ui/react'
-import useWallet from '@web3/wallet/use-wallet'
 import { useIsBrowser } from '@ui/hooks/use-is-browser'
 import Image from 'next/image'
 import heroImage from 'public/images/hero.png'
 import ButtonConnectWallet from '@ui/components/molecules/button-connect-wallet'
+import { TracesContext } from '@ui/contexts/Traces'
 
 const HomeHero = () => {
   const isBrowser = useIsBrowser()
-  const { isConnected } = useWallet()
+  const { isConnected } = useContext(TracesContext)
   const [isMobile, isTabletPortrait] = useMediaQuery(['(max-width: 30em)', '(max-width: calc(48em + 1px))'])
 
   return (
@@ -34,5 +34,3 @@ const HomeHero = () => {
 }
 
 export default HomeHero
-
-// color="gray.900" colorScheme="primary" size="lg" mt={8} onClick={handleOpenModal}

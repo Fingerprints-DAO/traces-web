@@ -1,27 +1,22 @@
 import React, { useContext } from 'react'
 import { Box, Button, Text } from '@chakra-ui/react'
-import { useBalance, useDisconnect } from 'wagmi'
+import { useDisconnect } from 'wagmi'
 import { Avatar, ConnectKitButton } from 'connectkit'
 import { shortenAddress } from '@ui/utils/string'
 import { TracesContext } from '@ui/contexts/Traces'
 import useMediaQuery from '@ui/hooks/use-media-query'
+import useWallet from '@web3/wallet/use-wallet'
 
 type WalletProps = {
   variant: 'header' | 'drawer'
 }
-
-const printContractAddress = process.env.NEXT_PUBLIC_PRINTS_CONTRACT_ADDRESS || ('' as any)
 
 const Wallet = ({ variant }: WalletProps) => {
   const { disconnect } = useDisconnect()
   const { address } = useContext(TracesContext)
   const isMobile = useMediaQuery('(max-width: 479px)')
 
-  const { data: balance } = useBalance({
-    address,
-    enabled: Boolean(address) && Boolean(printContractAddress),
-    token: printContractAddress,
-  })
+  const { printsBalance } = useWallet()
 
   const isDrawer = variant === 'drawer'
 
@@ -47,7 +42,7 @@ const Wallet = ({ variant }: WalletProps) => {
               >
                 <Box textAlign={isDrawer ? 'left' : 'right'} mx={2}>
                   <Text as="strong" color="gray.200" display="block" fontSize={['xs', 'sm']} fontWeight={600} mb="-2px">
-                    {parseFloat(balance?.formatted || '0').toLocaleString()} PRINTS
+                    {parseFloat(printsBalance?.formatted || '0').toLocaleString()} PRINTS
                   </Text>
                   <Text as="span" color="gray.400" fontSize={['xs', 'sm']} display="block">
                     {ensName || shortenAddress(address, 5)}
