@@ -28,6 +28,7 @@ import '@fontsource/inter/700.css'
 import '@fontsource/inter/800.css'
 import '@fontsource/inter/900.css'
 import { getBaseURL } from './api/helpers/_getLink'
+import { TracesProvider } from '@ui/contexts/Traces'
 import Web3Provider from '@ui/contexts/Web3'
 
 dayjs.extend(duration)
@@ -72,12 +73,14 @@ function Traces({ Component, pageProps }: TracesProps) {
       <MetaTags {...pageProps.meta} host={pageProps.host} />
       <ChakraProvider theme={theme}>
         <Web3Provider>
-          <ModalProvider>
-            <Layout>
-              <Component {...pageProps} />
-              <Modal />
-            </Layout>
-          </ModalProvider>
+          <TracesProvider>
+            <ModalProvider>
+              <Layout>
+                <Component {...pageProps} />
+                <Modal />
+              </Layout>
+            </ModalProvider>
+          </TracesProvider>
         </Web3Provider>
       </ChakraProvider>
     </ReactQueryProvider>
