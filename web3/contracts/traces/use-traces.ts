@@ -1,7 +1,4 @@
-// Dependencies
 import { Address, useContract, useSigner } from 'wagmi'
-
-// Helpers
 import TracesContract from './traces-abi'
 
 const useTraces = () => {

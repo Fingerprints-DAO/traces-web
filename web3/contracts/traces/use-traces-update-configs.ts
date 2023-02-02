@@ -1,7 +1,4 @@
 import { useCallback, useContext, useEffect, useState } from 'react'
-
-// Dependencies
-import { useToast } from '@chakra-ui/react'
 import { Address, useContractWrite, usePrepareContractWrite, useWaitForTransaction } from 'wagmi'
 
 // Helpers

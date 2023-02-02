@@ -1,33 +1,28 @@
-import React, { useMemo } from 'react'
+import React, { useContext, useMemo } from 'react'
 import { Box, Button, Container, Grid, Text } from '@chakra-ui/react'
-import { useBalance, useEnsName, useDisconnect } from 'wagmi'
+import { useEnsName, useDisconnect } from 'wagmi'
 import { ConnectKitButton } from 'connectkit'
 
 import PageHeader from '@ui/components/organisms/page-header'
 import WNFT from '@ui/components/molecules/wnft'
-import useWallet from '@web3/wallet/use-wallet'
 import useTracesGetWNFTs from '@web3/contracts/traces/use-traces-get-wnfts'
 import { useIsBrowser } from '@ui/hooks/use-is-browser'
 import { parseAmountToDisplay } from '@web3/helpers/handleAmount'
-
-const printContractAddress = process.env.NEXT_PUBLIC_PRINTS_CONTRACT_ADDRESS || ('' as any)
+import { TracesContext } from '@ui/contexts/Traces'
+import useWallet from '@web3/wallet/use-wallet'
 
 const ProfilePage = () => {
   const isBrowser = useIsBrowser()
-  const { address, isConnected } = useWallet()
   const { disconnect } = useDisconnect()
+  const { address, isConnected } = useContext(TracesContext)
 
+  const { printsBalance } = useWallet()
   const { data: ensName } = useEnsName({ address, enabled: Boolean(address) })
-
-  const { data: balance } = useBalance({
-    address,
-    enabled: Boolean(address) && Boolean(printContractAddress),
-    token: printContractAddress,
-  })
-
   const { data: wnfts, isLoading: isLoadingWNFTs } = useTracesGetWNFTs(address)
+
   const stakedAmount = useMemo(() => {
     if (!wnfts) return 0
+
     return wnfts.reduce((acc, item) => acc + parseAmountToDisplay(item.lastPrice), 0)
   }, [wnfts])
 
@@ -44,7 +39,7 @@ const ProfilePage = () => {
                 <Text mb={6} color="gray.200" fontSize="xl">
                   Current balance{' '}
                   <Text ml={[0, 6]} as="strong" display={['block', 'unset']}>
-                    {parseFloat(balance?.formatted || '0').toLocaleString()} PRINTS
+                    {parseFloat(printsBalance?.formatted || '0').toLocaleString()} PRINTS
                   </Text>
                 </Text>
                 <Text mb={6} color="gray.200" fontSize="xl">
