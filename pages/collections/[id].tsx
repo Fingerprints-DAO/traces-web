@@ -55,7 +55,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext<Serv
 
     const meta = {
       title: collectionData?.name || 'Collection',
-      description: 'Hold and use NFTs from the Fingerprints collection',
+      description: 'Borrow NFTs from Fingerprints collection',
       navPage: 'collection',
     }
 

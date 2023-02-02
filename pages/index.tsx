@@ -19,7 +19,7 @@ const Home: NextPage = () => {
 export async function getStaticProps() {
   const meta = {
     title: 'Home',
-    description: 'Hold and use NFTs from the Fingerprints collection',
+    description: 'Borrow NFTs from Fingerprints collection',
     navPage: 'home',
   }
 
