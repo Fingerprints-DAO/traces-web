@@ -262,10 +262,10 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
                 label={
                   <Box px={2} py={2}>
                     <Text>
-                      Dutch duration: <b>{formatTime(wnftMeta.dutchAuctionDuration)}</b>
+                      Dutch Auction duration: <b>{formatTime(wnftMeta.dutchAuctionDuration)}</b>
                     </Text>
                     <Text>
-                      Dutch multiplier: <b>{wnftMeta.dutchMultiplier}x</b>
+                      Dutch Auction multiplier: <b>{wnftMeta.dutchMultiplier}x</b>
                     </Text>
                     <Text>
                       Guaranteed hold period: <b>{formatTime(wnftMeta.minHoldPeriod)}</b>
@@ -394,7 +394,7 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
                   </Text>
                   {wnftMeta! && (
                     <Tooltip
-                      label={`The value decreases constantly until reachs ${wnftMeta.stakedAmount} at ${dayjs
+                      label={`TThe value decreases constantly until it reaches ${wnftMeta.stakedAmount} PRINTS at ${dayjs
                         .unix(wnftMeta.lastOutbidTimestamp)
                         .add(wnftMeta.dutchAuctionDuration, 'seconds')
                         .add(wnftMeta.minHoldPeriod, 'seconds')
