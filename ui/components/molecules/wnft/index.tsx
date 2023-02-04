@@ -394,7 +394,7 @@ const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
                   </Text>
                   {wnftMeta! && (
                     <Tooltip
-                      label={`TThe value decreases constantly until it reaches ${wnftMeta.stakedAmount} PRINTS at ${dayjs
+                      label={`The value decreases constantly until it reaches ${wnftMeta.stakedAmount} PRINTS at ${dayjs
                         .unix(wnftMeta.lastOutbidTimestamp)
                         .add(wnftMeta.dutchAuctionDuration, 'seconds')
                         .add(wnftMeta.minHoldPeriod, 'seconds')
