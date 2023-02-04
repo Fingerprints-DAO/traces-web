@@ -1,4 +1,3 @@
-import { Address } from 'wagmi'
 import useTraces from './use-traces'
 import { useMutation } from 'react-query'
 import { AddRolePayload } from '@ui/components/organisms/modals/modal-add-role'

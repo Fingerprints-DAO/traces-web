@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useContext, useMemo } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import Image from 'next/image'
@@ -15,7 +15,7 @@ import {
   Text,
 } from '@chakra-ui/react'
 import Wallet from '@ui/components/molecules/wallet'
-import useTracesRead from '@web3/contracts/traces/use-traces-read'
+import { TracesContext } from '@ui/contexts/Traces'
 import { ModalElement } from '@ui/contexts/Modal'
 import useWallet from '@web3/wallet/use-wallet'
 import logoImage from 'public/images/logo.svg'
@@ -28,8 +28,7 @@ type DrawerProps = {
 
 const Drawer = ({ isOpen, onClose, onOpenModal }: DrawerProps) => {
   const router = useRouter()
-  const { isConnected } = useWallet()
-  const { isAdmin, isEditor } = useTracesRead()
+  const { isAdmin, isEditor, isConnected } = useContext(TracesContext)
 
   const handleOpenModal = (element: ModalElement) => () => onOpenModal(element)
 

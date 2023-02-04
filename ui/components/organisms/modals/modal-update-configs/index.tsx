@@ -1,14 +1,14 @@
-import React, { useCallback } from 'react'
+import React, { useContext } from 'react'
 import { object, string } from 'yup'
 import { Controller, useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Box, Button, Heading, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalOverlay, Text } from '@chakra-ui/react'
 import { ModalProps } from '@ui/contexts/Modal'
 import useTracesUpdateConfigs from '@web3/contracts/traces/use-traces-update-configs'
-import useTracesRead from '@web3/contracts/traces/use-traces-read'
 import { Address } from 'wagmi'
 import { isAddress } from 'ethers/lib/utils.js'
 import useTxToast from '@ui/hooks/use-tx-toast'
+import { TracesContext } from '@ui/contexts/Traces'
 
 export type UpdateConfigsPayload = {
   vaultAddress: `0x${string}`
@@ -20,7 +20,7 @@ const schema = object({
 
 const ModalUpdateConfigs = ({ isOpen, onClose }: ModalProps) => {
   const { showTxErrorToast } = useTxToast()
-  const { vaultAddress: currentVaultAddress } = useTracesRead()
+  const { vaultAddress: currentVaultAddress } = useContext(TracesContext)
 
   const { control, formState, handleSubmit, watch } = useForm<UpdateConfigsPayload>({
     mode: 'onSubmit',

@@ -26,10 +26,9 @@ import { ModalContext, ModalElement } from '@ui/contexts/Modal'
 import TracesContract from '@web3/contracts/traces/traces-abi'
 import useTxToast from '@ui/hooks/use-tx-toast'
 import ButtonConnectWallet from '../button-connect-wallet'
-import useWallet from '@web3/wallet/use-wallet'
-import useTracesRead from '@web3/contracts/traces/use-traces-read'
 import { WNFTState } from 'pages/api/helpers/_types'
 import CopyButton from '@ui/components/atoms/copy-button'
+import { TracesContext } from '@ui/contexts/Traces'
 import useTracesGetOutbid from '@web3/contracts/traces/use-traces-get-outbid'
 
 export type Modify<T, R> = Omit<T, keyof R> & R
@@ -83,13 +82,12 @@ function formatTime(timeInSeconds: number) {
 const WNFT = ({ item }: PropsWithChildren<WNFTProps>) => {
   const { showTxSentToast, showTxErrorToast } = useTxToast()
   const { handleOpenModal } = useContext(ModalContext)
-  const { address } = useWallet()
-  const { isEditor } = useTracesRead()
   const [currentState, setCurrentState] = useState<WNFTState>(WNFTState.loading)
   const { data: wnftMeta, error } = useTracesGetOutbid(item.id)
   const [deleteParam, setDeleteParam] = useState<[BigNumber] | undefined>(undefined)
   const [unstakeParam, setUnstakeParam] = useState<[BigNumber] | undefined>(undefined)
   const [imageHasError, setImageHasError] = useState(false)
+  const { address, isEditor } = useContext(TracesContext)
 
   const { data: ensName } = useEnsName({ address: item.currentOwner, enabled: Boolean(item.currentOwner) })
 

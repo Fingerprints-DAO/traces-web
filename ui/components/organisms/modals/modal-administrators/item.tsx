@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { Button, Td, Tr } from '@chakra-ui/react'
 import { Editor } from '.graphclient'
 import useTracesRevokeRole from '@web3/contracts/traces/use-traces-revoke-role'
@@ -6,7 +6,7 @@ import { TransactionStatus } from 'types/transaction'
 import useTxToast from '@ui/hooks/use-tx-toast'
 import { useQueryClient } from 'react-query'
 import { getTracesAdministratorsKey } from '@web3/contracts/traces/keys'
-import useTracesRead from '@web3/contracts/traces/use-traces-read'
+import { TracesContext } from '@ui/contexts/Traces'
 
 type AdminItemProps = {
   isAdmin?: boolean
@@ -17,7 +17,7 @@ const AdminItem = ({ isAdmin, ...item }: AdminItemProps) => {
   const [isLoading, setIsLoading] = useState(false)
   const { showTxErrorToast, showTxExecutedToast } = useTxToast()
 
-  const { adminRole, editorRole } = useTracesRead()
+  const { adminRole, editorRole } = useContext(TracesContext)
   const { mutateAsync: deleteRole } = useTracesRevokeRole(isAdmin)
 
   const handleDelete = (item: Pick<Editor, 'id' | 'role'>) => async () => {

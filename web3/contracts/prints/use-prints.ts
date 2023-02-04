@@ -1,7 +1,4 @@
-// Dependencies
 import { Address, useContract, useSigner } from 'wagmi'
-
-// Helpers
 import PrintsContract from './prints-abi'
 
 const usePrints = () => {

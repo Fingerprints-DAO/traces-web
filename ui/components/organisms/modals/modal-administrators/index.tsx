@@ -1,10 +1,10 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Box, Heading, Modal, ModalBody, ModalContent, ModalOverlay, Table, TableContainer, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react'
 import { ModalProps } from '@ui/contexts/Modal'
-import useTracesRead from '@web3/contracts/traces/use-traces-read'
 import useTracesGetAdministrators from '@web3/contracts/traces/use-traces-get-administrators'
 import { Address } from 'wagmi'
 import AdminItem from './item'
+import { TracesContext } from '@ui/contexts/Traces'
 
 export type DeleteRolePayload = {
   role: Address
@@ -12,7 +12,7 @@ export type DeleteRolePayload = {
 }
 
 const ModalAdministrators = ({ isOpen, onClose }: ModalProps) => {
-  const { isAdmin } = useTracesRead()
+  const { isAdmin } = useContext(TracesContext)
   const { data: administrators, isLoading: isGettingAdmins, isError } = useTracesGetAdministrators()
 
   return (
