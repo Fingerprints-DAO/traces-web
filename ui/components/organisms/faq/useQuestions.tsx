@@ -7,7 +7,7 @@ export const useQuestions = () => {
       answer: (
         <>
           Traces is a tool that allows{' '}
-          <Text as="a" href="https://fingerprintsdao.xyz/stats" textDecor={'underline'} target={'_blank'}>
+          <Text as="a" href="https://fingerprintsdao.xyz/join" textDecor={'underline'} target={'_blank'}>
             Fingerprints DAO
           </Text>{' '}
           members to borrow wrapped versions of NFTs in{' '}
