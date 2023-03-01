@@ -1,0 +1,10 @@
+query GetAdministrators {
+  admins {
+    id
+    role
+  }
+  editors {
+    id
+    role
+  }
+}

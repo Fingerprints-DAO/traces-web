@@ -1,49 +1,76 @@
-import { useContext } from 'react'
-
-// Dependencies
-import { useToast } from '@chakra-ui/react'
-import { useContractWrite, usePrepareContractWrite } from 'wagmi'
-
-// Helpers
-import useTracesRead from './use-traces-read'
-import TracesContract from '@web3/contracts/traces/contract'
+import { useCallback, useContext, useEffect, useState } from 'react'
+import { BigNumber } from 'ethers'
+import dayjs from 'dayjs'
+import { Address, useContractWrite, usePrepareContractWrite } from 'wagmi'
+import TracesContract from '@web3/contracts/traces/traces-abi'
 import { ModalContext } from '@ui/contexts/Modal'
 import { AddNftPayload } from '@ui/components/organisms/modals/modal-add-nft'
+import useTxToast from '@ui/hooks/use-tx-toast'
+import { parseUnits } from 'ethers/lib/utils.js'
+import { TracesContext } from '@ui/contexts/Traces'
 
-const useTracesAddNft = (isSubmitted: boolean, payload: AddNftPayload) => {
-  const toast = useToast()
-  const { isEditor } = useTracesRead()
+const useTracesAddNft = (isSubmitted: boolean) => {
+  const { showTxSentToast, showTxErrorToast, showTxExecutedToast } = useTxToast()
+  const { isEditor } = useContext(TracesContext)
   const { handleCloseModal } = useContext(ModalContext)
+  const [formIsReady, setFormIsReady] = useState(false)
+  const [params, setParams] = useState<[`0x${string}`, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] | undefined>(undefined)
 
   const { config } = usePrepareContractWrite({
-    address: process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS,
+    address: process.env.NEXT_PUBLIC_TRACES_CONTRACT_ADDRESS as Address,
     abi: TracesContract,
     functionName: 'addToken',
-    args: [
-      process.env.NEXT_PUBLIC_ERC721_MOCK_CONTRACT_ADDRESS || ('' as any),
-      payload?.ogTokenId as any,
-      payload?.minStake as any,
-      payload?.minHoldPeriod as any,
-      payload?.dutchMultiplier as any,
-      payload?.dutchAuctionDuration as any,
-    ],
-    enabled: isSubmitted && !!isEditor && !!payload,
+    args: params,
+    enabled: isSubmitted && !!isEditor,
+    onError(error) {
+      showTxErrorToast(error)
+    },
   })
 
   const { write } = useContractWrite({
     ...config,
-    onSettled: (_, error) => {
-      if (!error) {
-        toast({ title: 'Agora sim seu cagão', status: 'success' })
-        handleCloseModal()
+    onSettled: (data, error) => {
+      setFormIsReady(false)
+      if (error) {
+        showTxErrorToast(error)
+        return
       }
+
+      showTxSentToast(data?.hash)
+      handleCloseModal(data?.hash as Address, () => {
+        showTxExecutedToast({
+          title: 'WNFT created. Reload the collection page to see it in few seconds.',
+          txHash: data?.hash,
+          id: 'wnft-created',
+        })
+      })
     },
-    onError: () => {
-      toast({ title: 'Você fez merda', status: 'error' })
-    },
+    onError: showTxErrorToast,
   })
 
-  return write
+  const setValues = useCallback((payload: AddNftPayload) => {
+    if (!!payload) {
+      const { ogTokenAddress, ogTokenId, minStake, minHoldPeriod, dutchMultiplier, dutchAuctionDuration } = payload
+
+      setParams([
+        ogTokenAddress as Address,
+        BigNumber.from(ogTokenId),
+        parseUnits(minStake.toString(), 18),
+        BigNumber.from(dayjs.duration(minHoldPeriod, 'day').as('second')),
+        BigNumber.from(dutchMultiplier),
+        BigNumber.from(dayjs.duration(dutchAuctionDuration, 'hour').as('second')),
+      ])
+      setFormIsReady(true)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (formIsReady && write) {
+      write()
+    }
+  }, [formIsReady, write])
+
+  return [setValues]
 }
 
 export default useTracesAddNft

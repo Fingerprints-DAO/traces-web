@@ -4,7 +4,22 @@ import React from 'react'
 import { useForm } from 'react-hook-form'
 import { number, object, string } from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { Box, Button, Grid, GridItem, Heading, Input, InputGroup, InputRightAddon, Modal, ModalBody, ModalContent, ModalFooter, ModalOverlay, Text, useToast } from '@chakra-ui/react'
+import {
+  Box,
+  Button,
+  Grid,
+  GridItem,
+  Heading,
+  Input,
+  InputGroup,
+  InputRightAddon,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalOverlay,
+  Text,
+} from '@chakra-ui/react'
 
 // Helpers
 import { ModalProps } from '@ui/contexts/Modal'
@@ -29,22 +44,23 @@ const schema = object({
 })
 
 const ModalAddNft = ({ isOpen, onClose }: ModalProps) => {
-  const { control, formState, register, handleSubmit, watch } = useForm<AddNftPayload>({
+  const { formState, register, handleSubmit, watch } = useForm<AddNftPayload>({
     mode: 'onSubmit',
     resolver: yupResolver(schema),
     defaultValues: {
       ogTokenAddress: '',
+      dutchAuctionDuration: 10,
+      dutchMultiplier: 10,
     },
   })
 
   const form = watch()
+  const [onAddNFT] = useTracesAddNft(formState.isSubmitted)
 
-  const addNft = useTracesAddNft(formState.isSubmitted, form)
-
-  const submit = () => addNft && addNft()
+  const submit = () => onAddNFT(form)
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} isCentered={true}>
+    <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
       <ModalContent background="gray.900" padding={[6, 12]} minW={['unset', 650]} maxW={['90%', '90%', '90%', 'md']}>
         <form onSubmit={handleSubmit(submit)}>
@@ -72,7 +88,7 @@ const ModalAddNft = ({ isOpen, onClose }: ModalProps) => {
                   Guaranteed Holding Period
                 </Text>
                 <InputGroup>
-                  <Input {...register('minHoldPeriod')} type="number" size="lg" borderColor="gray.600" placeholder="Ex: 10" />
+                  <Input {...register('minHoldPeriod')} type="number" size="lg" borderColor="gray.600" placeholder="Ex: 10" step=".01" />
                   <InputRightAddon background="gray.800" borderColor="gray.600" color="gray.400" height={12}>
                     Days
                   </InputRightAddon>
@@ -83,7 +99,7 @@ const ModalAddNft = ({ isOpen, onClose }: ModalProps) => {
                   Min. Stake Qty
                 </Text>
                 <InputGroup>
-                  <Input {...register('minStake')} type="number" size="lg" borderColor="gray.600" placeholder="Ex: 1000" />
+                  <Input {...register('minStake')} type="number" size="lg" borderColor="gray.600" placeholder="Ex: 1000" step=".0001" />
                   <InputRightAddon background="gray.800" borderColor="gray.600" color="gray.400" height={12}>
                     $PRINTS
                   </InputRightAddon>
@@ -105,9 +121,9 @@ const ModalAddNft = ({ isOpen, onClose }: ModalProps) => {
                   Dutch Auction Duration
                 </Text>
                 <InputGroup>
-                  <Input {...register('dutchAuctionDuration')} type="number" size="lg" borderColor="gray.600" placeholder="Ex: 100" />
+                  <Input {...register('dutchAuctionDuration')} type="number" size="lg" borderColor="gray.600" placeholder="Ex: 100" step=".01" />
                   <InputRightAddon background="gray.800" borderColor="gray.600" color="gray.400" height={12}>
-                    seconds
+                    hours
                   </InputRightAddon>
                 </InputGroup>
               </GridItem>

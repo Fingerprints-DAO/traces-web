@@ -1,0 +1,16 @@
+# .graphclientrc.yml
+sources:
+  - name: Traces
+    handler:
+      graphql:
+        # endpoint: https://api.studio.thegraph.com/query/38826/traces/v0.0.34
+        # endpoint: https://api.studio.thegraph.com/d7e93acd35c73f0cdedadad7b0984645/subgraphs/id/38826
+        # endpoint: https://api.studio.thegraph.com/query/38826/traces/v0.0.4
+        endpoint: ${SUBGRAPH_URL}
+
+documents:
+  - ./web3/graphql/collection.graphql
+  - ./web3/graphql/collections.graphql
+  - ./web3/graphql/wnfts.graphql
+  - ./web3/graphql/administrators.graphql
+  - ./web3/graphql/outbids.graphql

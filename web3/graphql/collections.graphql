@@ -1,0 +1,12 @@
+query GetCollections {
+  collections(
+    first: 5
+    orderDirection: desc
+    where: {tokens_: {id_not: ""}}
+    orderBy: tokensCount
+  ) {
+    id
+    ogTokenAddress
+    blockTimestamp
+  }
+}

@@ -1,7 +1,7 @@
 import React from 'react'
 
 // Dependencies
-import { Box, BoxProps, Flex, Heading, Icon, Text } from '@chakra-ui/react'
+import { Box, BoxProps, Flex, Heading, Icon, SkeletonText, Text } from '@chakra-ui/react'
 import { ArrowBackIcon } from '@chakra-ui/icons'
 import { useRouter } from 'next/router'
 
@@ -11,9 +11,10 @@ type PageHeaderProps = {
   onClickBack?: () => void
   containerProps?: BoxProps
   withBackButton?: boolean
+  isLoading?: boolean
 }
 
-const PageHeader = ({ description, title, containerProps, withBackButton, onClickBack }: PageHeaderProps) => {
+const PageHeader = ({ description, title, containerProps, withBackButton, onClickBack, isLoading }: PageHeaderProps) => {
   const router = useRouter()
 
   const handleBack = () => onClickBack || router.back()
@@ -28,14 +29,12 @@ const PageHeader = ({ description, title, containerProps, withBackButton, onClic
           </Text>
         </Flex>
       )}
-      <Heading as="h1" size="3xl">
+      <SkeletonText isLoaded={!isLoading} skeletonHeight="100%" as={Heading} size="3xl">
         {title}
-      </Heading>
-      {Boolean(description) && (
-        <Text color="gray.400" marginTop={6}>
-          {description}
-        </Text>
-      )}
+      </SkeletonText>
+      <Text color="gray.400" marginTop={6}>
+        {description! && description}
+      </Text>
     </Box>
   )
 }
